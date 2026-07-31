@@ -234,6 +234,12 @@ pre.code b {
   margin: 0 0 0.75rem;
 }
 
+.verbnote {
+  align-self: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .picker {
   display: flex;
   align-items: baseline;

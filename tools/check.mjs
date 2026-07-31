@@ -120,6 +120,20 @@ if (index.tag !== tag) {
   complain("examples/index.json", `says ${index.tag} and the page pins ${tag}`);
 }
 
+// The page turns Run off from `runs`, so an entry missing it would quietly
+// offer a button that cannot work. Regenerate with `node tools/examples.mjs`.
+for (const entry of index.examples) {
+  if (typeof entry.summary !== "string" || entry.summary === "") {
+    complain("examples/index.json", `${entry.file} has no summary`);
+  }
+  if (typeof entry.runs !== "boolean") {
+    complain("examples/index.json", `${entry.file} does not say whether it runs`);
+  }
+  if (typeof entry.tests !== "number") {
+    complain("examples/index.json", `${entry.file} does not say how many tests it has`);
+  }
+}
+
 // A share link carries the version it was written against, and the playground
 // says so when it disagrees. A link written into a page here should not be the
 // thing triggering that.

@@ -76,11 +76,15 @@ not separately pinned:
 $ git -C ../deed archive -o /tmp/ex.tar vX.Y.Z examples
 $ tar -xf /tmp/ex.tar
 $ rm examples/greeting.deed examples/todo.txt
+$ node tools/examples.mjs
 ```
 
-`examples/index.json` is the list the picker reads, with each file's opening
-comment as its summary. It is data rather than build output, so it is written
-by hand when the pin moves.
+That last step rewrites `examples/index.json`, which is the list the picker
+reads. Everything in it comes from somewhere else: each summary is the comment
+at the top of the file, and whether an example has a `main` to run is what the
+pinned artifact answered when asked. Seven of the twenty-nine do; the picker
+turns Run off for the other twenty-two and says why, rather than letting
+somebody press it and be refused.
 
 `greeting.deed` is left out because it imports two other modules and this page
 hands the compiler one file. That is the only one: the other twenty-nine were
@@ -96,7 +100,8 @@ install/            how to get a binary running
 one-clause/         what a signature turns into
 examples/           the compiler's corpus at the pinned tag
 assets/             the stylesheet, the scripts, the brand files, the compiler
-tools/              the one check that runs before anything merges
+tools/              the check that runs before anything merges, and the
+                    script that regenerates the example index
 decisions/          why this repository is shaped the way it is
 ```
 
