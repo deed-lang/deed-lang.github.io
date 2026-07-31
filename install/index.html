@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Install | Deed</title>
+    <meta
+      name="description"
+      content="Download one file, unpack it, run it. One path per platform, with the output to compare against."
+    />
+    <link rel="icon" href="../assets/brand/deed-cipher-favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="name" href="../">Deed</a>
+        <nav>
+          <a href="../play/">Playground</a>
+          <a href="./">Install</a>
+          <a href="https://github.com/deed-lang/deed">Source</a>
+        </nav>
+      </header>
+
+      <main>
+        <h1>Install</h1>
+        <p class="lede">
+          One file. The compiler, the formatter, the test runner and the
+          language server are all in it, and there is nothing else to install.
+        </p>
+
+        <!--
+          Every `deed 0.2.1` below is the output of that binary on that
+          platform, printed by the release workflow, which refuses to publish
+          when a binary disagrees with its tag. The program output further down
+          was produced by running the released Windows build.
+        -->
+
+        <h2>Take the file for your machine</h2>
+        <table class="files">
+          <thead>
+            <tr>
+              <th scope="col">Machine</th>
+              <th scope="col">File</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Linux, 64-bit Intel or AMD</td>
+              <td><code>deed-v0.2.1-x86_64-unknown-linux-gnu.tar.gz</code></td>
+            </tr>
+            <tr>
+              <td>macOS, Apple silicon</td>
+              <td><code>deed-v0.2.1-aarch64-apple-darwin.tar.gz</code></td>
+            </tr>
+            <tr>
+              <td>Windows, 64-bit</td>
+              <td><code>deed-v0.2.1-x86_64-pc-windows-msvc.zip</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          From
+          <a href="https://github.com/deed-lang/deed/releases/latest"
+            >the latest release</a
+          >. There is no Intel Mac build and no Linux ARM build; on those,
+          <a href="#source">build from source</a>.
+        </p>
+
+        <h2>Unpack it and ask it what it is</h2>
+        <p>
+          Pick the one for your machine and run it as written. The last line is
+          what you should see.
+        </p>
+
+        <h3>Linux</h3>
+        <pre class="code"><code>$ tar xzf deed-v0.2.1-x86_64-unknown-linux-gnu.tar.gz
+$ ./deed-v0.2.1-x86_64-unknown-linux-gnu/deed --version
+deed 0.2.1</code></pre>
+
+        <h3>macOS</h3>
+        <pre class="code"><code>$ tar xzf deed-v0.2.1-aarch64-apple-darwin.tar.gz
+$ xattr -d com.apple.quarantine deed-v0.2.1-aarch64-apple-darwin/deed
+$ ./deed-v0.2.1-aarch64-apple-darwin/deed --version
+deed 0.2.1</code></pre>
+        <p>
+          The middle line is not optional and it is explained below.
+        </p>
+
+        <h3>Windows</h3>
+        <pre class="code"><code>&gt; Expand-Archive deed-v0.2.1-x86_64-pc-windows-msvc.zip .
+&gt; .\deed-v0.2.1-x86_64-pc-windows-msvc\deed.exe --version
+deed 0.2.1</code></pre>
+
+        <h2>What your operating system will say about it</h2>
+        <p>
+          These binaries are not code-signed. Signing needs a certificate tied
+          to an identity, and there is not one yet, so both macOS and Windows
+          will treat the download as something they have never seen.
+        </p>
+        <p>
+          <strong>macOS</strong> marks anything a browser downloaded with a
+          quarantine attribute, and refuses to run an unsigned, unnotarised
+          binary that carries it. Depending on the version you get
+          <em>&ldquo;cannot be opened because the developer cannot be
+          verified&rdquo;</em> or the process is killed with no explanation at
+          all. Removing the attribute is the <code>xattr</code> line above, and
+          it is worth understanding rather than pasting: it says you accept
+          this file from where you got it.
+        </p>
+        <p>
+          <strong>Windows</strong> shows
+          <em>&ldquo;Windows protected your PC&rdquo;</em> if you double-click
+          the executable in Explorer. More info, then Run anyway. Starting it
+          from a terminal, as above, is the shorter path.
+        </p>
+        <p>
+          <strong>Linux</strong> says nothing. The archive carries the execute
+          bit; if you rebuilt it or copied it in a way that dropped the mode,
+          <code>chmod +x deed</code>.
+        </p>
+
+        <h2>Where to put it</h2>
+        <p>
+          Anywhere. It reads nothing next to itself and writes nothing beside
+          itself. To type <code>deed</code> instead of a path, move it onto
+          yours:
+        </p>
+        <pre class="code"><code>$ sudo mv deed-v0.2.1-x86_64-unknown-linux-gnu/deed /usr/local/bin/deed</code></pre>
+        <p>
+          On Windows, put the folder on <code>Path</code> through Settings, or
+          keep using the full path. Nothing on this page needs it on
+          <code>Path</code>.
+        </p>
+
+        <h2>A first program</h2>
+        <p>Put this in a file called <code>hello.deed</code>:</p>
+        <pre class="code"><code>module hello
+
+fn main(sys: System) -&gt; Int
+  uses
+    Io.write,
+{
+    Io.write(sys.console, "hello, world\n")
+    0
+}</code></pre>
+        <p>Then:</p>
+        <pre class="code"><code>$ deed check hello.deed
+$ deed run hello.deed
+hello, world</code></pre>
+        <p>
+          <code>check</code> printing nothing is the answer. It found no
+          problem, so it has nothing to say, and it exits 0. Anything it does
+          print is a diagnostic, and it will point at the byte it means.
+        </p>
+        <p>
+          The <a href="../play/">playground</a> runs the same compiler in a
+          browser tab, so you can try things there without any of this.
+        </p>
+
+        <h2 id="source">From source</h2>
+        <p>Needs Rust 1.85 or newer, and nothing else:</p>
+        <pre class="code"><code>$ git clone https://github.com/deed-lang/deed
+$ cd deed
+$ cargo install --path crates/deed-cli</code></pre>
+        <p>
+          The workspace has no external dependencies, so this compiles what is
+          in the tree and nothing from anywhere else.
+        </p>
+
+        <h2>When it does not work</h2>
+        <dl class="trouble">
+          <dt><code>cannot execute binary file: Exec format error</code></dt>
+          <dd>
+            The file is for a different machine than the one running it. Check
+            the table above against <code>uname -m</code>.
+          </dd>
+
+          <dt><code>deed: command not found</code></dt>
+          <dd>
+            It is not on your <code>PATH</code>. Run it by path, with the
+            <code>./</code>, or move it as above.
+          </dd>
+
+          <dt><code>--version</code> prints something other than 0.2.1</dt>
+          <dd>
+            You are running a different <code>deed</code> than the one you
+            unpacked. <code>which deed</code> says which.
+          </dd>
+
+          <dt>It prints a diagnostic you do not understand</dt>
+          <dd>
+            <code>deed explain DEED5001</code>, with the code it printed. Every
+            code has a page.
+          </dd>
+
+          <dt>Anything else</dt>
+          <dd>
+            <a href="https://github.com/deed-lang/deed/issues/new"
+              >Open an issue</a
+            >
+            with the command you ran and everything it printed. A confusing
+            message is a bug in the message.
+          </dd>
+        </dl>
+      </main>
+
+      <footer class="site">
+        <p>
+          Apache-2.0. This page has no analytics, no cookies and no third-party
+          requests.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
