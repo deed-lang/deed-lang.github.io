@@ -22,37 +22,85 @@ const OUTPUT = document.getElementById("output");
 const STATUS = document.getElementById("status");
 const EXAMPLE = document.getElementById("example");
 const SUMMARY = document.getElementById("summary");
+const STOP = document.getElementById("stop");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-let wasm = null;
+// The module lives in a worker, so the thread that draws the page is never the
+// thread doing the compiling. See assets/worker.js for why that matters.
+let worker = null;
+let pending = null;
+let nextId = 1;
 
-// `memory.buffer` is detached whenever the module grows its heap, so every
-// read takes a fresh view rather than holding one.
-function bytes() {
-  return new Uint8Array(wasm.memory.buffer);
+// Long enough that nothing anyone types by hand hits it, short enough that a
+// frozen page is not what a mistake looks like.
+const PATIENCE = 10000;
+
+function spawn() {
+  const next = new Worker("../assets/worker.js");
+  next.onmessage = ({ data }) => {
+    if (data.ready !== undefined || data.failed !== undefined) {
+      arrived(data);
+      return;
+    }
+    if (pending && pending.id === data.id) {
+      const settle = pending;
+      pending = null;
+      clearTimeout(settle.timer);
+      running(false);
+      if (data.error) settle.reject(new Error(data.error));
+      else settle.resolve(data.text);
+    }
+  };
+  return next;
 }
 
-function readResult() {
-  const ptr = wasm.deed_result_ptr();
-  const len = wasm.deed_result_len();
-  const text = decoder.decode(bytes().slice(ptr, ptr + len));
-  wasm.deed_free(ptr, len);
-  return text;
+// Ending the thread is the only way to stop something already running, so the
+// worker is replaced rather than reused, and the next question waits for the
+// replacement to load the module again.
+function stop(why, deliberate = false) {
+  worker.terminate();
+  if (pending) {
+    const settle = pending;
+    pending = null;
+    clearTimeout(settle.timer);
+    const ended = new Error(why);
+    ended.stopped = deliberate;
+    settle.reject(ended);
+  }
+  running(false);
+  for (const button of VERBS) button.disabled = true;
+  worker = spawn();
+  worker.postMessage({ load: new URL(WASM_URL, location.href).href });
 }
 
-// Allocate, write, call, read, free: the sequence the module's own docs
-// describe, and the only way onto or off of its memory.
-function call(verb, source) {
-  const input = encoder.encode(source);
-  const ptr = wasm.deed_alloc(input.length);
-  bytes().set(input, ptr);
-  wasm[verb](ptr, input.length);
-  const result = readResult();
-  wasm.deed_free(ptr, input.length);
-  return result;
+function ask(verb, source) {
+  if (pending) return Promise.reject(new Error("one question at a time"));
+  const id = nextId++;
+  return new Promise((resolve, reject) => {
+    pending = {
+      id,
+      resolve,
+      reject,
+      timer: setTimeout(() => {
+        OUTPUT.innerHTML = span(
+          "d-note",
+          `This ran for ${PATIENCE / 1000} seconds without answering, so it was stopped. ` +
+            `The compiler is being loaded again.`,
+        );
+        stop("ran too long", true);
+      }, PATIENCE),
+    };
+    running(true);
+    worker.postMessage({ id, verb, source });
+  });
+}
+
+function running(yes) {
+  STOP.hidden = !yes;
+  for (const button of VERBS) button.disabled = yes || worker === null;
 }
 
 function lines(text) {
@@ -177,47 +225,67 @@ function render(verb, json, source) {
   return out.join("\n");
 }
 
-function run(verb) {
+async function run(verb) {
   const source = SOURCE.value;
   try {
-    OUTPUT.innerHTML = render(verb, call(verb, source), source);
+    OUTPUT.innerHTML = render(verb, await ask(verb, source), source);
   } catch (error) {
-    OUTPUT.innerHTML = span("d-error", `the compiler could not answer: ${error}`);
+    // A stop is an answer the reader asked for, not a failure to answer.
+    if (error.stopped) return;
+    OUTPUT.innerHTML = span("d-error", `the compiler could not answer: ${error.message}`);
   }
 }
 
-async function load() {
-  STATUS.textContent = `loading the compiler, ${TAG}`;
-  try {
-    const module = await WebAssembly.instantiateStreaming(fetch(WASM_URL), {});
-    wasm = module.instance.exports;
+// `check` is the fast one and the one the language is about, so it runs while
+// you type rather than waiting to be asked. Only when nothing else is in
+// flight: a `run` that is still going is a better use of the compiler than a
+// `check` of a program that is being edited anyway.
+let typing = null;
+SOURCE.addEventListener("input", () => {
+  clearTimeout(typing);
+  typing = setTimeout(() => {
+    if (!pending && worker && !VERBS[0].disabled) run("deed_check");
+  }, 500);
+});
 
-    // #594: the artifact says which compiler it is, so the page checks that
-    // against the tag it asked for rather than trusting the filename.
-    wasm.deed_version();
-    const reported = readResult();
-    if (reported !== VERSION) {
-      STATUS.innerHTML = span(
-        "d-error",
-        `this page pinned ${VERSION} and the module says ${reported}, so it is not being used`,
-      );
-      wasm = null;
-      return;
-    }
+STOP.addEventListener("click", () => {
+  OUTPUT.innerHTML = span("d-note", "Stopped. The compiler is being loaded again.");
+  stop("stopped", true);
+});
 
-    STATUS.innerHTML =
-      `Deed ${esc(reported)}, ` +
-      `<a href="https://github.com/deed-lang/deed/releases/tag/${TAG}">${TAG}</a>, ` +
-      `running in this tab.`;
-    for (const button of VERBS) button.disabled = false;
-  } catch (error) {
+function arrived(data) {
+  if (data.failed !== undefined) {
     // The verbs stay disabled, so say why and say what still works, rather
     // than leaving four dead buttons and a browser exception.
     STATUS.innerHTML = span(
       "d-error",
-      `The compiler did not load, so the four verbs are off. You can still read and edit, and the examples still open. (${error})`,
+      `The compiler did not load, so the four verbs are off. You can still read and edit, and the examples still open. (${data.failed})`,
     );
+    return;
   }
+
+  // #594: the artifact says which compiler it is, so the page checks that
+  // against the tag it asked for rather than trusting the filename.
+  const reported = data.ready;
+  if (reported !== VERSION) {
+    STATUS.innerHTML = span(
+      "d-error",
+      `this page pinned ${VERSION} and the module says ${reported}, so it is not being used`,
+    );
+    return;
+  }
+
+  STATUS.innerHTML =
+    `Deed ${esc(reported)}, ` +
+    `<a href="https://github.com/deed-lang/deed/releases/tag/${TAG}">${TAG}</a>, ` +
+    `running in this tab.`;
+  running(false);
+}
+
+function load() {
+  STATUS.textContent = `loading the compiler, ${TAG}`;
+  worker = spawn();
+  worker.postMessage({ load: new URL(WASM_URL, location.href).href });
 }
 
 for (const button of VERBS) {
