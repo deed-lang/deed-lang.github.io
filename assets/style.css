@@ -160,6 +160,33 @@ pre.code b {
   max-width: 68ch;
 }
 
+.walk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+}
+
+.walk .summary {
+  margin: 0;
+}
+
+[data-step] {
+  scroll-margin-top: 2rem;
+  transition: color 0.2s;
+}
+
+[data-step].here {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-step] {
+    transition: none;
+  }
+}
+
 .next {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
