@@ -9,7 +9,7 @@ The language itself lives in [deed-lang/deed](https://github.com/deed-lang/deed)
 This repository owns pages. It does not own the compiler, the wasm artifact,
 or anything that decides what a Deed program means.
 
-The playground fetches a released build of the compiler, pinned to a tag, and
+The playground runs a released build of the compiler, pinned to a tag, and
 asks it. If this site ever shows behaviour that no release has, that is a bug
 here and not a feature: the fix is to correct the page, or to pin a different
 tag, never to make the page answer on the compiler's behalf.
@@ -20,7 +20,9 @@ Concretely, that rules out a few things that would otherwise be tempting:
 - No syntax highlighting that knows more than the grammar the compiler ships.
 - No error messages written here. Diagnostics are rendered from what the
   compiler returns, carets and all.
-- No examples typed out by hand. They are loaded from the corpus.
+- No compiler output typed out by hand. The landing page's program is short
+  and was written for the page, but the refusal underneath it was produced by
+  running that program through the pinned build, not written to look like one.
 
 The split exists because the two repositories have different constraints. The
 compiler's has no dependencies on purpose and its tests are strict in ways
@@ -40,15 +42,35 @@ There is no build step, no package manager and nothing to install. See
 [decisions/2026-07-31-no-build-step.md](decisions/2026-07-31-no-build-step.md)
 for why, and for what would change the answer.
 
-The playground fetches the compiler over the network, so that page needs a
-connection even when the rest of the site does not.
+Opening `play/index.html` as a `file://` URL will not work, because the wasm
+module is loaded with `fetch`. Serve the directory instead.
+
+## The pinned compiler
+
+`assets/deed-<tag>-wasm32-unknown-unknown.wasm` is copied from the release of
+that tag. It is not built here and it is not edited here. A release asset
+cannot be fetched from a browser, so it is committed rather than requested;
+the measurement behind that is in the decision record.
+
+Moving the pin is three steps:
+
+```
+$ gh release download vX.Y.Z --repo deed-lang/deed --pattern '*.wasm' --dir assets
+$ git rm assets/deed-<old tag>-wasm32-unknown-unknown.wasm
+$ $EDITOR assets/play.js    # TAG and VERSION
+```
+
+The page asks the module its version and refuses to run if the answer is not
+the one `play.js` claims, so changing the file without changing the pin, or
+the other way round, says so on the page instead of quietly serving the wrong
+compiler.
 
 ## Layout
 
 ```
 index.html          what the language is
 play/               the playground
-assets/             one stylesheet, and a script per page that needs one
+assets/             the stylesheet, the scripts, the brand files, the compiler
 decisions/          why this repository is shaped the way it is
 ```
 

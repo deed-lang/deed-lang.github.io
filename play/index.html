@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Playground | Deed</title>
+    <meta
+      name="description"
+      content="Run Deed in your browser. A released compiler, compiled to WebAssembly, answering in this tab."
+    />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="name" href="../">Deed</a>
+        <nav>
+          <a href="./">Playground</a>
+          <a href="https://github.com/deed-lang/deed">Source</a>
+        </nav>
+      </header>
+
+      <main>
+        <h1>Playground</h1>
+        <p class="lede">
+          A released compiler, pinned to a tag, running in this tab. Nothing you
+          write here leaves your browser.
+        </p>
+        <p class="status" id="status">loading</p>
+
+        <div class="verbs">
+          <button data-verb="deed_check" disabled>Check</button>
+          <button data-verb="deed_run" disabled>Run</button>
+          <button data-verb="deed_test" disabled>Test</button>
+          <button data-verb="deed_fmt" disabled>Format</button>
+        </div>
+
+        <div class="panes">
+          <label class="visually-hidden" for="source">Deed source</label>
+          <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">
+module main
+
+// Every capability is handed down. There is no ambient authority, so
+// reading `main` tells you everything this program can reach.
+fn greet(out: Console, name: String) -> ()
+  uses
+    Io.write,
+{
+    Io.write(out, "hello, ")
+    Io.write(out, name)
+}
+
+// This one declares no effects, so it cannot perform any, and holds no
+// capability, so there is nothing it could reach even if it could.
+fn twice(n: Int) -> Int
+  where
+    n &lt; 1000000000,
+    n &gt; -1000000000,
+  ensures
+    ok  =&gt; result == n + n,
+{
+    n + n
+}
+
+test "twice doubles" {
+    assert twice(21) == 42
+}
+
+fn main(sys: System) -> Int
+  uses
+    Io.write,
+{
+    greet(sys.console, "world")
+    twice(21)
+}
+</textarea
+          >
+          <pre id="output" aria-live="polite" aria-label="Compiler output">Press Check, Run, Test or Format.</pre>
+        </div>
+      </main>
+
+      <footer class="site">
+        <p>
+          Four verbs because the compiler has four. Nothing here reimplements
+          any of them, and the diagnostics below are rendered from what the
+          compiler returned rather than written on this page.
+        </p>
+        <p>No analytics, no cookies, no third-party requests.</p>
+      </footer>
+    </div>
+
+    <script src="../assets/play.js"></script>
+  </body>
+</html>
