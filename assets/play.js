@@ -162,11 +162,68 @@ function renderDiagnostic(d, source) {
   }
   if (d.fix) {
     out.push(span("d-note", `  = help: ${d.fix.message}`));
+
+    // The compiler already decided whether a repair is certain, and says so.
+    // `maybe-incorrect` is a guess, and a button that applies a guess is a
+    // button that edits your program for no reason, so only the certain ones
+    // get one. `deed fix` draws the same line.
+    const inThisFile = (d.fix.edits || []).length > 0 && d.primary.file === "main.deed";
+    if (d.fix.applicability === "machine-applicable" && inThisFile) {
+      const index = repairs.push(d.fix.edits) - 1;
+      out.push(
+        `  <button type="button" class="apply" data-repair="${index}">Apply it</button>`,
+      );
+    }
   }
   return out.join("\n");
 }
 
+// The repairs offered by whatever is currently on screen, and the exact text
+// they were computed against. A span is a byte offset into that text, so a
+// repair is only meaningful while the editor still holds it.
+let repairs = [];
+let repairedFrom = null;
+
+// Spans are byte offsets and a JavaScript string is not bytes, so the edit
+// happens on the encoded form and the result is decoded back.
+function applyEdits(source, edits) {
+  const bytes = encoder.encode(source);
+  const ordered = [...edits].sort((a, b) => b.span.start - a.span.start);
+  let out = bytes;
+  for (const edit of ordered) {
+    const replacement = encoder.encode(edit.replacement);
+    const next = new Uint8Array(
+      out.length - (edit.span.end - edit.span.start) + replacement.length,
+    );
+    next.set(out.subarray(0, edit.span.start), 0);
+    next.set(replacement, edit.span.start);
+    next.set(out.subarray(edit.span.end), edit.span.start + replacement.length);
+    out = next;
+  }
+  return decoder.decode(out);
+}
+
+OUTPUT.addEventListener("click", (event) => {
+  const button = event.target.closest("button.apply");
+  if (!button) return;
+
+  if (SOURCE.value !== repairedFrom) {
+    button.replaceWith(
+      Object.assign(document.createElement("span"), {
+        className: "d-note",
+        textContent: "the program changed since this was offered, so check again",
+      }),
+    );
+    return;
+  }
+
+  SOURCE.value = applyEdits(SOURCE.value, repairs[Number(button.dataset.repair)]);
+  run("deed_check");
+});
+
 function render(verb, json, source) {
+  repairs = [];
+  repairedFrom = source;
   const parsed = lines(json).map((line) => JSON.parse(line));
 
   if (parsed.length === 0) {
