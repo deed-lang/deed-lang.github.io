@@ -23,6 +23,7 @@ const STATUS = document.getElementById("status");
 const EXAMPLE = document.getElementById("example");
 const SUMMARY = document.getElementById("summary");
 const STOP = document.getElementById("stop");
+const VERBNOTE = document.getElementById("verbnote");
 const HIGHLIGHT = document.getElementById("highlight");
 const GUTTER = document.getElementById("gutter");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
@@ -104,7 +105,25 @@ function ask(verb, source) {
 
 function running(yes) {
   STOP.hidden = !yes;
-  for (const button of VERBS) button.disabled = yes || worker === null;
+  for (const button of VERBS) {
+    button.disabled = yes || worker === null || (button.dataset.verb === "deed_run" && !runnable);
+  }
+}
+
+// Twenty-two of the twenty-nine examples are libraries: functions and `test`
+// blocks with no `main` to enter through. Run is the wrong button for those,
+// and finding that out by pressing it and being refused is a bad way to be
+// told. `examples/index.json` records the answer the pinned artifact gave for
+// each file, so the button is off before it is reached for.
+//
+// It goes back on the moment the text is edited, because then it is no longer
+// the file that was asked about.
+let runnable = true;
+
+function thisIsRunnable(yes, why = "") {
+  runnable = yes;
+  VERBNOTE.textContent = why;
+  if (ready) running(false);
 }
 
 function lines(text) {
@@ -423,6 +442,9 @@ function schedule(which, delay) {
 const check = () => run("deed_check").then(paint);
 
 SOURCE.addEventListener("input", () => {
+  // Whatever was known about the example is now known about a different
+  // program.
+  if (!runnable) thisIsRunnable(true);
   drawGutter(SOURCE.value);
   schedule(paint, 150);
   schedule(check, 500);
@@ -560,6 +582,7 @@ async function loadFromLink() {
     SHARED.textContent = `This program was written against ${version} and the page is running ${VERSION}, so it may not say the same thing.`;
   }
   marked = new Map();
+  thisIsRunnable(true);
   paint();
   return true;
 }
@@ -583,7 +606,7 @@ async function loadExamples() {
 
   const summaries = new Map();
   for (const entry of index.examples) {
-    summaries.set(entry.file, entry.summary);
+    summaries.set(entry.file, entry);
     const option = document.createElement("option");
     option.value = entry.file;
     option.textContent = entry.file.replace(/\.deed$/, "");
@@ -593,13 +616,23 @@ async function loadExamples() {
 
   EXAMPLE.addEventListener("change", async () => {
     const file = EXAMPLE.value;
-    if (!file) return;
-    SUMMARY.textContent = summaries.get(file) ?? "";
+    if (!file) {
+      thisIsRunnable(true);
+      return;
+    }
+    const entry = summaries.get(file);
+    SUMMARY.textContent = entry?.summary ?? "";
     SHARED.textContent = "";
     OUTPUT.textContent = "Press Check, Run, Test or Format.";
     const response = await fetch(`../examples/${encodeURIComponent(file)}`);
     SOURCE.value = await response.text();
     marked = new Map();
+    thisIsRunnable(
+      entry?.runs !== false,
+      entry?.runs === false
+        ? `A library: no \`main\` to run, ${entry.tests} tests to press Test on.`
+        : "",
+    );
     paint();
   });
 }

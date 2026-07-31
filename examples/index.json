@@ -3,119 +3,177 @@
   "examples": [
     {
       "file": "calculator.deed",
-      "summary": "A small expression language, written in Deed: split into tokens, parse by precedence, evaluate. Tokens are space separated on purpose, to keep character-by-character lexing out of the way of the part this file is actually about, which is precedence and associativity."
+      "summary": "A small expression language, written in Deed: split into tokens, parse by precedence, evaluate. Tokens are space separated on purpose, to keep character-by-character lexing out of the way of the part this file is actually about, which is precedence and associativity.",
+      "runs": false,
+      "tests": 3
     },
     {
       "file": "calendar.deed",
-      "summary": "A calendar on top of `Io.epoch`, which only gives milliseconds since 1970. design/04-capabilities.md says the language has no way to write one yet: this is that attempt, to find out whether that is still true."
+      "summary": "A calendar on top of `Io.epoch`, which only gives milliseconds since 1970. design/04-capabilities.md says the language has no way to write one yet: this is that attempt, to find out whether that is still true.",
+      "runs": false,
+      "tests": 3
     },
     {
       "file": "closures.deed",
-      "summary": "Closures, the two holes they used to open, and the boundary they can now cross."
+      "summary": "Closures, the two holes they used to open, and the boundary they can now cross.",
+      "runs": false,
+      "tests": 4
     },
     {
       "file": "config.deed",
-      "summary": "A program that reads a file it was given access to, and cannot read one it was not. `deed run examples/config.deed --dir examples`"
+      "summary": "A program that reads a file it was given access to, and cannot read one it was not. `deed run examples/config.deed --dir examples`",
+      "runs": true,
+      "tests": 0
     },
     {
       "file": "counter.deed",
-      "summary": "A Deed program that actually runs. `deed test examples/counter.deed` executes the tests at the bottom."
+      "summary": "A Deed program that actually runs. `deed test examples/counter.deed` executes the tests at the bottom.",
+      "runs": false,
+      "tests": 10
     },
     {
       "file": "diverge.deed",
-      "summary": "Non-termination, which is something a function does, so it goes in the row."
+      "summary": "Non-termination, which is something a function does, so it goes in the row.",
+      "runs": false,
+      "tests": 1
     },
     {
       "file": "generator.deed",
-      "summary": "A generator pattern over a Yield effect."
+      "summary": "A generator pattern over a Yield effect.",
+      "runs": false,
+      "tests": 3
     },
     {
       "file": "generic_types.deed",
-      "summary": "Generic types, and the shortcut they were there to cover for."
+      "summary": "Generic types, and the shortcut they were there to cover for.",
+      "runs": false,
+      "tests": 5
     },
     {
       "file": "generics.deed",
-      "summary": "Generic functions, and the thing they make possible."
+      "summary": "Generic functions, and the thing they make possible.",
+      "runs": false,
+      "tests": 5
     },
     {
       "file": "hello.deed",
-      "summary": "A Deed program with a `main`. `deed run examples/hello.deed` executes it."
+      "summary": "A Deed program with a `main`. `deed run examples/hello.deed` executes it.",
+      "runs": true,
+      "tests": 0
     },
     {
       "file": "journal.deed",
-      "summary": "Writing a file, which until now the language could not do at all."
+      "summary": "Writing a file, which until now the language could not do at all.",
+      "runs": true,
+      "tests": 3
     },
     {
       "file": "json.deed",
-      "summary": "A small JSON-shaped value, encoded to text. No decoder: reading JSON back needs a real tokenizer with string-escape handling and a wall this file does not climb, unlike `examples/calculator.deed`'s space-separated shortcut. Left for whoever wants that wall next."
+      "summary": "A small JSON-shaped value, encoded to text. No decoder: reading JSON back needs a real tokenizer with string-escape handling and a wall this file does not climb, unlike `examples/calculator.deed`'s space-separated shortcut. Left for whoever wants that wall next.",
+      "runs": false,
+      "tests": 2
     },
     {
       "file": "kv_store.deed",
-      "summary": "A small key-value store: `key=value` lines, saved and loaded through `Io.save`/`Io.read` the way `journal.deed` and `todo.deed` already do. The parsing and the table-building are pure and tested here; `main` is the untested glue that hands them a real `Dir`, the same split every other example with a `main` already uses."
+      "summary": "A small key-value store: `key=value` lines, saved and loaded through `Io.save`/`Io.read` the way `journal.deed` and `todo.deed` already do. The parsing and the table-building are pure and tested here; `main` is the untested glue that hands them a real `Dir`, the same split every other example with a `main` already uses.",
+      "runs": true,
+      "tests": 3
     },
     {
       "file": "lists.deed",
-      "summary": "Holding more than one of something, which until now the language could not do at all."
+      "summary": "Holding more than one of something, which until now the language could not do at all.",
+      "runs": false,
+      "tests": 5
     },
     {
       "file": "logs.deed",
-      "summary": "A program that reads a directory of logs and reports what is in them."
+      "summary": "A program that reads a directory of logs and reports what is in them.",
+      "runs": true,
+      "tests": 11
     },
     {
       "file": "markdown.deed",
-      "summary": "Markdown to plain text, three rules: a line starting `# ` becomes an upper-cased heading, a line starting `- ` becomes an indented bullet, and `**` markers are stripped wherever they appear. Nothing here needs a real Markdown parser (no nesting, no inline links); one line in, one line out, which is as far as `logs.deed`-style line-at-a-time text handling goes before it would need one."
+      "summary": "Markdown to plain text, three rules: a line starting `# ` becomes an upper-cased heading, a line starting `- ` becomes an indented bullet, and `**` markers are stripped wherever they appear. Nothing here needs a real Markdown parser (no nesting, no inline links); one line in, one line out, which is as far as `logs.deed`-style line-at-a-time text handling goes before it would need one.",
+      "runs": false,
+      "tests": 4
     },
     {
       "file": "names.deed",
-      "summary": "The other side of an import. `deed check examples/` sees this file and `greeting.deed` at the same time, which is what makes the `use` in that file mean something."
+      "summary": "The other side of an import. `deed check examples/` sees this file and `greeting.deed` at the same time, which is what makes the `use` in that file mean something.",
+      "runs": false,
+      "tests": 1
     },
     {
       "file": "proven.deed",
-      "summary": "The Proven tier, which is the part of this language that is supposed to be interesting."
+      "summary": "The Proven tier, which is the part of this language that is supposed to be interesting.",
+      "runs": false,
+      "tests": 5
     },
     {
       "file": "ranking.deed",
-      "summary": "design/02-syntax.md's stated falsification test for \"no traits\": write a program needing a generic sort over a user type, or needing to print a `T`, and see whether it is unwritable rather than merely uglier with a passed function."
+      "summary": "design/02-syntax.md's stated falsification test for \"no traits\": write a program needing a generic sort over a user type, or needing to print a `T`, and see whether it is unwritable rather than merely uglier with a passed function.",
+      "runs": false,
+      "tests": 1
     },
     {
       "file": "scheduler.deed",
-      "summary": "A cooperative round-robin scheduler, written entirely in Deed."
+      "summary": "A cooperative round-robin scheduler, written entirely in Deed.",
+      "runs": false,
+      "tests": 2
     },
     {
       "file": "sink.deed",
-      "summary": "An effect and a handler, declared here and used from `greeting.deed`."
+      "summary": "An effect and a handler, declared here and used from `greeting.deed`.",
+      "runs": false,
+      "tests": 0
     },
     {
       "file": "stack_machine.deed",
-      "summary": "A tiny stack machine: push a number, or combine the top two with an operator. Four instructions, and the interesting part is `applied`, which is one function for all three binary operators because the operator itself is the parameter, the same shape `logs.deed` uses to take a walk's question as an argument."
+      "summary": "A tiny stack machine: push a number, or combine the top two with an operator. Four instructions, and the interesting part is `applied`, which is one function for all three binary operators because the operator itself is the parameter, the same shape `logs.deed` uses to take a walk's question as an argument.",
+      "runs": false,
+      "tests": 4
     },
     {
       "file": "strings.deed",
-      "summary": "Strings, which until recently you could hold and not use."
+      "summary": "Strings, which until recently you could hold and not use.",
+      "runs": false,
+      "tests": 7
     },
     {
       "file": "tic_tac_toe.deed",
-      "summary": "Tic-tac-toe: a 9-cell board, a move, a winner check over the eight lines that can win, and a text render. The board is a plain `List<String>` rather than a record with nine fields, because every operation here walks it by position and a record would need the same nine-way match `placed` and `rendered` are written once to avoid."
+      "summary": "Tic-tac-toe: a 9-cell board, a move, a winner check over the eight lines that can win, and a text render. The board is a plain `List<String>` rather than a record with nine fields, because every operation here walks it by position and a record would need the same nine-way match `placed` and `rendered` are written once to avoid.",
+      "runs": false,
+      "tests": 3
     },
     {
       "file": "todo.deed",
-      "summary": "A real program, written to find out what is missing rather than to show off what is there. `deed run examples/todo.deed --dir examples`"
+      "summary": "A real program, written to find out what is missing rather than to show off what is there. `deed run examples/todo.deed --dir examples`",
+      "runs": true,
+      "tests": 15
     },
     {
       "file": "transfer.deed",
-      "summary": "The running example, and two of the fourteen design documents work through it: design/02-syntax.md and design/03-effects.md."
+      "summary": "The running example, and two of the fourteen design documents work through it: design/02-syntax.md and design/03-effects.md.",
+      "runs": false,
+      "tests": 3
     },
     {
       "file": "tree.deed",
-      "summary": "A binary search tree, written in Deed."
+      "summary": "A binary search tree, written in Deed.",
+      "runs": false,
+      "tests": 9
     },
     {
       "file": "using_list.deed",
-      "summary": "Using the list library, which is the point of it existing."
+      "summary": "Using the list library, which is the point of it existing.",
+      "runs": false,
+      "tests": 7
     },
     {
       "file": "workers.deed",
-      "summary": "A concurrent program written to find the walls."
+      "summary": "A concurrent program written to find the walls.",
+      "runs": true,
+      "tests": 5
     }
   ]
 }
