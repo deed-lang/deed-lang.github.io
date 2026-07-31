@@ -13,8 +13,8 @@
 // release, because a release asset cannot be fetched from a browser at all:
 // both the download URL and the API one redirect to a host that sends no
 // `Access-Control-Allow-Origin`. See decisions/2026-07-31-no-build-step.md.
-const TAG = "v0.2.1";
-const VERSION = "0.2.1";
+const TAG = "v0.2.2";
+const VERSION = "0.2.2";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
 
 const SOURCE = document.getElementById("source");
@@ -23,6 +23,8 @@ const STATUS = document.getElementById("status");
 const EXAMPLE = document.getElementById("example");
 const SUMMARY = document.getElementById("summary");
 const STOP = document.getElementById("stop");
+const HIGHLIGHT = document.getElementById("highlight");
+const GUTTER = document.getElementById("gutter");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -33,6 +35,7 @@ const decoder = new TextDecoder();
 let worker = null;
 let pending = null;
 let nextId = 1;
+let ready = false;
 
 // Long enough that nothing anyone types by hand hits it, short enough that a
 // frozen page is not what a mistake looks like.
@@ -62,6 +65,7 @@ function spawn() {
 // replacement to load the module again.
 function stop(why, deliberate = false) {
   worker.terminate();
+  ready = false;
   if (pending) {
     const settle = pending;
     pending = null;
@@ -285,7 +289,10 @@ function render(verb, json, source) {
 async function run(verb) {
   const source = SOURCE.value;
   try {
-    OUTPUT.innerHTML = render(verb, await ask(verb, source), source);
+    const answer = await ask(verb, source);
+    OUTPUT.innerHTML = render(verb, answer, source);
+    if (verb === "deed_check" || verb === "deed_fmt") markLines(answer, SOURCE.value);
+    if (verb === "deed_fmt") paint();
   } catch (error) {
     // A stop is an answer the reader asked for, not a failure to answer.
     if (error.stopped) return;
@@ -293,16 +300,115 @@ async function run(verb) {
   }
 }
 
+// The colouring, from the compiler's own lexer rather than from a grammar
+// written here. `deed_tokens` classifies every byte range but whitespace, so
+// the gaps between ranges are exactly the whitespace and get copied through.
+//
+// The textarea sits on top with transparent text, so what anyone reads is
+// this layer and what anyone types is that one. They have to agree on every
+// font property or the caret drifts, which is why the CSS sets both from the
+// same block.
+async function paint() {
+  const source = SOURCE.value;
+  let classified;
+  try {
+    classified = await ask("deed_tokens", source);
+  } catch {
+    // Colouring is the part that can be missing. The editor still works.
+    return;
+  }
+  if (SOURCE.value !== source) return;
+
+  let out = "";
+  let at = 0;
+  for (const line of classified.split("\n")) {
+    if (line.trim() === "") continue;
+    const { class: kind, start, end } = JSON.parse(line);
+    out += esc(source.slice(at, start));
+    out += `<span class="t-${kind}">${esc(source.slice(start, end))}</span>`;
+    at = end;
+  }
+  out += esc(source.slice(at));
+
+  // A trailing newline collapses in a `pre`, and the caret can sit after it.
+  HIGHLIGHT.innerHTML = out + "\n";
+  drawGutter(source);
+}
+
+// The line numbers, and which lines the compiler had something to say about.
+let marked = new Map();
+
+function drawGutter(source) {
+  const lines = source.split("\n").length;
+  let out = "";
+  for (let n = 1; n <= lines; n++) {
+    const severity = marked.get(n);
+    out += severity ? `<b class="has-${severity}">${n}</b>\n` : `${n}\n`;
+  }
+  GUTTER.innerHTML = out;
+}
+
+function markLines(answer, source) {
+  marked = new Map();
+  for (const line of answer.split("\n")) {
+    if (line.trim() === "") continue;
+    const item = JSON.parse(line);
+    if (item.kind !== "diagnostic") continue;
+    const { file, span } = item.diagnostic.primary;
+    if (file !== "main.deed") continue;
+    // An error on a line beats a warning on the same one.
+    const severity = item.diagnostic.severity === "warning" ? "warning" : "error";
+    if (severity === "error" || !marked.has(span.startLine)) {
+      marked.set(span.startLine, severity);
+    }
+  }
+  drawGutter(source);
+}
+
+// Three layers scrolling as one. The gutter follows vertically only: it has
+// no columns to scroll past.
+SOURCE.addEventListener("scroll", () => {
+  HIGHLIGHT.scrollTop = SOURCE.scrollTop;
+  HIGHLIGHT.scrollLeft = SOURCE.scrollLeft;
+  GUTTER.scrollTop = SOURCE.scrollTop;
+});
+
 // `check` is the fast one and the one the language is about, so it runs while
 // you type rather than waiting to be asked. Only when nothing else is in
 // flight: a `run` that is still going is a better use of the compiler than a
 // `check` of a program that is being edited anyway.
+//
+// Colouring is on a shorter fuse than checking, because it is answering a
+// question about the text rather than about the program, and text that stays
+// grey while you type reads as broken.
+let painting = null;
 let typing = null;
+
+// Both of these can find the compiler busy with the other one. Re-arming
+// rather than returning is the difference between "later" and "never": an
+// earlier version dropped the check whenever a paint was still in flight, so
+// the output pane kept answering about the program before last.
+//
+// "Busy" and "not there" are separate questions for the same reason. The verbs
+// are disabled in both cases, so reading the buttons would have made a
+// temporary state look permanent.
+function schedule(which, delay) {
+  clearTimeout(which === paint ? painting : typing);
+  const timer = setTimeout(() => {
+    if (!ready) return;
+    if (pending) return schedule(which, 100);
+    which();
+  }, delay);
+  if (which === paint) painting = timer;
+  else typing = timer;
+}
+
+const check = () => run("deed_check").then(paint);
+
 SOURCE.addEventListener("input", () => {
-  clearTimeout(typing);
-  typing = setTimeout(() => {
-    if (!pending && worker && !VERBS[0].disabled) run("deed_check");
-  }, 500);
+  drawGutter(SOURCE.value);
+  schedule(paint, 150);
+  schedule(check, 500);
 });
 
 STOP.addEventListener("click", () => {
@@ -336,7 +442,9 @@ function arrived(data) {
     `Deed ${esc(reported)}, ` +
     `<a href="https://github.com/deed-lang/deed/releases/tag/${TAG}">${TAG}</a>, ` +
     `running in this tab.`;
+  ready = true;
   running(false);
+  paint();
 }
 
 function load() {
@@ -434,6 +542,8 @@ async function loadFromLink() {
   if (version !== VERSION) {
     SHARED.textContent = `This program was written against ${version} and the page is running ${VERSION}, so it may not say the same thing.`;
   }
+  marked = new Map();
+  paint();
   return true;
 }
 
@@ -472,6 +582,8 @@ async function loadExamples() {
     OUTPUT.textContent = "Press Check, Run, Test or Format.";
     const response = await fetch(`../examples/${encodeURIComponent(file)}`);
     SOURCE.value = await response.text();
+    marked = new Map();
+    paint();
   });
 }
 

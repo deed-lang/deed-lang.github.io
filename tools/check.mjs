@@ -66,20 +66,40 @@ for (const path of files.filter((f) => f.endsWith(".html"))) {
   }
 }
 
-// The pin names a file, and the file has to be one somebody added.
-const play = await readFile(join(root, "assets", "play.js"), "utf8");
-const tag = play.match(/const TAG = "([^"]+)"/)?.[1];
-const version = play.match(/const VERSION = "([^"]+)"/)?.[1];
+// The pin names a file, and the file has to be one somebody added. More than
+// one script carries it now, and two pins that disagree is the failure the
+// version check exists to catch, so they are compared here before shipping.
+const pins = new Map();
+for (const path of files.filter((f) => f.endsWith(".js"))) {
+  const text = await readFile(path, "utf8");
+  const tag = text.match(/const TAG = "([^"]+)"/)?.[1];
+  const version = text.match(/const VERSION = "([^"]+)"/)?.[1];
+  if (tag || version) pins.set(relative(root, path).replaceAll("\\", "/"), { tag, version });
+}
 
-if (!tag || !version) {
-  complain("assets/play.js", "has no TAG or no VERSION");
-} else {
-  if (`v${version}` !== tag) {
-    complain("assets/play.js", `pins ${tag} and ${version}, which are not the same release`);
+if (pins.size === 0) {
+  complain("assets/", "no script pins a release");
+}
+
+const [first] = pins.values();
+for (const [where, { tag, version }] of pins) {
+  if (!tag || !version) {
+    complain(where, "has a TAG without a VERSION, or the other way round");
+    continue;
   }
+  if (`v${version}` !== tag) {
+    complain(where, `pins ${tag} and ${version}, which are not the same release`);
+  }
+  if (tag !== first.tag) {
+    complain(where, `pins ${tag} while another script pins ${first.tag}`);
+  }
+}
+
+const tag = first?.tag;
+if (tag) {
   const artifact = join(root, "assets", `deed-${tag}-wasm32-unknown-unknown.wasm`);
   if (!(await exists(artifact))) {
-    complain("assets/play.js", `pins ${tag}, and deed-${tag}-wasm32-unknown-unknown.wasm is not here`);
+    complain("assets/", `the pin says ${tag}, and deed-${tag}-wasm32-unknown-unknown.wasm is not here`);
   }
 }
 

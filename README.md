@@ -17,9 +17,12 @@ tag, never to make the page answer on the compiler's behalf.
 Concretely, that rules out a few things that would otherwise be tempting:
 
 - No second formatter. `fmt` is one of the exports.
-- No syntax highlighting that knows more than the grammar the compiler ships.
+- No syntax highlighting written here. The colouring in the playground is the
+  compiler's own lexer, asked on every keystroke, so there is no second
+  grammar to keep in step.
 - No error messages written here. Diagnostics are rendered from what the
-  compiler returns, carets and all.
+  compiler returns, carets and all, and the index at `errors/` is the set of
+  pages the compiler generates rather than a list maintained here.
 - No examples written here. The playground's are the compiler's corpus at the
   pinned tag, and the summary under each one is the comment at the top of the
   file. The landing page's program is the exception, and it is short and its
@@ -88,7 +91,9 @@ checked through the pinned artifact and every one of them is clean.
 ```
 index.html          what the language is
 play/               the playground
+errors/             every diagnostic code, read out of the compiler
 install/            how to get a binary running
+one-clause/         what a signature turns into
 examples/           the compiler's corpus at the pinned tag
 assets/             the stylesheet, the scripts, the brand files, the compiler
 tools/              the one check that runs before anything merges
