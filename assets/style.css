@@ -294,6 +294,85 @@ textarea#source {
   margin: 0 0 1rem;
 }
 
+/* The playground in one screen.
+   Only where there is room for it: on a phone, or a short window, scrolling
+   is the right answer and a 26rem editor squeezed into 300 pixels is not. */
+@media (min-width: 52rem) and (min-height: 40rem) {
+  body.fits {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body.fits .wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
+  }
+
+  body.fits main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.fits header.site {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  body.fits h1 {
+    font-size: 1.3rem;
+  }
+
+  body.fits .lede,
+  body.fits .status,
+  body.fits .picker,
+  body.fits .verbs {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Reading width costs a line here, and the line is the editor's. */
+  body.fits main .lede {
+    max-width: none;
+  }
+
+  /* An example's own comment is however long its author wanted it. */
+  body.fits .summary {
+    margin-bottom: 0.5rem;
+    max-height: 2.9em;
+    overflow-y: auto;
+  }
+
+  body.fits .summary:empty {
+    display: none;
+  }
+
+  body.fits .panes {
+    flex: 1;
+    min-height: 0;
+  }
+
+  body.fits textarea#source,
+  body.fits #output {
+    height: 100%;
+    min-height: 0;
+    resize: none;
+    overflow: auto;
+  }
+
+  body.fits footer.site {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  body.fits footer.site p {
+    margin: 0.25rem 0;
+  }
+}
+
 /* Present to a screen reader, absent to everyone else. */
 .visually-hidden {
   position: absolute;
