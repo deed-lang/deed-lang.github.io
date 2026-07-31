@@ -91,8 +91,20 @@ play/               the playground
 install/            how to get a binary running
 examples/           the compiler's corpus at the pinned tag
 assets/             the stylesheet, the scripts, the brand files, the compiler
+tools/              the one check that runs before anything merges
 decisions/          why this repository is shaped the way it is
 ```
+
+## Before you open a pull request
+
+```
+$ node tools/check.mjs
+```
+
+Nothing here fails to compile, so this is what stands between a mistake and
+the site: every local link resolves, every JSON file parses, the pin in
+`assets/play.js` names an artifact that is actually committed, and the example
+index matches the files on disk. It runs on every pull request too.
 
 ## Licence
 
