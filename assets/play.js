@@ -222,6 +222,94 @@ for (const button of VERBS) {
   button.addEventListener("click", () => run(button.dataset.verb));
 }
 
+// A link carries the program and the version it was written against, in the
+// fragment, which a browser never sends to a server. There is no backend here
+// and this is the reason there does not need to be one: nobody's program is
+// stored anywhere they did not put it.
+//
+// The fragment is `#<version>/<z or u><base64url>`. `z` is deflate-raw, which
+// the browser already has, and `u` is the same bytes without it, for anything
+// that does not. The version is first so it is readable without decoding.
+
+const SHARE = document.getElementById("share");
+const SHARED = document.getElementById("shared");
+
+function toBase64Url(bytes) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+}
+
+function fromBase64Url(text) {
+  // The padding is dropped on the way out because it is noise in a URL. Some
+  // browsers accept it missing and some do not, so it is put back rather than
+  // depended on.
+  const padded = text.replaceAll("-", "+").replaceAll("_", "/");
+  const binary = atob(padded.padEnd(Math.ceil(padded.length / 4) * 4, "="));
+  return Uint8Array.from(binary, (c) => c.charCodeAt(0));
+}
+
+async function through(stream, bytes) {
+  const response = new Response(new Blob([bytes]).stream().pipeThrough(stream));
+  return new Uint8Array(await response.arrayBuffer());
+}
+
+async function encodeProgram(source) {
+  const raw = encoder.encode(source);
+  if (typeof CompressionStream === "function") {
+    try {
+      return "z" + toBase64Url(await through(new CompressionStream("deflate-raw"), raw));
+    } catch {
+      // Fall through to the uncompressed form rather than lose the link.
+    }
+  }
+  return "u" + toBase64Url(raw);
+}
+
+async function decodeProgram(payload) {
+  const bytes = fromBase64Url(payload.slice(1));
+  if (payload.startsWith("z")) {
+    return decoder.decode(await through(new DecompressionStream("deflate-raw"), bytes));
+  }
+  return decoder.decode(bytes);
+}
+
+SHARE.addEventListener("click", async () => {
+  const payload = await encodeProgram(SOURCE.value);
+  const link = `${location.origin}${location.pathname}#${VERSION}/${payload}`;
+  location.hash = `${VERSION}/${payload}`;
+  ours = location.hash;
+
+  // The button says what it did, including when it could not: a page served
+  // over `file://` has no clipboard permission and neither does an old
+  // browser, and silently doing nothing is worse than saying so.
+  try {
+    await navigator.clipboard.writeText(link);
+    SHARED.textContent = `Copied. ${link.length} characters, and the address bar has it too.`;
+  } catch {
+    SHARED.textContent = `The address bar has the link, ${link.length} characters. Copying it needs a permission this page does not have here.`;
+  }
+});
+
+async function loadFromLink() {
+  const hash = location.hash.slice(1);
+  const slash = hash.indexOf("/");
+  if (slash < 1) return false;
+
+  const version = hash.slice(0, slash);
+  try {
+    SOURCE.value = await decodeProgram(hash.slice(slash + 1));
+  } catch {
+    SHARED.textContent = "That link does not decode. It may have been cut short by whatever carried it.";
+    return false;
+  }
+
+  if (version !== VERSION) {
+    SHARED.textContent = `This program was written against ${version} and the page is running ${VERSION}, so it may not say the same thing.`;
+  }
+  return true;
+}
+
 // The examples are the compiler's corpus at the pinned tag, not programs
 // written for this page. Every one of them is checked by that repository's own
 // tests, and the summary under the picker is the comment at the top of the
@@ -253,6 +341,7 @@ async function loadExamples() {
     const file = EXAMPLE.value;
     if (!file) return;
     SUMMARY.textContent = summaries.get(file) ?? "";
+    SHARED.textContent = "";
     OUTPUT.textContent = "Press Check, Run, Test or Format.";
     const response = await fetch(`../examples/${encodeURIComponent(file)}`);
     SOURCE.value = await response.text();
@@ -261,3 +350,14 @@ async function loadExamples() {
 
 load();
 loadExamples();
+loadFromLink();
+
+// Pasting a link into a tab that is already open changes only the fragment,
+// which is not a page load. Without this the address bar would say one thing
+// and the editor another.
+let ours = location.hash;
+addEventListener("hashchange", () => {
+  if (location.hash === ours) return;
+  ours = location.hash;
+  loadFromLink();
+});
