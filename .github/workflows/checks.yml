@@ -1,0 +1,22 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: what a broken commit would break
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # There is no build step, so what is in the tree is what gets served and
+      # a bad relative path is live the moment it merges. This is the only
+      # thing standing between a mistake and the site.
+      - name: every link resolves and the pin names a file that is here
+        run: node tools/check.mjs
