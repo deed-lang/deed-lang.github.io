@@ -1,0 +1,121 @@
+{
+  "tag": "v0.2.1",
+  "examples": [
+    {
+      "file": "calculator.deed",
+      "summary": "A small expression language, written in Deed: split into tokens, parse by precedence, evaluate. Tokens are space separated on purpose, to keep character-by-character lexing out of the way of the part this file is actually about, which is precedence and associativity."
+    },
+    {
+      "file": "calendar.deed",
+      "summary": "A calendar on top of `Io.epoch`, which only gives milliseconds since 1970. design/04-capabilities.md says the language has no way to write one yet: this is that attempt, to find out whether that is still true."
+    },
+    {
+      "file": "closures.deed",
+      "summary": "Closures, the two holes they used to open, and the boundary they can now cross."
+    },
+    {
+      "file": "config.deed",
+      "summary": "A program that reads a file it was given access to, and cannot read one it was not. `deed run examples/config.deed --dir examples`"
+    },
+    {
+      "file": "counter.deed",
+      "summary": "A Deed program that actually runs. `deed test examples/counter.deed` executes the tests at the bottom."
+    },
+    {
+      "file": "diverge.deed",
+      "summary": "Non-termination, which is something a function does, so it goes in the row."
+    },
+    {
+      "file": "generator.deed",
+      "summary": "A generator pattern over a Yield effect."
+    },
+    {
+      "file": "generic_types.deed",
+      "summary": "Generic types, and the shortcut they were there to cover for."
+    },
+    {
+      "file": "generics.deed",
+      "summary": "Generic functions, and the thing they make possible."
+    },
+    {
+      "file": "hello.deed",
+      "summary": "A Deed program with a `main`. `deed run examples/hello.deed` executes it."
+    },
+    {
+      "file": "journal.deed",
+      "summary": "Writing a file, which until now the language could not do at all."
+    },
+    {
+      "file": "json.deed",
+      "summary": "A small JSON-shaped value, encoded to text. No decoder: reading JSON back needs a real tokenizer with string-escape handling and a wall this file does not climb, unlike `examples/calculator.deed`'s space-separated shortcut. Left for whoever wants that wall next."
+    },
+    {
+      "file": "kv_store.deed",
+      "summary": "A small key-value store: `key=value` lines, saved and loaded through `Io.save`/`Io.read` the way `journal.deed` and `todo.deed` already do. The parsing and the table-building are pure and tested here; `main` is the untested glue that hands them a real `Dir`, the same split every other example with a `main` already uses."
+    },
+    {
+      "file": "lists.deed",
+      "summary": "Holding more than one of something, which until now the language could not do at all."
+    },
+    {
+      "file": "logs.deed",
+      "summary": "A program that reads a directory of logs and reports what is in them."
+    },
+    {
+      "file": "markdown.deed",
+      "summary": "Markdown to plain text, three rules: a line starting `# ` becomes an upper-cased heading, a line starting `- ` becomes an indented bullet, and `**` markers are stripped wherever they appear. Nothing here needs a real Markdown parser (no nesting, no inline links); one line in, one line out, which is as far as `logs.deed`-style line-at-a-time text handling goes before it would need one."
+    },
+    {
+      "file": "names.deed",
+      "summary": "The other side of an import. `deed check examples/` sees this file and `greeting.deed` at the same time, which is what makes the `use` in that file mean something."
+    },
+    {
+      "file": "proven.deed",
+      "summary": "The Proven tier, which is the part of this language that is supposed to be interesting."
+    },
+    {
+      "file": "ranking.deed",
+      "summary": "design/02-syntax.md's stated falsification test for \"no traits\": write a program needing a generic sort over a user type, or needing to print a `T`, and see whether it is unwritable rather than merely uglier with a passed function."
+    },
+    {
+      "file": "scheduler.deed",
+      "summary": "A cooperative round-robin scheduler, written entirely in Deed."
+    },
+    {
+      "file": "sink.deed",
+      "summary": "An effect and a handler, declared here and used from `greeting.deed`."
+    },
+    {
+      "file": "stack_machine.deed",
+      "summary": "A tiny stack machine: push a number, or combine the top two with an operator. Four instructions, and the interesting part is `applied`, which is one function for all three binary operators because the operator itself is the parameter, the same shape `logs.deed` uses to take a walk's question as an argument."
+    },
+    {
+      "file": "strings.deed",
+      "summary": "Strings, which until recently you could hold and not use."
+    },
+    {
+      "file": "tic_tac_toe.deed",
+      "summary": "Tic-tac-toe: a 9-cell board, a move, a winner check over the eight lines that can win, and a text render. The board is a plain `List<String>` rather than a record with nine fields, because every operation here walks it by position and a record would need the same nine-way match `placed` and `rendered` are written once to avoid."
+    },
+    {
+      "file": "todo.deed",
+      "summary": "A real program, written to find out what is missing rather than to show off what is there. `deed run examples/todo.deed --dir examples`"
+    },
+    {
+      "file": "transfer.deed",
+      "summary": "The running example, and two of the fourteen design documents work through it: design/02-syntax.md and design/03-effects.md."
+    },
+    {
+      "file": "tree.deed",
+      "summary": "A binary search tree, written in Deed."
+    },
+    {
+      "file": "using_list.deed",
+      "summary": "Using the list library, which is the point of it existing."
+    },
+    {
+      "file": "workers.deed",
+      "summary": "A concurrent program written to find the walls."
+    }
+  ]
+}

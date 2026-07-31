@@ -20,6 +20,8 @@ const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
 const SOURCE = document.getElementById("source");
 const OUTPUT = document.getElementById("output");
 const STATUS = document.getElementById("status");
+const EXAMPLE = document.getElementById("example");
+const SUMMARY = document.getElementById("summary");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -220,4 +222,42 @@ for (const button of VERBS) {
   button.addEventListener("click", () => run(button.dataset.verb));
 }
 
+// The examples are the compiler's corpus at the pinned tag, not programs
+// written for this page. Every one of them is checked by that repository's own
+// tests, and the summary under the picker is the comment at the top of the
+// file rather than a description written here.
+//
+// One file is missing: `greeting.deed` imports two other modules, and this
+// page hands the compiler one file. It is left out rather than shown failing.
+async function loadExamples() {
+  let index;
+  try {
+    const response = await fetch("../examples/index.json");
+    index = await response.json();
+  } catch {
+    // A picker that is not there is better than one that is empty and enabled.
+    return;
+  }
+
+  const summaries = new Map();
+  for (const entry of index.examples) {
+    summaries.set(entry.file, entry.summary);
+    const option = document.createElement("option");
+    option.value = entry.file;
+    option.textContent = entry.file.replace(/\.deed$/, "");
+    EXAMPLE.append(option);
+  }
+  EXAMPLE.disabled = false;
+
+  EXAMPLE.addEventListener("change", async () => {
+    const file = EXAMPLE.value;
+    if (!file) return;
+    SUMMARY.textContent = summaries.get(file) ?? "";
+    OUTPUT.textContent = "Press Check, Run, Test or Format.";
+    const response = await fetch(`../examples/${encodeURIComponent(file)}`);
+    SOURCE.value = await response.text();
+  });
+}
+
 load();
+loadExamples();

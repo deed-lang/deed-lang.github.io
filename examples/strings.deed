@@ -1,0 +1,227 @@
+// Strings, which until recently you could hold and not use.
+//
+// There was no way to join two of them. A program could not build a message
+// out of pieces, which meant nobody could write a program, which meant every
+// other decision in this language was untested. Eight passes, a formatter, an
+// autofixer and a proof tier, and you could not say hello to someone by name.
+//
+// The other half of the same bug: `<` was accepted on anything, as long as
+// both sides had the same type. Comparing two records passed the type checker
+// and failed at runtime with a message blaming the interpreter for not
+// implementing something that has nothing to implement.
+
+module examples/strings
+
+type NonEmpty = String where length(value) > 0
+
+record Person {
+    name: NonEmpty,
+    town: String,
+}
+
+// `+` joins two strings, and it is not the only operator doing two jobs.
+// There are five operators that mean two things: `+`, `<`, `<=`, `>` and `>=`.
+// Every one of them takes an `Int` or a `String` and nothing else, and none of
+// them is ambiguous, for the same reason: there is no conversion between the
+// two types, so no expression is unsure which meaning it wanted.
+//
+// The reasons they were allowed are not the same, though. `+` is here because
+// spelling concatenation any other way would be a tax on the most ordinary
+// thing a program does. The comparisons are here because nothing else in this
+// language orders text without tying two pieces of it that differ; see
+// `earlier` below.
+fn greeting(person: Person) -> String {
+    "hello, " + person.name + " of " + person.town
+}
+
+// A length is never negative, and the prelude says so, so this lands in the
+// Proven tier rather than being checked again at runtime.
+fn width(text: String) -> Counted {
+    length(text)
+}
+
+type Counted = Int where value >= 0
+
+// Nothing here knows anything about the length of `text`, so this one is a
+// real check that really runs. Interval reasoning is about integers, and a
+// string is not one.
+fn shout(text: String) -> String {
+    let loud = announce(text)
+
+    loud + "!"
+}
+
+fn announce(text: NonEmpty) -> String {
+    text
+}
+
+// Strings are ordered because the other writable answers are weaker than they
+// first look. Three other things do rank text and all three tie. `length`
+// answers for every pair and calls "ab" and "ba" the same. `to_int` refuses
+// everything that does not spell a number and calls "007" and "7" the same.
+// `Io.list` hands back file names already sorted, which agrees with `<` on the
+// text it will take, but it refuses whatever the machine will not accept as a
+// name, it calls "A" and "a" the same wherever the filesystem does, and it
+// costs a `Dir`, two entries in the row and a written file per comparison.
+//
+// A record has fields, so a caller who wants two of them ranked passes the
+// comparison in, which is why ordering a record is refused, and that asks the
+// caller for nothing it does not already have to have: which field decides the
+// order is not something the shape of the record says, and some of those
+// fields have no order of their own. Text is reachable as well, since
+// `split(s, "")` hands back the characters, which this file asserts further
+// down, so a comparator over text can be written. What it cannot do is rank a
+// character nobody told it about: there is no code point, and `to_int` only
+// speaks about text that spells a number, so the characters it turns into
+// numbers are the ten digits and no letter. A comparator can rank those with
+// no alphabet written down, and to rank anything else it needs one typed out
+// by hand, with everything left out of that alphabet tying with everything
+// else, silently. Take `<` away and sorting names is still writable, at the
+// price of one hand-written alphabet per program, each of them wrong somewhere
+// its author never looked. That is the argument for `<` on `String`, and it is
+// weaker than "text is otherwise unordered" for exactly one reason: there is
+// still no code point.
+//
+// The order is by character. For text in one script that is the order anybody
+// expects, and for text that mixes them it is a decision nobody should be
+// making without knowing the locale, so this is the plain answer rather than a
+// wrong clever one. It follows that `"10" < "9"`, which is true and is not the
+// comparison being wrong: it is a question about numbers asked of text. Call
+// `to_int` first, and the `Result` it hands back is this language making the
+// caller say what happens to input that was never a number.
+fn earlier(a: String, b: String) -> String {
+    if a < b {
+        a
+    } else {
+        b
+    }
+}
+
+// Taking a string apart and putting one back together. `split` and `join` are
+// inverses, and so are `to_string` and `to_int`. Before them a program could
+// hold a number and hold some text and get from neither to the other, which
+// meant it could not read input or print a count.
+//
+// The parameter is `text` rather than `line` because `line` is the function
+// below it. Naming it that shadowed a declaration this module can still see,
+// which is a warning, and being unable to call `line` from inside `words` is
+// exactly what the warning is about.
+fn words(text: String) -> List<String> {
+    split(text, " ")
+}
+
+fn line(parts: List<String>) -> String {
+    join(parts, " ")
+}
+
+// Text that is not a number is not a mistake in the caller. It usually came
+// from a file or an argument, so it is an error value and whoever asked
+// decides what to do about it.
+fn total_or(text: String, fallback: Int) -> Int {
+    match to_int(text) {
+        ok(n) => n,
+        err(why) => fallback,
+    }
+}
+
+fn report(count: Int) -> String {
+    "found " + to_string(count)
+}
+
+// The one text operation that cannot be written in the language, which is the
+// test for whether a name belongs in the prelude at all. `contains(a, b)` is
+// `length(split(a, b)) > 1` and `replace(a, from, to)` is
+// `join(split(a, from), to)`, but deciding what whitespace is needs to look at
+// characters and taking it off the ends needs a walk that stops early, which a
+// fold does not do.
+//
+// It is also the difference between a program working and not. Splitting a
+// file on "\n" leaves a "\r" on every line of a file written on Windows, and
+// `examples/todo.deed` printed its own output backwards over itself until there
+// was a way to take one off.
+fn cleaned(raw: String) -> String {
+    trim(raw)
+}
+
+// What is deliberately missing from the prelude: slicing, searching, padding,
+// and richer formatting than `+`. Those live in `std/string` now. This file is
+// the minimum that makes a program writable, not a claim that the prelude
+// should grow.
+
+test "joining" {
+    assert greeting(Person { name: "onat", town: "istanbul" }) == "hello, onat of istanbul"
+    assert "" + "a" == "a"
+}
+
+test "measuring" {
+    assert width("hello") == 5
+    assert width("") == 0
+    // Characters, not bytes. A length that counted bytes would mean something
+    // different depending on which letters turned up.
+    assert width("gün") == 3
+}
+
+test "ordering" {
+    assert earlier("b", "a") == "a"
+    assert earlier("abc", "abd") == "abc"
+    assert !("b" <= "a")
+    // The answer the paragraph above warns about, pinned so it stays an
+    // answer rather than a surprise.
+    assert "10" < "9"
+    // And the reach the same paragraph claims for a comparator written
+    // without `<`: a digit is text that spells a number, a letter is not, so
+    // an alphabet with a letter in it is one somebody typed.
+    assert to_int("7") == ok(7)
+    assert to_int("a") == err("`a` is not a number")
+    // The two ties the paragraph names, so the reason `<` is kept is held by
+    // something rather than asserted. Both of these rank text and both put
+    // two pieces of text that differ in the same place; `<` separates them.
+    assert length("ab") == length("ba")
+    assert "ab" < "ba"
+    assert to_int("007") == to_int("7")
+    assert "007" < "7"
+}
+
+test "the refinement is real" {
+    assert shout("hey") == "hey!"
+}
+
+test "taking a line apart and putting it back" {
+    assert words("a b c") == ["a", "b", "c"]
+    assert line(["a", "b", "c"]) == "a b c"
+    assert words("") == [""]
+    assert line([]) == ""
+    // An empty separator gives the characters. There is nothing else it could
+    // usefully mean, and it saves the prelude a second name.
+    assert split("gün", "") == ["g", "ü", "n"]
+}
+
+test "numbers and text" {
+    assert report(3) == "found 3"
+    assert to_string(0 - 12) == "-12"
+    assert total_or("41", 0) == 41
+    assert total_or("forty one", 7) == 7
+    assert to_int("") == err("`` is not a number")
+}
+
+test "trimming" {
+    assert cleaned("  spaced out  ") == "spaced out"
+    // Both ends, and nowhere else. What is between two words is the program's
+    // business rather than this function's.
+    assert cleaned("  a  b  ") == "a  b"
+    // Whitespace is four characters, written down rather than deferred to a
+    // table nobody reading the signature can see.
+    assert cleaned(" \t\r\nboth ends\n\r\t ") == "both ends"
+    // The reason it exists: a line off the end of a file written on Windows.
+    assert cleaned(at(split("first\r\nsecond\r\n", "\n"), 0)?) == "first"
+
+    // Case is the same bargain as whitespace: the twenty-six letters, written
+    // down, rather than a table nobody reading the signature can see. Digits
+    // and punctuation are not letters and come back untouched, and neither is
+    // anything outside the alphabet, so text in a script with no case survives
+    // instead of being mangled by a rule that was not written for it.
+    assert upper("deed lang 1") == "DEED LANG 1"
+    assert lower("DEED Lang 1") == "deed lang 1"
+    assert upper("ünïcode") == "üNïCODE"
+    assert lower("") == ""
+}
