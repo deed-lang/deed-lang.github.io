@@ -211,9 +211,11 @@ async function load() {
       `running in this tab.`;
     for (const button of VERBS) button.disabled = false;
   } catch (error) {
+    // The verbs stay disabled, so say why and say what still works, rather
+    // than leaving four dead buttons and a browser exception.
     STATUS.innerHTML = span(
       "d-error",
-      `could not load the compiler: ${error}`,
+      `The compiler did not load, so the four verbs are off. You can still read and edit, and the examples still open. (${error})`,
     );
   }
 }
