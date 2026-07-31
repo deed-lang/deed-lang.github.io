@@ -308,3 +308,56 @@ footer.site {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Install */
+
+main h2 {
+  font-size: 1.2rem;
+  margin: 2.5rem 0 0.75rem;
+}
+
+main h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 1.5rem 0 0.5rem;
+}
+
+main p,
+main dd {
+  max-width: 68ch;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+table.files {
+  border-collapse: collapse;
+  margin: 0 0 1rem;
+}
+
+table.files th,
+table.files td {
+  text-align: left;
+  padding: 0.4rem 1.5rem 0.4rem 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+table.files th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.trouble dt {
+  margin-top: 1.25rem;
+  font-weight: 600;
+}
+
+.trouble dd {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
