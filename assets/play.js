@@ -208,6 +208,12 @@ function applyEdits(source, edits) {
 }
 
 OUTPUT.addEventListener("click", (event) => {
+  const instead = event.target.closest("button[data-instead]");
+  if (instead) {
+    run(instead.dataset.instead);
+    return;
+  }
+
   const button = event.target.closest("button.apply");
   if (!button) return;
 
@@ -263,6 +269,17 @@ function render(verb, json, source) {
               ? renderDiagnostic(item.diagnostic, source)
               : span("d-error", item.message),
         );
+        // Twenty-two of the twenty-nine examples are libraries: a `module` of
+        // functions and `test` blocks, with no `main` to enter through. The
+        // compiler is right and the page was unhelpful, offering Run for all
+        // of them and then leaving the reader with a refusal and no next step.
+        // This is the page talking, not the compiler.
+        if (!item.ok && !item.diagnostic && /no `main`/.test(item.message ?? "")) {
+          out.push(
+            span("d-note", "  Nothing here is wrong: a file with no `main` is a library.") +
+              `\n  <button type="button" class="apply" data-instead="deed_test">Run its tests instead</button>`,
+          );
+        }
         break;
       case "test":
         out.push(
