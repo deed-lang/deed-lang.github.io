@@ -20,9 +20,10 @@ Concretely, that rules out a few things that would otherwise be tempting:
 - No syntax highlighting that knows more than the grammar the compiler ships.
 - No error messages written here. Diagnostics are rendered from what the
   compiler returns, carets and all.
-- No compiler output typed out by hand. The landing page's program is short
-  and was written for the page, but the refusal underneath it was produced by
-  running that program through the pinned build, not written to look like one.
+- No examples written here. The playground's are the compiler's corpus at the
+  pinned tag, and the summary under each one is the comment at the top of the
+  file. The landing page's program is the exception, and it is short and its
+  refusal was still produced by running it.
 
 The split exists because the two repositories have different constraints. The
 compiler's has no dependencies on purpose and its tests are strict in ways
@@ -65,11 +66,30 @@ the one `play.js` claims, so changing the file without changing the pin, or
 the other way round, says so on the page instead of quietly serving the wrong
 compiler.
 
+`examples/` moves with it, since a program and the compiler that reads it are
+not separately pinned:
+
+```
+$ git -C ../deed archive -o /tmp/ex.tar vX.Y.Z examples
+$ tar -xf /tmp/ex.tar
+$ rm examples/greeting.deed examples/todo.txt
+```
+
+`examples/index.json` is the list the picker reads, with each file's opening
+comment as its summary. It is data rather than build output, so it is written
+by hand when the pin moves.
+
+`greeting.deed` is left out because it imports two other modules and this page
+hands the compiler one file. That is the only one: the other twenty-nine were
+checked through the pinned artifact and every one of them is clean.
+
 ## Layout
 
 ```
 index.html          what the language is
 play/               the playground
+install/            how to get a binary running
+examples/           the compiler's corpus at the pinned tag
 assets/             the stylesheet, the scripts, the brand files, the compiler
 decisions/          why this repository is shaped the way it is
 ```

@@ -1,0 +1,5 @@
+# The corpus is a copy of another repository's files, so it should stay
+# byte-identical to it rather than pick up this machine's line endings.
+*.deed text eol=lf
+*.json text eol=lf
+*.wasm binary

@@ -1,0 +1,168 @@
+// Closures, the two holes they used to open, and the boundary they can now
+// cross.
+//
+// A closure is the only thing in the language that holds code without being a
+// declaration, which makes it the natural place for a guarantee to leak. Two
+// leaked here at once.
+//
+// The first was that a parameter could be written without a type. It became
+// the unknown type, unknown agrees with everything, and so every mistake made
+// with that parameter was invisible. P5 says nothing implicit crosses a
+// boundary and a parameter is the boundary, so that was the principle being
+// broken at the one place it exists for.
+//
+// The second was that a closure's effects were charged to nobody. On its own
+// that is a defensible thing to defer. Together with the first it meant a
+// closure could carry any effect into any function and the row stayed empty
+// the whole way.
+
+module examples/closures
+
+effect Log {
+    fn note(message: String) -> ()
+}
+
+// A handler that counts rather than prints, so a test can see what happened.
+handler Counted implements Log {
+    state seen: Int
+
+    fn note(message) -> () {
+        seen = seen + 1
+    }
+}
+
+// A closure's parameters carry types, like everything else. They were briefly
+// exempt, on the grounds that a closure cannot leave the function that wrote
+// it so its parameters are not a boundary anyone reviews. That is true, and it
+// is a different claim from "may be unchecked": with no types the parameters
+// were the unknown type, the unknown type agrees with everything, and the body
+// below was not checked at all.
+fn combine(a: Int, b: Int) -> Int {
+    let add = |x: Int, y: Int| {
+        x + y
+    }
+
+    add(a, b) + add(b, a)
+}
+
+// It can see what was in scope where it was written.
+fn scaled(n: Int, by: Int) -> Int {
+    let scale = |x: Int| {
+        x * by
+    }
+
+    scale(n)
+}
+
+// And the effects it performs belong to whoever wrote it. Take `Log.note` out
+// of this row and the effect checker says so, which was the whole point.
+fn announced(count: Int) -> Int
+  uses
+    Log.note,
+{
+    let announce = || {
+        Log.note("something happened")
+    }
+
+    announce()
+    count + 1
+}
+
+// The rule over-approximates in one direction: writing a closure is enough to
+// be charged for it, whether or not it is ever called. Deciding otherwise
+// means deciding whether a function value escapes, and the honest way to avoid
+// that question is to answer it conservatively and say so.
+fn never_called() -> Int
+  uses
+    Log.note,
+{
+    let _unused = || {
+        Log.note("nobody runs this")
+    }
+
+    0
+}
+
+// A closure can leave the function that wrote it, and the type it leaves
+// through says what it may do on the way out. `Fn(Int) -> Int` says three
+// things: this takes an `Int`, hands back an `Int`, and performs nothing. The
+// third is not decoration. Leaving a row off cannot mean "any row", because a
+// value carrying an unstated effect through a signature would undo the point
+// of having rows at all.
+fn apply(f: Fn(Int) -> Int, n: Int) -> Int {
+    f(n)
+}
+
+// When the callback is supposed to log, the type says so, and the row goes
+// before the arrow. After the return type it would be indistinguishable from
+// this declaration's own contract, which also starts with `uses` and also
+// comes after a return type.
+//
+// Note that `apply_logging` has to declare `Log.note` itself. Calling a
+// function value costs whatever its type said it costs, so the row does not
+// stop at the parameter.
+fn apply_logging(f: Fn(Int) uses Log.note -> Int, n: Int) -> Int
+  uses
+    Log.note,
+{
+    f(n)
+}
+
+// A declared function named where a value belongs is a value too, and calling
+// it that way goes through the same path a written out call takes. A closure
+// carries no contract and a function does, so passing one by name has to keep
+// the `where`, the `ensures` and every refinement on it.
+fn doubled(n: Int) -> Int {
+    n + n
+}
+
+// The other direction, which used to be impossible to write down at all.
+fn adder() -> Fn(Int) -> Int {
+    |x: Int| x + 1
+}
+
+// Take the effect out of `announced` above and it can cross into `apply` too.
+// Leave it in and only `apply_logging` will take it, which is the promise
+// being kept rather than assumed. Passing a callback that performs less than
+// the row allows is fine: `doubled` performs nothing and still fits, because a
+// function that stays inside the room it was given breaks nothing.
+fn composed(n: Int) -> Int {
+    let step = |x: Int| x - 1
+    apply(step, apply(doubled, apply(adder(), n)))
+}
+
+fn announced_twice(n: Int) -> Int
+  uses
+    Log.note,
+{
+    let step = |x: Int| {
+        Log.note("halfway")
+        x + 1
+    }
+
+    apply_logging(step, apply_logging(doubled, n))
+}
+
+test "a closure computes" {
+    assert combine(2, 3) == 10
+    assert scaled(6, 7) == 42
+}
+
+test "a function value crosses a boundary" {
+    assert apply(doubled, 3) == 6
+    assert apply(|x: Int| x * 3, 3) == 9
+    assert composed(1) == 3
+}
+
+test "a closure performs the effect its author declared" {
+    with Counted { seen: 0 } {
+        assert announced(1) == 2
+        assert never_called() == 0
+    }
+}
+
+test "a row on a function type lets an effect cross" {
+    with Counted { seen: 0 } {
+        assert announced_twice(2) == 5
+    }
+}
