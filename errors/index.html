@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Diagnostics | Deed</title>
+    <meta
+      name="description"
+      content="Every code the Deed compiler can produce, with the reasoning and an example, read out of the compiler itself."
+    />
+    <link rel="icon" href="../assets/brand/deed-cipher-favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <a class="name" href="../">Deed</a>
+        <nav>
+          <a href="../one-clause/">One clause</a>
+          <a href="../play/">Playground</a>
+          <a href="./">Diagnostics</a>
+          <a href="../install/">Install</a>
+          <a href="https://github.com/deed-lang/deed">Source</a>
+        </nav>
+      </header>
+
+      <main>
+        <h1>Diagnostics</h1>
+        <p class="lede">
+          Every code this compiler can produce, with why it exists and a
+          program that triggers it. Nothing on this page was written here: it
+          is what <code>deed explain</code> prints, asked of the same build the
+          playground runs.
+        </p>
+        <p class="status" id="status" aria-live="polite">loading</p>
+
+        <div class="picker">
+          <label for="filter">Find</label>
+          <input
+            id="filter"
+            type="search"
+            placeholder="a code, a name, or a word in the reasoning"
+            autocomplete="off"
+            disabled
+          />
+        </div>
+        <p class="summary" id="count" aria-live="polite"></p>
+
+        <div id="codes"></div>
+      </main>
+
+      <footer class="site">
+        <p>
+          The reasoning is the doc comment above each code in the compiler's
+          source, and the example is lifted from the test that had to exist for
+          it. A code with neither cannot be added.
+        </p>
+        <p>
+          Apache-2.0. This page has no analytics, no cookies and no third-party
+          requests.
+        </p>
+      </footer>
+    </div>
+    <script src="../assets/errors.js"></script>
+  </body>
+</html>

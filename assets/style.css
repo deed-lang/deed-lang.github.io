@@ -7,6 +7,11 @@
   --error: #a3252b;
   --warning: #8a6100;
   --surface: #f6f6f6;
+  --syntax-keyword: #0b6349;
+  --syntax-string: #8a4b00;
+  --syntax-number: #1f4bb8;
+  --syntax-comment: #5c5c5c;
+  --syntax-punctuation: #4a4a4a;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 }
@@ -21,6 +26,11 @@
     --error: #f2777a;
     --warning: #e6b455;
     --surface: #1e2124;
+    --syntax-keyword: #4bbf95;
+    --syntax-string: #e0a35c;
+    --syntax-number: #8fb0ff;
+    --syntax-comment: #9aa0a6;
+    --syntax-punctuation: #b7bcc2;
   }
 }
 
@@ -273,6 +283,122 @@ textarea#source {
   resize: vertical;
 }
 
+/* The editor: a gutter, the colouring, and the textarea over the top of it.
+   One source line is one visual line (no wrapping) so the gutter can say
+   which line it is without lying about wrapped ones. */
+
+.editor {
+  display: flex;
+  /* Fixed rather than a minimum: both layers inside are positioned, so the
+     only thing that could give this box a height is the gutter, and then the
+     editor would be as tall as the file. */
+  height: 26rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.editor .gutter,
+.editor .highlight,
+.editor textarea#source {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  tab-size: 4;
+  white-space: pre;
+}
+
+.editor .gutter {
+  flex: 0 0 auto;
+  padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+  color: var(--muted);
+  text-align: right;
+  user-select: none;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+}
+
+.editor .gutter b {
+  font-weight: 600;
+}
+
+.editor .gutter b.has-error {
+  color: var(--error);
+}
+
+.editor .gutter b.has-warning {
+  color: var(--warning);
+}
+
+.editor .layers {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.editor .highlight,
+.editor textarea#source {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0.75rem;
+  border: 0;
+  border-radius: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.editor .highlight {
+  pointer-events: none;
+  color: var(--fg);
+  /* Driven by the textarea's scroll position, so it must not grow one of its
+     own: two scrollbars in the same box is one too many. */
+  overflow: hidden;
+}
+
+.editor textarea#source {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  background: transparent;
+  /* The colouring underneath is what anyone reads; this layer is the caret,
+     the selection and the keyboard. */
+  color: transparent;
+  caret-color: var(--fg);
+}
+
+.editor textarea#source::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.t-keyword {
+  color: var(--syntax-keyword);
+  font-weight: 600;
+}
+
+.t-string {
+  color: var(--syntax-string);
+}
+
+.t-number {
+  color: var(--syntax-number);
+}
+
+.t-comment {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+.t-punctuation {
+  color: var(--syntax-punctuation);
+}
+
+.t-error {
+  color: var(--error);
+  text-decoration: underline wavy;
+}
+
 #output {
   margin: 0;
   padding: 0.75rem;
@@ -360,6 +486,11 @@ textarea#source {
     min-height: 0;
     resize: none;
     overflow: auto;
+  }
+
+  body.fits .editor {
+    height: 100%;
+    min-height: 0;
   }
 
   body.fits footer.site {
@@ -475,4 +606,40 @@ table.files th {
 .trouble dd {
   margin: 0.25rem 0 0;
   color: var(--muted);
+}
+
+/* Diagnostics index */
+
+.diagnostic {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+}
+
+.diagnostic h2 {
+  font-size: 1rem;
+  font-family: var(--mono);
+  margin: 0 0 0.5rem;
+  scroll-margin-top: 1rem;
+}
+
+.diagnostic h2 a {
+  text-decoration: none;
+}
+
+.diagnostic .from {
+  font-size: 0.8rem;
+  font-family: var(--mono);
+  margin-top: 0.4rem;
+}
+
+input[type="search"] {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.3rem 0.5rem;
+  min-width: min(28rem, 100%);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  background: var(--surface);
+  color: var(--fg);
 }

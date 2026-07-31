@@ -17,6 +17,7 @@
         <nav>
           <a href="../one-clause/">One clause</a>
           <a href="./">Playground</a>
+          <a href="../errors/">Diagnostics</a>
           <a href="../install/">Install</a>
           <a href="https://github.com/deed-lang/deed">Source</a>
         </nav>
@@ -49,8 +50,12 @@
         <p class="summary" id="shared" aria-live="polite"></p>
 
         <div class="panes">
-          <label class="visually-hidden" for="source">Deed source</label>
-          <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">
+          <div class="editor">
+            <div class="gutter" id="gutter" aria-hidden="true"></div>
+            <div class="layers">
+              <pre class="highlight" id="highlight" aria-hidden="true"></pre>
+              <label class="visually-hidden" for="source">Deed source</label>
+              <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">
 module main
 
 // Every capability is handed down. There is no ambient authority, so
@@ -88,6 +93,8 @@ fn main(sys: System) -> Int
 }
 </textarea
           >
+            </div>
+          </div>
           <pre id="output" aria-live="polite" aria-label="Compiler output">Press Check, Run, Test or Format.</pre>
         </div>
       </main>
