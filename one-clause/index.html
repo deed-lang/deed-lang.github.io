@@ -41,7 +41,12 @@
           wrong, and why.
         -->
 
-        <h2>Two functions</h2>
+        <div class="walk">
+          <button id="walk" type="button">Walk me through it</button>
+          <span class="summary" id="caption" aria-live="polite"></span>
+        </div>
+
+        <h2 data-step="Two functions. One line apart: the second admits to saving as well as reading.">Two functions</h2>
         <p>
           Identical, except for one line. They are
           <code>demo/read_only.deed</code> and
@@ -82,7 +87,7 @@ fn process(files: Dir, name: String) -&gt; Result&lt;String, String&gt;
           </div>
         </section>
 
-        <h2>Two worlds</h2>
+        <h2 data-step="Compiled, that one line is one more entry in the import section. Nobody wrote it.">Two worlds</h2>
         <p>
           Compiled to WebAssembly components, the import section of each module
           <em>is</em> its world. It lists what the module asks a host for, and
@@ -108,7 +113,7 @@ fn process(files: Dir, name: String) -&gt; Result&lt;String, String&gt;
           code is the manifest.
         </p>
 
-        <h2>What the host does with it</h2>
+        <h2 data-step="A host without `Io.save` refuses the second module, before any of it runs.">What the host does with it</h2>
         <p>
           A host that offers <code>Io.read</code> and not <code>Io.save</code>
           runs the first module and refuses the second. The refusal is not a
@@ -134,7 +139,7 @@ let Trap::NeedsAHost(what) = stopped else {
           <code>process</code> executes.
         </p>
 
-        <h2>None of this is checked by eye</h2>
+        <h2 data-step="All of it is pinned by tests that run on every commit, including the listing above.">None of this is checked by eye</h2>
         <p>
           The import sections, the host's refusal and the listing printed
           further up this page are all pinned in the compiler's repository, and
@@ -156,7 +161,7 @@ test the_readme_lists_the_imports_the_modules_actually_have ... ok</code></pre>
           import section with nothing to notice the prose no longer matching.
         </p>
 
-        <h2>Try them</h2>
+        <h2 data-step="Now take the first one and add `Io.save` to it, and watch the compiler answer.">Try them</h2>
         <p>
           Both programs open in the playground, running the same compiler this
           page is describing. Add <code>Io.save</code> to the first one's
@@ -166,14 +171,14 @@ test the_readme_lists_the_imports_the_modules_actually_have ... ok</code></pre>
         <nav class="next" aria-label="Open in the playground">
           <a
             class="card"
-            href="../play/#0.2.1/zTZFBi9wwDIXv_hXv1i5Mk3soC0t7mcsW2oUei-MoY4MjBUveNJT-9-JktuzRsvS9p6e-xzcmhOyrEhLDQ9ONvdVCSAqLhCnNMxXiQBjJNiKGbYIgyypMbNq5vnd9j5eYFHPlYEkYhfyk8JhTpg4vkd6R1e8K-u2D5R1b9IZkCJ5hUkMcGqwpt1Hd1Wi5YJZyIBPfOjyLxcQ3UFbq8EWWNWWaYIKfND6p0jLm_dIYDbXIVDN9UKRllWJQOh0GYfOJFcIEWan4ozwXWQ75KGrDfTdgIpqGJDhc3KtPRw8S60rBWlzekJMaRpqlEEplbkZbrHzLLWK1Ug_9DlfDRCFNpA22RbJIpW2hdV3zDvIh3k13b1qHxFrktY3hKl2zg7EaWKxhrtKpf6UjzlIZ1q7y_1jYkkWphkJqJZ1GnDsjwkSL9A34Szjvzs3cpAKpfjxuMeBrKhewX2jADyuJbw_49IjvpDXb57Nyuf88OqAqqQPwZvTi_rx_ntQT-OD-un8"
+            href="../play/#0.2.2/zTZFBi9wwDIXv_hXv1i5Mk3soC0t7mcsW2oUei-MoY4MjBUveNJT-9-JktuzRsvS9p6e-xzcmhOyrEhLDQ9ONvdVCSAqLhCnNMxXiQBjJNiKGbYIgyypMbNq5vnd9j5eYFHPlYEkYhfyk8JhTpg4vkd6R1e8K-u2D5R1b9IZkCJ5hUkMcGqwpt1Hd1Wi5YJZyIBPfOjyLxcQ3UFbq8EWWNWWaYIKfND6p0jLm_dIYDbXIVDN9UKRllWJQOh0GYfOJFcIEWan4ozwXWQ75KGrDfTdgIpqGJDhc3KtPRw8S60rBWlzekJMaRpqlEEplbkZbrHzLLWK1Ug_9DlfDRCFNpA22RbJIpW2hdV3zDvIh3k13b1qHxFrktY3hKl2zg7EaWKxhrtKpf6UjzlIZ1q7y_1jYkkWphkJqJZ1GnDsjwkSL9A34Szjvzs3cpAKpfjxuMeBrKhewX2jADyuJbw_49IjvpDXb57Nyuf88OqAqqQPwZvTi_rx_ntQT-OD-un8"
             >
             <strong>read_only.deed</strong>
             <span>The one a host without `Io.save` will run.</span>
           </a>
           <a
             class="card"
-            href="../play/#0.2.1/zhVFBjtswDLz7FXNrArj2PWgDLNpLTwXaBXpcKBIdC2uThkhvNijy90Jy7F20h-okaciZ4bBt8Z0JfnCzEiLDQeOZnc2JEBXWE0LsOkrEnnAiuxAx7CLwMk7CxKZN1bZV2-Kxj4puZm9RGIlcUDh0cSA4DrikaKSIhpPzz00RpldL7p289ZSZNg8HfJNG3Qs1-CLjFAcKMMEvOj2o0ngarnXxOEqYB_qgiOMkyaBUTGQulgu8sLnIWozLRMllVNElGUt_L2qH-xhAIAqHKCgz_PWVzdwLH0obrHeGKclLDKQQHq7ZdG6FEi0Z5q7VW84iUTdrwaJmqi1MnKiTREgzc-Rz2QefhxyOWprLVA0et5ERyA8uUYADExW360DwjlkMI5HVRXZDluUU51sG_0Z39-L4Ci-hmNKmqjblUdpM9FQ2W1Ud5xg8qe7y0vWArzHVYDfSAT8tRT7v8fGIH6TzYJ-Wn_qOHCsgR1IBWPOr10eOr65-l-fozPdrxSK0aOyxFORDKe0u_XWPz8ftXm-oPO-MXq2gG13WeE9XY6l5I_0_8Z38qcCryht8W6636lb9AQ"
+            href="../play/#0.2.2/zhVFBjtswDLz7FXNrArj2PWgDLNpLTwXaBXpcKBIdC2uThkhvNijy90Jy7F20h-okaciZ4bBt8Z0JfnCzEiLDQeOZnc2JEBXWE0LsOkrEnnAiuxAx7CLwMk7CxKZN1bZV2-Kxj4puZm9RGIlcUDh0cSA4DrikaKSIhpPzz00RpldL7p289ZSZNg8HfJNG3Qs1-CLjFAcKMMEvOj2o0ngarnXxOEqYB_qgiOMkyaBUTGQulgu8sLnIWozLRMllVNElGUt_L2qH-xhAIAqHKCgz_PWVzdwLH0obrHeGKclLDKQQHq7ZdG6FEi0Z5q7VW84iUTdrwaJmqi1MnKiTREgzc-Rz2QefhxyOWprLVA0et5ERyA8uUYADExW360DwjlkMI5HVRXZDluUU51sG_0Z39-L4Ci-hmNKmqjblUdpM9FQ2W1Ud5xg8qe7y0vWArzHVYDfSAT8tRT7v8fGIH6TzYJ-Wn_qOHCsgR1IBWPOr10eOr65-l-fozPdrxSK0aOyxFORDKe0u_XWPz8ftXm-oPO-MXq2gG13WeE9XY6l5I_0_8Z38qcCryht8W6636lb9AQ"
             >
             <strong>read_write.deed</strong>
             <span>The one it will not.</span>
@@ -188,5 +193,6 @@ test the_readme_lists_the_imports_the_modules_actually_have ... ok</code></pre>
         </p>
       </footer>
     </div>
+    <script src="../assets/walk.js"></script>
   </body>
 </html>

@@ -120,6 +120,18 @@ if (index.tag !== tag) {
   complain("examples/index.json", `says ${index.tag} and the page pins ${tag}`);
 }
 
+// A share link carries the version it was written against, and the playground
+// says so when it disagrees. A link written into a page here should not be the
+// thing triggering that.
+for (const path of files.filter((f) => f.endsWith(".html"))) {
+  const html = await readFile(path, "utf8");
+  for (const [, version] of html.matchAll(/play\/#(\d+\.\d+\.\d+)\//g)) {
+    if (`v${version}` !== tag) {
+      complain(relative(root, path), `links a program written against ${version}, and the pin is ${tag}`);
+    }
+  }
+}
+
 if (problems.length) {
   for (const problem of problems) console.error(problem);
   console.error(`\n${problems.length} problem${problems.length === 1 ? "" : "s"}.`);
