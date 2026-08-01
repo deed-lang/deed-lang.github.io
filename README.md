@@ -88,8 +88,8 @@ $ node tools/examples.mjs
 That last step rewrites `examples/index.json`, which is the list the picker
 reads. Everything in it comes from somewhere else: each summary is the comment
 at the top of the file, and whether an example has a `main` to run is what the
-pinned artifact answered when asked. Seven of the twenty-nine do; the picker
-turns Run off for the other twenty-two and says why, rather than letting
+pinned artifact answered when asked. Seven of the twenty-eight do; the picker
+turns Run off for the other twenty-one and says why, rather than letting
 somebody press it and be refused.
 
 Forgetting that step is caught rather than shipped. `tools/check.mjs` asks the
@@ -98,7 +98,7 @@ which is also what stops a generated file being edited by hand: it looks
 exactly like a generated file.
 
 `greeting.deed` is left out because it imports two other modules and this page
-hands the compiler one file. That is the only one: the other twenty-nine were
+hands the compiler one file. That is the only one: the other twenty-eight were
 checked through the pinned artifact and every one of them is clean.
 
 ## Layout
@@ -129,7 +129,7 @@ the release the pin names, and the example index still says what the compiler
 says.
 
 That last part is not a shape check. It loads the pinned artifact, asks it its
-version, and asks it about all twenty-nine examples, because a committed wasm
+version, and asks it about all twenty-eight examples, because a committed wasm
 is a file nothing here ever built: a truncated copy, or a different build
 wearing the right name, spells its filename correctly and passes everything
 else. It runs on every pull request too.

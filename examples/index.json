@@ -1,15 +1,9 @@
 {
-  "tag": "v0.2.2",
+  "tag": "v0.2.3",
   "examples": [
     {
       "file": "calculator.deed",
       "summary": "A small expression language, written in Deed: split into tokens, parse by precedence, evaluate. Tokens are space separated on purpose, to keep character-by-character lexing out of the way of the part this file is actually about, which is precedence and associativity.",
-      "runs": false,
-      "tests": 3
-    },
-    {
-      "file": "calendar.deed",
-      "summary": "A calendar on top of `Io.epoch`, which only gives milliseconds since 1970. design/04-capabilities.md says the language has no way to write one yet: this is that attempt, to find out whether that is still true.",
       "runs": false,
       "tests": 3
     },
@@ -89,7 +83,7 @@
       "file": "logs.deed",
       "summary": "A program that reads a directory of logs and reports what is in them.",
       "runs": true,
-      "tests": 11
+      "tests": 13
     },
     {
       "file": "markdown.deed",
