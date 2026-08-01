@@ -13,7 +13,7 @@
 
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { open } from "./artifact.mjs";
+import { open, SHOWN } from "./artifact.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -33,7 +33,13 @@ const names = (await readdir(join(root, "examples")))
 const examples = [];
 for (const file of names) {
   const source = await readFile(join(root, "examples", file), "utf8");
-  examples.push({ file, ...deed.describe(source) });
+  examples.push({ file, shown: SHOWN.indexOf(file), ...deed.describe(source) });
+}
+
+const missing = SHOWN.filter((file) => !names.includes(file));
+if (missing.length) {
+  console.error(`the picker names ${missing.join(", ")}, which the corpus does not have`);
+  process.exit(1);
 }
 
 await writeFile(
@@ -42,8 +48,8 @@ await writeFile(
   "utf8",
 );
 
-const programs = examples.filter((e) => e.runs).length;
+const startable = examples.filter((e) => e.runs && e.needs.length === 0).length;
 console.log(
-  `${examples.length} examples at ${tag}: ${programs} with a \`main\`, ` +
-    `${examples.length - programs} libraries.`,
+  `${examples.length} examples at ${tag}, ${SHOWN.length} in the picker: ` +
+    `${startable} the page can start, ${examples.length - startable} it can only check and test.`,
 );

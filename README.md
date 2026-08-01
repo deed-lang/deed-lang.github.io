@@ -25,8 +25,10 @@ Concretely, that rules out a few things that would otherwise be tempting:
   pages the compiler generates rather than a list maintained here.
 - No examples written here. The playground's are the compiler's corpus at the
   pinned tag, and the summary under each one is the comment at the top of the
-  file. The landing page's program is the exception, and it is short and its
-  refusal was still produced by running it.
+  file. Which twelve of them the picker offers is a choice made here, and it is
+  the only one: choosing what to show is not writing it, and every file is
+  still served. The landing page's program is the exception, and it is short
+  and its refusal was still produced by running it.
 
 The split exists because the two repositories have different constraints. The
 compiler's has no dependencies on purpose and its tests are strict in ways
@@ -85,17 +87,30 @@ $ rm examples/greeting.deed examples/todo.txt
 $ node tools/examples.mjs
 ```
 
-That last step rewrites `examples/index.json`, which is the list the picker
-reads. Everything in it comes from somewhere else: each summary is the comment
-at the top of the file, and whether an example has a `main` to run is what the
-pinned artifact answered when asked. Seven of the twenty-eight do; the picker
-turns Run off for the other twenty-one and says why, rather than letting
-somebody press it and be refused.
+That last step rewrites `examples/index.json`, which is what the picker reads.
+Everything in it comes from somewhere else: each summary is the comment at the
+top of the file, and the rest is what the pinned artifact answered when asked.
+
+What it was asked matters, because "can this be run" has two halves here.
+Twenty-one of the twenty-eight have no `main` at all. Six of the remaining
+seven have one and want the filesystem, which a page does not have, so `needs`
+records the capabilities they asked for. That leaves exactly one example this
+page can start, and Run is off for the other twenty-seven with the reason
+beside it, rather than letting somebody press it and be refused.
+
+The picker shows twelve of the twenty-eight, and that list is in
+`tools/artifact.mjs` because both tools need it. The corpus is not a menu:
+about half of it is one language feature at a time, written so the compiler's
+own tests have something to read, and a visitor scrolling past `sink`, `names`
+and `diverge` is being shown the inside of a test suite. The other sixteen stay
+here, still asked about, still reachable by name.
 
 Forgetting that step is caught rather than shipped. `tools/check.mjs` asks the
 same artifact the same questions and fails if the committed answers differ,
 which is also what stops a generated file being edited by hand: it looks
-exactly like a generated file.
+exactly like a generated file. It also fails when the picker names a file the
+corpus no longer has, so a promoted or deleted example shortens the menu
+loudly.
 
 `greeting.deed` is left out because it imports two other modules and this page
 hands the compiler one file. That is the only one: the other twenty-eight were

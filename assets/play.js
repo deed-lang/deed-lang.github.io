@@ -123,11 +123,15 @@ function running(yes) {
   }
 }
 
-// Twenty-two of the twenty-nine examples are libraries: functions and `test`
-// blocks with no `main` to enter through. Run is the wrong button for those,
-// and finding that out by pressing it and being refused is a bad way to be
-// told. `examples/index.json` records the answer the pinned artifact gave for
-// each file, so the button is off before it is reached for.
+// Most of the corpus cannot be started here, for two different reasons, and
+// pressing Run to find that out is a bad way to be told. Twenty-one are
+// libraries with no `main` to enter through. Six more have one and want the
+// filesystem, which this page does not have, so they would answer with a list
+// of capabilities rather than with anything about the program.
+//
+// `examples/index.json` records both answers from the pinned artifact, so the
+// button is off before it is reached for, and the note says which of the two
+// it is.
 //
 // It goes back on the moment the text is edited, because then it is no longer
 // the file that was asked about.
@@ -301,7 +305,7 @@ function render(verb, json, source) {
               ? renderDiagnostic(item.diagnostic, source)
               : span("d-error", item.message),
         );
-        // Twenty-two of the twenty-nine examples are libraries: a `module` of
+        // Twenty-one of the twenty-eight examples are libraries: a `module` of
         // functions and `test` blocks, with no `main` to enter through. The
         // compiler is right and the page was unhelpful, offering Run for all
         // of them and then leaving the reader with a refusal and no next step.
@@ -319,6 +323,37 @@ function render(verb, json, source) {
             ? `${span("d-ok", "pass")} ${esc(item.name)}`
             : `${span("d-error", "fail")} ${esc(item.name)}\n` +
                 renderDiagnostic(item.diagnostic, source),
+        );
+        break;
+      // A property is generated from a contract rather than written by
+      // somebody, so it says where it came from and carries its seed. A run
+      // you cannot reproduce is a rumour, and the seed is how you reproduce it.
+      case "property":
+        out.push(
+          (item.passed
+            ? `${span("d-ok", "pass")} ${esc(item.function)}`
+            : `${span("d-error", "fail")} ${esc(item.function)}`) +
+            span("d-note", ` its contract, ${item.cases} cases, seed ${esc(item.seed)}`) +
+            (item.passed ? "" : `\n${renderDiagnostic(item.diagnostic, source)}`),
+        );
+        break;
+      // Silence means "well formed" on the check verb, so a test run says how
+      // it came out rather than leaving an empty console to mean two things.
+      case "summary":
+        out.push(
+          span(
+            item.failed ? "d-error" : "d-ok",
+            `${item.passed} passed, ${item.failed} failed`,
+          ),
+        );
+        break;
+      // The compiler refuses to run a program that does not check, because
+      // running one answers a question nobody asked. Check is where the
+      // reasons are, so the page offers it rather than repeating them here.
+      case "refused":
+        out.push(
+          span("d-error", item.message) +
+            `\n  <button type="button" class="apply" data-instead="deed_check">Show the ${item.errors === 1 ? "error" : `${item.errors} errors`}</button>`,
         );
         break;
       case "capability":
@@ -616,8 +651,15 @@ async function loadFromLink() {
 // tests, and the summary under the picker is the comment at the top of the
 // file rather than a description written here.
 //
-// One file is missing: `greeting.deed` imports two other modules, and this
-// page hands the compiler one file. It is left out rather than shown failing.
+// The picker shows twelve of the twenty-eight. The rest are the corpus doing
+// its other job, one language feature at a time so the compiler's tests have
+// something to read, and a menu of those is a menu of somebody else's test
+// suite. `shown` in the index carries the choice and its order; every file is
+// still here and still opens by name.
+//
+// One file is missing entirely: `greeting.deed` imports two other modules, and
+// this page hands the compiler one file. It is left out rather than shown
+// failing.
 async function loadExamples() {
   let index;
   try {
@@ -629,8 +671,11 @@ async function loadExamples() {
   }
 
   const summaries = new Map();
-  for (const entry of index.examples) {
-    summaries.set(entry.file, entry);
+  for (const entry of index.examples) summaries.set(entry.file, entry);
+
+  for (const entry of index.examples
+    .filter((entry) => entry.shown >= 0)
+    .sort((a, b) => a.shown - b.shown)) {
     const option = document.createElement("option");
     option.value = entry.file;
     option.textContent = entry.file.replace(/\.deed$/, "");
@@ -651,14 +696,21 @@ async function loadExamples() {
     const response = await fetch(`../examples/${encodeURIComponent(file)}`);
     SOURCE.value = await response.text();
     marked = new Map();
-    thisIsRunnable(
-      entry?.runs !== false,
-      entry?.runs === false
-        ? `A library: no \`main\` to run, ${entry.tests} tests to press Test on.`
-        : "",
-    );
+    thisIsRunnable(entry ? entry.runs && entry.needs.length === 0 : true, whyNot(entry));
     paint();
   });
+}
+
+// What to say instead of Run, which is two different sentences: a library has
+// no way in, and a program that wants the filesystem has one and cannot use it
+// here.
+function whyNot(entry) {
+  if (!entry || (entry.runs && entry.needs.length === 0)) return "";
+  if (!entry.runs) return `A library: no \`main\` to run, ${entry.tests} tests to press Test on.`;
+  return (
+    `Wants ${entry.needs.join(", ")}, which this page has no filesystem for. ` +
+    `Its ${entry.tests} tests still run.`
+  );
 }
 
 load();

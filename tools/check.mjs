@@ -8,7 +8,7 @@
 
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, dirname, resolve, relative } from "node:path";
-import { open } from "./artifact.mjs";
+import { open, SHOWN } from "./artifact.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const problems = [];
@@ -153,17 +153,18 @@ if (index.tag !== tag) {
   complain("examples/index.json", `says ${index.tag} and the page pins ${tag}`);
 }
 
-// `summary`, `runs` and `tests` are answers rather than descriptions, and the
-// page reads all three: Run is turned off from `runs`, and the note beside it
-// counts `tests`. They are derived again here, from the same artifact and the
-// same code that wrote them, because a generated file that somebody edited by
-// hand looks exactly like a generated file.
+// `summary`, `runs`, `needs` and `tests` are answers rather than descriptions,
+// and the page reads all four: Run is turned off from `runs` and `needs`, and
+// the note beside it counts `tests` and names the capabilities. They are
+// derived again here, from the same artifact and the same code that wrote
+// them, because a generated file that somebody edited by hand looks exactly
+// like a generated file.
 if (deed) {
   for (const entry of index.examples) {
     if (!present.has(entry.file)) continue;
     const answer = deed.describe(await readFile(join(root, "examples", entry.file), "utf8"));
-    for (const field of ["summary", "runs", "tests"]) {
-      if (entry[field] !== answer[field]) {
+    for (const field of ["summary", "runs", "needs", "tests"]) {
+      if (JSON.stringify(entry[field]) !== JSON.stringify(answer[field])) {
         complain(
           "examples/index.json",
           `${entry.file} says ${field} is ${JSON.stringify(entry[field])} and the artifact ` +
@@ -171,6 +172,23 @@ if (deed) {
         );
       }
     }
+  }
+}
+
+// The picker's dozen. `shown` is the position in `SHOWN` and -1 for the rest,
+// so a file leaving the corpus takes its place in the picker with it and says
+// so here rather than shortening the menu quietly.
+for (const file of SHOWN) {
+  if (!present.has(file)) complain("tools/artifact.mjs", `the picker names ${file}, which is not here`);
+}
+for (const entry of index.examples) {
+  const expected = SHOWN.indexOf(entry.file);
+  if (entry.shown !== expected) {
+    complain(
+      "examples/index.json",
+      `${entry.file} says shown is ${entry.shown} and the picker's list says ${expected}. ` +
+        "Regenerate with `node tools/examples.mjs`.",
+    );
   }
 }
 
