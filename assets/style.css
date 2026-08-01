@@ -339,6 +339,20 @@ main > .controls,
 .next .card {
   display: block;
   margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--green);
+}
+
+.next .card:nth-of-type(4n + 2) {
+  border-left-color: var(--pink);
+}
+
+.next .card:nth-of-type(4n + 3) {
+  border-left-color: var(--blue);
+}
+
+.next .card:nth-of-type(4n + 4) {
+  border-left-color: var(--yellow);
 }
 
 .next .card strong {
@@ -879,6 +893,36 @@ table.files th {
   font-size: 0.9rem;
 }
 
+/* The four accents were only doing the link underlines. They cycle through
+   the things a page is made of as well now, in the same order everywhere, and
+   still meaning nothing: which colour a section gets is which section it is,
+   not what it says. */
+
+main > h2::before {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin: 0 auto 0.7rem;
+  background: var(--green);
+}
+
+main > h2:nth-of-type(4n + 2)::before {
+  background: var(--pink);
+}
+
+main > h2:nth-of-type(4n + 3)::before {
+  background: var(--blue);
+}
+
+main > h2:nth-of-type(4n + 4)::before {
+  background: var(--yellow);
+}
+
+table.files th {
+  border-bottom-color: var(--blue);
+}
+
 .trouble dt {
   margin-top: 1.25rem;
   font-weight: 600;
@@ -892,9 +936,21 @@ table.files th {
 /* Diagnostics index */
 
 .diagnostic {
-  border-top: 1px solid var(--gray);
+  border-top: 2px solid var(--green);
   padding-top: 1rem;
   margin-top: 1.5rem;
+}
+
+.diagnostic:nth-of-type(4n + 2) {
+  border-top-color: var(--pink);
+}
+
+.diagnostic:nth-of-type(4n + 3) {
+  border-top-color: var(--blue);
+}
+
+.diagnostic:nth-of-type(4n + 4) {
+  border-top-color: var(--yellow);
 }
 
 .diagnostic h2 {
