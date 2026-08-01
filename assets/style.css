@@ -68,57 +68,6 @@
     Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --gray: #a4a4a4;
-    --error: #f2777a;
-    --warning: #e6b455;
-    --ok: #24d05a;
-    --syntax-keyword: #10a2f5;
-    --syntax-string: #eb4888;
-    --syntax-number: #24d05a;
-    --syntax-comment: #a4a4a4;
-    --syntax-punctuation: #efefef;
-  }
-
-  ::selection {
-    color: var(--white);
-    background: #0f0f0f;
-  }
-
-  html,
-  body {
-    background: var(--black);
-    color: var(--white);
-  }
-
-  body button,
-  body select,
-  body input,
-  body textarea {
-    background: var(--black);
-    color: var(--white);
-  }
-
-  body code {
-    background: var(--moretranswhite);
-  }
-
-  body a {
-    color: var(--white);
-  }
-
-  body h1,
-  body strong,
-  body b {
-    color: var(--white);
-  }
-
-  nav.site {
-    background: var(--transblack);
-  }
-}
-
 * {
   box-sizing: border-box;
 }
@@ -129,11 +78,23 @@ html {
 
 html,
 body {
-  max-width: 70ch;
   margin: auto;
   padding: 20px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+body {
+  max-width: 70ch;
+  background: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* The pages that show code next to code get more room than a blog column. */
+body.wide {
+  max-width: 100ch;
 }
 
 html,
@@ -144,13 +105,6 @@ select,
 textarea,
 code {
   font-family: var(--mono);
-}
-
-body {
-  background: var(--white);
-  color: var(--black);
-  font-size: 16px;
-  line-height: 1.6;
 }
 
 a {
@@ -300,15 +254,6 @@ main h1 {
 }
 
 /* Landing */
-
-.lockup {
-  text-align: center;
-}
-
-.lockup img {
-  max-width: min(380px, 100%);
-  height: auto;
-}
 
 main .lede {
   max-width: 60ch;
@@ -836,4 +781,72 @@ table.files th {
 
 input[type="search"] {
   min-width: min(28rem, 100%);
+}
+
+/* Dark mode comes last, so it overrides what the light rules decided above.
+   Everything that carries an explicit background here has to be told about
+   the other side of the switch. */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray: #a4a4a4;
+    --error: #f2777a;
+    --warning: #e6b455;
+    --ok: #24d05a;
+    --syntax-keyword: #10a2f5;
+    --syntax-string: #eb4888;
+    --syntax-number: #24d05a;
+    --syntax-comment: #a4a4a4;
+    --syntax-punctuation: #efefef;
+  }
+
+  ::selection {
+    color: var(--white);
+    background: #0f0f0f;
+  }
+
+  html,
+  body {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  body h1,
+  body strong,
+  body b {
+    color: var(--white);
+  }
+
+  body a {
+    color: var(--white);
+  }
+
+  body button,
+  body select,
+  body input {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  body code,
+  pre.code {
+    background: var(--moretranswhite);
+  }
+
+  .editor,
+  #output {
+    background: var(--black);
+  }
+
+  .editor textarea#source {
+    caret-color: var(--white);
+  }
+
+  #output button.apply {
+    color: var(--white);
+  }
+
+  nav.site {
+    background: var(--transblack);
+  }
 }
