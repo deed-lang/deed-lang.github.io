@@ -92,6 +92,11 @@ pinned artifact answered when asked. Seven of the twenty-nine do; the picker
 turns Run off for the other twenty-two and says why, rather than letting
 somebody press it and be refused.
 
+Forgetting that step is caught rather than shipped. `tools/check.mjs` asks the
+same artifact the same questions and fails if the committed answers differ,
+which is also what stops a generated file being edited by hand: it looks
+exactly like a generated file.
+
 `greeting.deed` is left out because it imports two other modules and this page
 hands the compiler one file. That is the only one: the other twenty-nine were
 checked through the pinned artifact and every one of them is clean.
@@ -106,8 +111,9 @@ install/            how to get a binary running
 one-clause/         what a signature turns into
 examples/           the compiler's corpus at the pinned tag
 assets/             the stylesheet, the scripts, the fonts, the brand files, the compiler
-tools/              the check that runs before anything merges, and the
-                    script that regenerates the example index
+tools/              the check that runs before anything merges, the script
+                    that regenerates the example index, and the code they
+                    both use to ask the compiler
 decisions/          why this repository is shaped the way it is
 ```
 
@@ -118,9 +124,15 @@ $ node tools/check.mjs
 ```
 
 Nothing here fails to compile, so this is what stands between a mistake and
-the site: every local link resolves, every JSON file parses, the pin in
-`assets/play.js` names an artifact that is actually committed, and the example
-index matches the files on disk. It runs on every pull request too.
+the site: every local link resolves, every JSON file parses, every page names
+the release the pin names, and the example index still says what the compiler
+says.
+
+That last part is not a shape check. It loads the pinned artifact, asks it its
+version, and asks it about all twenty-nine examples, because a committed wasm
+is a file nothing here ever built: a truncated copy, or a different build
+wearing the right name, spells its filename correctly and passes everything
+else. It runs on every pull request too.
 
 ## Licence
 

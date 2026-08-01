@@ -8,6 +8,7 @@
 
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, dirname, resolve, relative } from "node:path";
+import { open } from "./artifact.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const problems = [];
@@ -96,10 +97,32 @@ for (const [where, { tag, version }] of pins) {
 }
 
 const tag = first?.tag;
+
+// The artifact is committed rather than built, so nothing in this repository
+// has ever compiled it, and a file that is present is not a file that answers.
+// A truncated copy, or the artifact of a different build wearing the right
+// name, passes every check above: the filename is still spelled correctly.
+//
+// So it is loaded and asked its version, which is the check the page makes at
+// load time, made before the commit instead of in front of a reader.
+let deed = null;
 if (tag) {
   const artifact = join(root, "assets", `deed-${tag}-wasm32-unknown-unknown.wasm`);
   if (!(await exists(artifact))) {
     complain("assets/", `the pin says ${tag}, and deed-${tag}-wasm32-unknown-unknown.wasm is not here`);
+  } else {
+    try {
+      deed = await open(artifact);
+    } catch (error) {
+      complain("assets/", `the pinned artifact does not load: ${error.message}`);
+    }
+  }
+}
+
+if (deed) {
+  const reported = deed.version();
+  if (`v${reported}` !== tag) {
+    complain("assets/", `the file named ${tag} says it is ${reported}`);
   }
 }
 
@@ -120,17 +143,24 @@ if (index.tag !== tag) {
   complain("examples/index.json", `says ${index.tag} and the page pins ${tag}`);
 }
 
-// The page turns Run off from `runs`, so an entry missing it would quietly
-// offer a button that cannot work. Regenerate with `node tools/examples.mjs`.
-for (const entry of index.examples) {
-  if (typeof entry.summary !== "string" || entry.summary === "") {
-    complain("examples/index.json", `${entry.file} has no summary`);
-  }
-  if (typeof entry.runs !== "boolean") {
-    complain("examples/index.json", `${entry.file} does not say whether it runs`);
-  }
-  if (typeof entry.tests !== "number") {
-    complain("examples/index.json", `${entry.file} does not say how many tests it has`);
+// `summary`, `runs` and `tests` are answers rather than descriptions, and the
+// page reads all three: Run is turned off from `runs`, and the note beside it
+// counts `tests`. They are derived again here, from the same artifact and the
+// same code that wrote them, because a generated file that somebody edited by
+// hand looks exactly like a generated file.
+if (deed) {
+  for (const entry of index.examples) {
+    if (!present.has(entry.file)) continue;
+    const answer = deed.describe(await readFile(join(root, "examples", entry.file), "utf8"));
+    for (const field of ["summary", "runs", "tests"]) {
+      if (entry[field] !== answer[field]) {
+        complain(
+          "examples/index.json",
+          `${entry.file} says ${field} is ${JSON.stringify(entry[field])} and the artifact ` +
+            `says ${JSON.stringify(answer[field])}. Regenerate with \`node tools/examples.mjs\`.`,
+        );
+      }
+    }
   }
 }
 
@@ -161,4 +191,7 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(`${files.length} files, every link resolves, the pin names a file that is here.`);
+console.log(
+  `${files.length} files, every link resolves, and ${tag} loaded and answered ` +
+    `about all ${index.examples.length} examples.`,
+);
