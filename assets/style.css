@@ -617,22 +617,50 @@ button:disabled {
   gap: 0.3rem;
 }
 
+/* Three of the site's four, in the order everything else uses them, rather
+   than the traffic light every terminal window borrowed. They breathe on a
+   stagger so the console reads as something running, and breathe faster while
+   it is actually answering. */
+
 .console .bar .dots i {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.console.working .bar .dots i {
+  animation-duration: 0.7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .console .bar .dots i {
+    animation: none;
+  }
 }
 
 .console .bar .dots i:nth-child(1) {
-  background: var(--red);
+  background: var(--green);
 }
 
 .console .bar .dots i:nth-child(2) {
-  background: var(--yellow);
+  background: var(--pink);
+  animation-delay: 0.3s;
 }
 
 .console .bar .dots i:nth-child(3) {
-  background: var(--green);
+  background: var(--blue);
+  animation-delay: 0.6s;
 }
 
 .console #output {

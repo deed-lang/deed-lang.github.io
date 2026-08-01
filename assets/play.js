@@ -27,6 +27,7 @@ const VERBNOTE = document.getElementById("verbnote");
 const HIGHLIGHT = document.getElementById("highlight");
 const GUTTER = document.getElementById("gutter");
 const CONTROLS = document.querySelector(".controls");
+const CONSOLE = document.querySelector(".console");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -116,6 +117,7 @@ function running(yes) {
   // type made that happen on its own.
   STOP.disabled = !(yes && asked);
   CONTROLS.classList.toggle("quiet", yes && !asked);
+  CONSOLE.classList.toggle("working", yes && asked);
   for (const button of VERBS) {
     button.disabled = yes || worker === null || (button.dataset.verb === "deed_run" && !runnable);
   }
