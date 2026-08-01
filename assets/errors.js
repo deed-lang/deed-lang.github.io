@@ -14,16 +14,27 @@ const FILTER = document.getElementById("filter");
 const COUNT = document.getElementById("count");
 const CODES = document.getElementById("codes");
 
+// Quotes as well as the angle brackets, because a code goes into an `id` and
+// an `href` on this page and not only into text.
 function esc(text) {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function span(cls, text) {
+  return `<span class="${cls}">${esc(text)}</span>`;
 }
 
 function render(pages) {
   CODES.innerHTML = pages
     .map(
       (page) => `
-      <section class="diagnostic" id="${page.code}">
-        <h2><a href="#${page.code}">${page.code}</a> <span class="d-gutter">${esc(page.name)}</span></h2>
+      <section class="diagnostic" id="${esc(page.code)}">
+        <h2><a href="#${esc(page.code)}">${esc(page.code)}</a> ${span("d-gutter", page.name)}</h2>
         <p>${esc(page.text).replace(/\n\n/g, "</p><p>").replace(/\n/g, " ")}</p>
         ${
           page.example
@@ -42,7 +53,10 @@ async function load() {
     const module = await WebAssembly.instantiateStreaming(fetch(WASM_URL), {});
     wasm = module.instance.exports;
   } catch (error) {
-    STATUS.innerHTML = `<span class="d-error">The compiler did not load, so there is nothing to list. (${error})</span>`;
+    STATUS.innerHTML = span(
+      "d-error",
+      `The compiler did not load, so there is nothing to list. (${error})`,
+    );
     return;
   }
 
@@ -58,7 +72,10 @@ async function load() {
   wasm.deed_version();
   const reported = read();
   if (reported !== VERSION) {
-    STATUS.innerHTML = `<span class="d-error">This page pinned ${VERSION} and the module says ${reported}, so it is not being used.</span>`;
+    STATUS.innerHTML = span(
+      "d-error",
+      `This page pinned ${VERSION} and the module says ${reported}, so it is not being used.`,
+    );
     return;
   }
 

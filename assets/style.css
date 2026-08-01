@@ -1,7 +1,7 @@
 /* Deed, dressed like blahg: iA Writer Mono on cream, a sticky centred nav,
    and links whose underlines wear the four accent colours at random.
-   `assets/color.js` is the random part, `assets/color.js` sets the colours,
-   and this file keeps every class the pages and scripts use. */
+   The four are the custom properties below, and `assets/color.js` reads them
+   from here, so the only part written there is which one a link gets. */
 
 /* The typeface is committed rather than fetched, like the compiler: the site
    promises no third-party requests, and a release that moves on cannot be
@@ -48,7 +48,6 @@
   --transblack: #252525b3;
   --moretransblack: #2525251a;
   --gray: #6b6b6b;
-  --highlight: #e5ffc3;
   --red: #e4002b;
   --green: #24d05a;
   --pink: #eb4888;

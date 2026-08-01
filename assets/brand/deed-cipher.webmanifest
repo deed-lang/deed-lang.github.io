@@ -1,6 +1,7 @@
 {
   "name": "Deed — Cipher",
   "short_name": "Deed",
+  "start_url": "/",
   "icons": [
     {
       "src": "deed-cipher-192.png",

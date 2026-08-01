@@ -67,6 +67,14 @@ for (const path of files.filter((f) => f.endsWith(".html"))) {
   }
 }
 
+// Every page wears the mark. The playground was the one that did not, which
+// showed up as the only 404 in the server log while the site was being read in
+// a browser, and as a blank tab beside four that were not.
+for (const path of files.filter((f) => f.endsWith(".html"))) {
+  const html = await readFile(path, "utf8");
+  if (!/rel="icon"/.test(html)) complain(relative(root, path), "has no favicon");
+}
+
 // The pin names a file, and the file has to be one somebody added. More than
 // one script carries it now, and two pins that disagree is the failure the
 // version check exists to catch, so they are compared here before shipping.
