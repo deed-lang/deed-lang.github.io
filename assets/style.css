@@ -64,6 +64,9 @@
   --syntax-number: #157a33;
   --syntax-comment: #6b6b6b;
   --syntax-punctuation: #252525;
+  /* The console is black against the cream, and a little lighter against the
+     black, so it is a screen in both themes. */
+  --console: #252525;
   --mono: "iA Writer Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
     Consolas, "Liberation Mono", monospace;
 }
@@ -345,7 +348,7 @@ main .lede {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 0 0.75rem;
+  margin: 0;
 }
 
 .verbnote {
@@ -405,15 +408,9 @@ button:disabled {
 }
 
 .panes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-}
-
-@media (max-width: 52rem) {
-  .panes {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* The editor: a gutter, the colouring, and the textarea over the top of it.
@@ -531,17 +528,66 @@ button:disabled {
   text-decoration: underline wavy;
 }
 
-#output {
+/* The console is where the compiler answers, in both themes: a bar on top
+   and the answer scrolling beneath it, like the playgrounds of the
+   languages that had this idea first. */
+
+.console {
+  display: flex;
+  flex-direction: column;
+  min-height: 14rem;
+  border: 1px solid var(--gray);
+  background: var(--console);
+  color: var(--white);
+}
+
+.console .bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  border-bottom: 1px solid var(--gray);
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+.console .bar .dots {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.console .bar .dots i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.console .bar .dots i:nth-child(1) {
+  background: var(--red);
+}
+
+.console .bar .dots i:nth-child(2) {
+  background: var(--yellow);
+}
+
+.console .bar .dots i:nth-child(3) {
+  background: var(--green);
+}
+
+.console #output {
+  flex: 1;
+  min-height: 0;
   margin: 0;
   padding: 0.75rem;
-  border: 1px solid var(--gray);
-  background: var(--white);
+  border: 0;
+  background: transparent;
+  color: var(--white);
   font-family: var(--mono);
   font-size: 0.85rem;
   line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  min-height: 26rem;
+  overflow-y: auto;
 }
 
 /* What the compiler said, in the colours it means. */
@@ -569,6 +615,27 @@ button:disabled {
   color: var(--ok);
 }
 
+/* The console is black in both themes, so what the compiler says inside it
+   is told in the colours that pass on black. */
+
+.console .d-error,
+.console .d-caret {
+  color: #f2777a;
+}
+
+.console .d-warning {
+  color: #e6b455;
+}
+
+.console .d-gutter,
+.console .d-note {
+  color: #a4a4a4;
+}
+
+.console .d-ok {
+  color: #24d05a;
+}
+
 #output button.apply {
   font-family: var(--mono);
   font-size: 0.8rem;
@@ -578,6 +645,10 @@ button:disabled {
   color: var(--black);
   text-decoration: underline;
   cursor: pointer;
+}
+
+.console #output button.apply {
+  color: var(--white);
 }
 
 #output button.apply:hover {
@@ -655,19 +726,28 @@ button:disabled {
   body.fits .panes {
     flex: 1;
     min-height: 0;
+    gap: 0.5rem;
   }
 
-  body.fits textarea#source,
-  body.fits #output {
+  body.fits .editor {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+
+  body.fits textarea#source {
     height: 100%;
     min-height: 0;
     resize: none;
     overflow: auto;
   }
 
-  body.fits .editor {
-    height: 100%;
-    min-height: 0;
+  /* The console keeps its share of the screen, and the editor takes the
+     rest, like the playgrounds that fit in a window. */
+  body.fits .console {
+    flex: 0 0 35%;
+    min-height: 8rem;
+    max-height: 18rem;
   }
 
   body.fits footer.site {
@@ -798,6 +878,7 @@ input[type="search"] {
     --syntax-number: #24d05a;
     --syntax-comment: #a4a4a4;
     --syntax-punctuation: #efefef;
+    --console: #2e2e2e;
   }
 
   ::selection {
@@ -833,8 +914,7 @@ input[type="search"] {
     background: var(--moretranswhite);
   }
 
-  .editor,
-  #output {
+  .editor {
     background: var(--black);
   }
 

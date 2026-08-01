@@ -45,17 +45,6 @@
         </div>
         <p class="summary" id="summary"></p>
 
-        <div class="verbs">
-          <button data-verb="deed_check" disabled>Check</button>
-          <button data-verb="deed_run" disabled>Run</button>
-          <button data-verb="deed_test" disabled>Test</button>
-          <button data-verb="deed_fmt" disabled>Format</button>
-          <button id="stop" type="button" hidden>Stop</button>
-          <button id="share" type="button">Copy a link to this</button>
-          <span class="verbnote" id="verbnote"></span>
-        </div>
-        <p class="summary" id="shared" aria-live="polite"></p>
-
         <div class="panes">
           <div class="editor">
             <div class="gutter" id="gutter" aria-hidden="true"></div>
@@ -99,10 +88,33 @@ fn main(sys: System) -> Int
     twice(21)
 }
 </textarea
-          >
+            >
             </div>
           </div>
-          <pre id="output" aria-live="polite" aria-label="Compiler output">Press Check, Run, Test or Format.</pre>
+
+          <div class="verbs">
+            <button data-verb="deed_check" disabled>Check</button>
+            <button data-verb="deed_run" disabled>Run</button>
+            <button data-verb="deed_test" disabled>Test</button>
+            <button data-verb="deed_fmt" disabled>Format</button>
+            <button id="stop" type="button" hidden>Stop</button>
+            <button id="share" type="button">Copy a link to this</button>
+            <span class="verbnote" id="verbnote"></span>
+          </div>
+          <p class="summary" id="shared" aria-live="polite"></p>
+
+          <div class="console">
+            <div class="bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              output
+            </div>
+            <pre
+              id="output"
+              aria-live="polite"
+              aria-label="Compiler output"
+              >Press Check, Run, Test or Format.</pre
+            >
+          </div>
         </div>
       </main>
 
