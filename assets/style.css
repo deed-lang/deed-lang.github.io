@@ -1,36 +1,121 @@
+/* Deed, dressed like blahg: iA Writer Mono on cream, a sticky centred nav,
+   and links whose underlines wear the four accent colours at random.
+   `assets/color.js` is the random part, `assets/color.js` sets the colours,
+   and this file keeps every class the pages and scripts use. */
+
+/* The typeface is committed rather than fetched, like the compiler: the site
+   promises no third-party requests, and a release that moves on cannot be
+   allowed to move this page with it. iA Writer Mono is SIL-1.1; the licence is
+   committed beside the files in assets/fonts/. */
+
+@font-face {
+  font-family: "iA Writer Mono";
+  src: url("fonts/ia-writer-mono-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "iA Writer Mono";
+  src: url("fonts/ia-writer-mono-latin-400-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "iA Writer Mono";
+  src: url("fonts/ia-writer-mono-latin-700-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "iA Writer Mono";
+  src: url("fonts/ia-writer-mono-latin-700-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
-  --bg: #ffffff;
-  --fg: #1b1b1b;
-  --muted: #5c5c5c;
-  --line: #d9d9d9;
-  --accent: #0b6349;
-  --error: #a3252b;
+  --white: #efefef;
+  --transwhite: #efefefb3;
+  --moretranswhite: #efefef1a;
+  --black: #252525;
+  --transblack: #252525b3;
+  --moretransblack: #2525251a;
+  --gray: #6b6b6b;
+  --highlight: #e5ffc3;
+  --red: #e4002b;
+  --green: #24d05a;
+  --pink: #eb4888;
+  --blue: #10a2f5;
+  --yellow: #e9bc3f;
+  /* The palette is for decoration; text in it has to be readable on the
+     cream, so the semantic colours are the palette darkened to pass. */
+  --error: #c20022;
   --warning: #8a6100;
-  --surface: #f6f6f6;
-  --syntax-keyword: #0b6349;
-  --syntax-string: #8a4b00;
-  --syntax-number: #1f4bb8;
-  --syntax-comment: #5c5c5c;
-  --syntax-punctuation: #4a4a4a;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  --ok: #157a33;
+  --syntax-keyword: #0f6fb8;
+  --syntax-string: #b02e63;
+  --syntax-number: #157a33;
+  --syntax-comment: #6b6b6b;
+  --syntax-punctuation: #252525;
+  --mono: "iA Writer Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #16181a;
-    --fg: #e8e6e3;
-    --muted: #9aa0a6;
-    --line: #33383d;
-    --accent: #4bbf95;
+    --gray: #a4a4a4;
     --error: #f2777a;
     --warning: #e6b455;
-    --surface: #1e2124;
-    --syntax-keyword: #4bbf95;
-    --syntax-string: #e0a35c;
-    --syntax-number: #8fb0ff;
-    --syntax-comment: #9aa0a6;
-    --syntax-punctuation: #b7bcc2;
+    --ok: #24d05a;
+    --syntax-keyword: #10a2f5;
+    --syntax-string: #eb4888;
+    --syntax-number: #24d05a;
+    --syntax-comment: #a4a4a4;
+    --syntax-punctuation: #efefef;
+  }
+
+  ::selection {
+    color: var(--white);
+    background: #0f0f0f;
+  }
+
+  html,
+  body {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  body button,
+  body select,
+  body input,
+  body textarea {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  body code {
+    background: var(--moretranswhite);
+  }
+
+  body a {
+    color: var(--white);
+  }
+
+  body h1,
+  body strong,
+  body b {
+    color: var(--white);
+  }
+
+  nav.site {
+    background: var(--transblack);
   }
 }
 
@@ -42,80 +127,190 @@ html {
   color-scheme: light dark;
 }
 
+html,
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  max-width: 70ch;
+  margin: auto;
+  padding: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.wrap {
-  max-width: 68rem;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
+html,
+body,
+button,
+input,
+select,
+textarea,
+code {
+  font-family: var(--mono);
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 a {
-  color: var(--accent);
+  color: var(--black);
+  text-decoration: underline;
+  text-underline-offset: 0.3ex;
+  text-decoration-thickness: 0.3ex;
 }
 
 a:focus-visible,
 button:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--accent);
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
 
+h1,
+h2 {
+  font-weight: 400;
+}
+
+h1,
+strong,
+b {
+  color: var(--black);
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--gray);
+  line-height: 1.1;
+}
+
+code {
+  background-color: var(--moretransblack);
+  padding: 2px 5px;
+  font-weight: 700;
+}
+
+pre {
+  padding: 1rem;
+}
+
+pre.code {
+  margin: 0;
+  padding: 1rem;
+  background: var(--moretransblack);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+pre.code code {
+  background: none;
+  padding: 0;
+  font-weight: 400;
+}
+
+pre.code b {
+  color: var(--syntax-keyword);
+}
+
+/* Header: the wordmark and its tagline, centred like the rest. */
+
 header.site {
+  display: block;
+}
+
+header.site .header-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  align-items: baseline;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
-header.site .name {
-  font-weight: 700;
-  font-size: 1.1rem;
+header.site .header-frame {
+  max-width: 350px;
+  text-align: center;
+}
+
+header.site h1 {
+  margin: 0;
+  font-size: 2em;
+}
+
+header.site h1 a {
   text-decoration: none;
-  color: var(--fg);
 }
 
-header.site nav {
-  display: flex;
-  gap: 1rem;
-  margin-left: auto;
+header.site h2 {
+  margin: 0.5em 0;
 }
 
-h1 {
-  font-size: 1.6rem;
-  line-height: 1.3;
+/* The nav is sticky and sits on a blur of the page, so it stays readable
+   while the content scrolls under it. */
+
+nav.site {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0 0 1.5rem;
+  padding: 0 4px;
+  text-align: center;
+  background: var(--transwhite);
+  backdrop-filter: blur(1px);
+}
+
+nav.site a {
+  display: inline-block;
+  margin: 0.75rem 0;
+  text-decoration: none;
+}
+
+nav.site a:not(:last-child) {
+  padding-right: 12px;
+}
+
+nav.site a.active {
+  font-weight: 700;
+  text-underline-offset: 0.3ex;
+  text-decoration: underline 0.3ex;
+}
+
+@media (max-width: 600px) {
+  nav.site a:not(:last-child) {
+    padding-right: 0;
+  }
+}
+
+main {
+  line-height: 1.6;
+}
+
+main h1 {
+  font-size: clamp(1.5rem, 1.1rem + 2vw, 2.4rem);
   margin: 0 0 0.5rem;
 }
 
 .lede {
-  color: var(--muted);
+  color: var(--gray);
   margin: 0 0 1.5rem;
 }
 
 /* Landing */
+
+.lockup {
+  text-align: center;
+}
 
 .lockup img {
   max-width: min(380px, 100%);
   height: auto;
 }
 
-main h1 {
-  font-size: clamp(1.5rem, 1.1rem + 2vw, 2.4rem);
-  max-width: 26ch;
-}
-
 main .lede {
-  font-size: 1.05rem;
   max-width: 60ch;
 }
 
@@ -134,26 +329,7 @@ main .lede {
 
 .show h2 {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--muted);
   margin: 0 0 0.5rem;
-}
-
-pre.code {
-  margin: 0;
-  padding: 0.85rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  line-height: 1.5;
-  overflow-x: auto;
-}
-
-pre.code b {
-  font-weight: 700;
-  color: var(--accent);
 }
 
 .after {
@@ -178,7 +354,7 @@ pre.code b {
 }
 
 [data-step].here {
-  color: var(--accent);
+  color: var(--syntax-string);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -187,40 +363,32 @@ pre.code b {
   }
 }
 
+/* The next cards are the blog's post list: a big title over a short
+   excerpt, no boxes. */
+
 .next {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
   margin: 2.5rem 0 0;
 }
 
 .next .card {
   display: block;
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  text-decoration: none;
-  color: var(--fg);
-}
-
-.next .card:hover {
-  border-color: var(--accent);
+  margin: 1.5rem 0;
 }
 
 .next .card strong {
   display: block;
-  color: var(--accent);
+  font-size: 1.3em;
+  font-weight: 400;
   margin-bottom: 0.25rem;
 }
 
 .next .card span {
-  color: var(--muted);
+  color: var(--gray);
   font-size: 0.9rem;
 }
 
 @media (max-width: 52rem) {
-  .show,
-  .next {
+  .show {
     grid-template-columns: 1fr;
   }
 }
@@ -230,13 +398,13 @@ pre.code b {
 .verbs {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   margin: 0 0 0.75rem;
 }
 
 .verbnote {
-  align-self: center;
-  color: var(--muted);
+  color: var(--gray);
   font-size: 0.9rem;
 }
 
@@ -248,45 +416,47 @@ pre.code b {
 }
 
 .picker label {
-  color: var(--muted);
+  color: var(--gray);
   font-size: 0.9rem;
 }
 
-select {
-  font: inherit;
-  font-size: 0.95rem;
-  padding: 0.3rem 0.5rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
-  color: var(--fg);
-}
-
-.summary {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 1rem;
-  max-width: 68ch;
-}
-
+select,
+input[type="search"],
 button {
   font: inherit;
   font-size: 0.95rem;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
-  color: var(--fg);
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--gray);
+  border-radius: 0;
+  background: var(--white);
+  color: var(--black);
+}
+
+button {
   cursor: pointer;
 }
 
-button:hover:not(:disabled) {
-  border-color: var(--accent);
+button:hover:not(:disabled),
+select:hover:not(:disabled) {
+  border-color: var(--black);
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.summary {
+  color: var(--gray);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+  max-width: 68ch;
+}
+
+.status {
+  color: var(--gray);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
 }
 
 .panes {
@@ -301,21 +471,6 @@ button:disabled {
   }
 }
 
-textarea#source {
-  width: 100%;
-  min-height: 26rem;
-  padding: 0.75rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
-  color: var(--fg);
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  tab-size: 4;
-  resize: vertical;
-}
-
 /* The editor: a gutter, the colouring, and the textarea over the top of it.
    One source line is one visual line (no wrapping) so the gutter can say
    which line it is without lying about wrapped ones. */
@@ -326,9 +481,8 @@ textarea#source {
      only thing that could give this box a height is the gutter, and then the
      editor would be as tall as the file. */
   height: 26rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
+  border: 1px solid var(--gray);
+  background: var(--white);
   overflow: hidden;
 }
 
@@ -345,11 +499,11 @@ textarea#source {
 .editor .gutter {
   flex: 0 0 auto;
   padding: 0.75rem 0.5rem 0.75rem 0.75rem;
-  color: var(--muted);
+  color: var(--gray);
   text-align: right;
   user-select: none;
   overflow: hidden;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid var(--gray);
 }
 
 .editor .gutter b {
@@ -384,7 +538,7 @@ textarea#source {
 
 .editor .highlight {
   pointer-events: none;
-  color: var(--fg);
+  color: var(--syntax-punctuation);
   /* Driven by the textarea's scroll position, so it must not grow one of its
      own: two scrollbars in the same box is one too many. */
   overflow: hidden;
@@ -398,11 +552,11 @@ textarea#source {
   /* The colouring underneath is what anyone reads; this layer is the caret,
      the selection and the keyboard. */
   color: transparent;
-  caret-color: var(--fg);
+  caret-color: var(--black);
 }
 
 .editor textarea#source::selection {
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--blue) 30%, transparent);
 }
 
 .t-keyword {
@@ -435,22 +589,54 @@ textarea#source {
 #output {
   margin: 0;
   padding: 0.75rem;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
+  border: 1px solid var(--gray);
+  background: var(--white);
   font-family: var(--mono);
   font-size: 0.85rem;
   line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   min-height: 26rem;
-  margin-block: 0;
 }
 
-.status {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 1rem;
+/* What the compiler said, in the colours it means. */
+
+.d-error {
+  color: var(--error);
+  font-weight: 700;
+}
+
+.d-warning {
+  color: var(--warning);
+  font-weight: 700;
+}
+
+.d-gutter,
+.d-note {
+  color: var(--gray);
+}
+
+.d-caret {
+  color: var(--error);
+}
+
+.d-ok {
+  color: var(--ok);
+}
+
+#output button.apply {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--black);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#output button.apply:hover {
+  border-color: transparent;
 }
 
 /* The playground in one screen.
@@ -458,6 +644,7 @@ textarea#source {
    is the right answer and a 26rem editor squeezed into 300 pixels is not. */
 @media (min-width: 52rem) and (min-height: 40rem) {
   body.fits {
+    max-width: min(120ch, 100%);
     height: 100dvh;
     overflow: hidden;
   }
@@ -476,12 +663,24 @@ textarea#source {
     flex-direction: column;
   }
 
-  body.fits header.site {
-    padding-bottom: 0.5rem;
+  body.fits nav.site {
     margin-bottom: 0.75rem;
   }
 
-  body.fits h1 {
+  body.fits nav.site a {
+    margin: 0.4rem 0;
+  }
+
+  body.fits header.site h1 {
+    font-size: 1.4rem;
+  }
+
+  body.fits header.site h2 {
+    font-size: 0.85rem;
+    margin: 0.25em 0;
+  }
+
+  body.fits main h1 {
     font-size: 1.3rem;
   }
 
@@ -550,42 +749,16 @@ textarea#source {
   border: 0;
 }
 
-.d-error {
-  color: var(--error);
-  font-weight: 600;
-}
-
-.d-warning {
-  color: var(--warning);
-  font-weight: 600;
-}
-
-.d-gutter,
-.d-note {
-  color: var(--muted);
-}
-
-.d-caret {
-  color: var(--error);
-}
-
-.d-ok {
-  color: var(--accent);
-}
-
-#output button.apply {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  padding: 0.1rem 0.5rem;
-  margin: 0.1rem 0;
-}
-
 footer.site {
-  border-top: 1px solid var(--line);
-  margin-top: 3rem;
-  padding-top: 1rem;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin-top: 2rem;
+  padding: 25px;
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+footer.site p {
+  margin: 0.25rem 0;
 }
 
 /* Install */
@@ -598,7 +771,6 @@ main h2 {
 main h3 {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--muted);
   margin: 1.5rem 0 0.5rem;
 }
 
@@ -607,26 +779,22 @@ main dd {
   max-width: 68ch;
 }
 
-code {
-  font-family: var(--mono);
-  font-size: 0.9em;
-}
-
 table.files {
   border-collapse: collapse;
   margin: 0 0 1rem;
+  width: 100%;
 }
 
 table.files th,
 table.files td {
   text-align: left;
   padding: 0.4rem 1.5rem 0.4rem 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--gray);
   vertical-align: top;
 }
 
 table.files th {
-  color: var(--muted);
+  color: var(--gray);
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -638,13 +806,13 @@ table.files th {
 
 .trouble dd {
   margin: 0.25rem 0 0;
-  color: var(--muted);
+  color: var(--gray);
 }
 
 /* Diagnostics index */
 
 .diagnostic {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--gray);
   padding-top: 1rem;
   margin-top: 1.5rem;
 }
@@ -657,7 +825,7 @@ table.files th {
 }
 
 .diagnostic h2 a {
-  text-decoration: none;
+  color: inherit;
 }
 
 .diagnostic .from {
@@ -667,12 +835,5 @@ table.files th {
 }
 
 input[type="search"] {
-  font: inherit;
-  font-size: 0.95rem;
-  padding: 0.3rem 0.5rem;
   min-width: min(28rem, 100%);
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-  background: var(--surface);
-  color: var(--fg);
 }
