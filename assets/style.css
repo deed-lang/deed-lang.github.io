@@ -414,6 +414,13 @@ button {
   cursor: pointer;
 }
 
+/* Held at the width of its own label, because it swaps that label for what it
+   just did and a button that resizes moves the row it is in. Nineteen is the
+   longest of the three, and the face is monospaced, so `ch` is exact. */
+#share {
+  min-width: calc(19ch + 1.6rem + 2px);
+}
+
 button:hover:not(:disabled),
 select:hover:not(:disabled) {
   border-color: var(--black);
@@ -560,37 +567,19 @@ button:disabled {
 /* The console is where the compiler answers, in both themes: a bar on top
    and the answer scrolling beneath it, like the playgrounds of the
    languages that had this idea first.
-   It is not there until a verb is asked for: the editor owns the screen
-   first, and the console grows into it, letting the page flex rather than
-   adding a scrollbar. */
+   It is there from the start, at the size it will stay. Growing it when a
+   verb was pressed meant the editor changed shape under the cursor, every
+   time, and the thing that moved was the text somebody was reading. */
 
 .console {
   display: flex;
   flex-direction: column;
-  height: 0;
+  height: 14rem;
   min-height: 0;
   overflow: hidden;
-  opacity: 0;
-  border-width: 0;
+  border: 1px solid var(--gray);
   background: var(--console);
   color: var(--white);
-  transition:
-    height 0.25s ease-out,
-    flex-basis 0.25s ease-out,
-    opacity 0.25s ease-out,
-    border-width 0.25s ease-out;
-}
-
-.console.shown {
-  height: 14rem;
-  opacity: 1;
-  border-width: 1px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .console {
-    transition: none;
-  }
 }
 
 .console .bar {
@@ -792,21 +781,8 @@ button:disabled {
     flex: 1;
     min-height: 0;
     display: grid;
-    grid-template-columns: 1fr 0fr;
+    grid-template-columns: 1fr minmax(24rem, 32%);
     gap: 1rem;
-    transition: grid-template-columns 0.25s ease-out;
-  }
-
-  /* The console is not there until a verb is asked for, so until then the
-     column it lives in has no width and the editor has all of it. */
-  body.fits .panes:has(.console.shown) {
-    grid-template-columns: 1fr minmax(26rem, 34%);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    body.fits .panes {
-      transition: none;
-    }
   }
 
   body.fits .editor {
@@ -824,11 +800,6 @@ button:disabled {
   body.fits .console {
     height: auto;
     min-height: 0;
-    max-height: none;
-  }
-
-  body.fits .console.shown {
-    height: auto;
   }
 
   /* One line of footer. The other paragraph is about the four verbs, which

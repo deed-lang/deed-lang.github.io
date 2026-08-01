@@ -26,7 +26,6 @@ const STOP = document.getElementById("stop");
 const VERBNOTE = document.getElementById("verbnote");
 const HIGHLIGHT = document.getElementById("highlight");
 const GUTTER = document.getElementById("gutter");
-const CONSOLE = document.querySelector(".console");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -228,7 +227,6 @@ function applyEdits(source, edits) {
 }
 
 OUTPUT.addEventListener("click", (event) => {
-  CONSOLE.classList.add("shown");
   const instead = event.target.closest("button[data-instead]");
   if (instead) {
     run(instead.dataset.instead);
@@ -496,10 +494,6 @@ function load() {
 
 for (const button of VERBS) {
   button.addEventListener("click", () => {
-    // The console is not there until it is needed: a verb is the only thing
-    // that asks for it, so the editor owns the screen until then. The check
-    // that runs while you type is not a question asked, and must not open it.
-    CONSOLE.classList.add("shown");
     run(button.dataset.verb);
   });
 }
@@ -515,6 +509,8 @@ for (const button of VERBS) {
 
 const SHARE = document.getElementById("share");
 const SHARED = document.getElementById("shared");
+const SHARE_LABEL = SHARE.textContent;
+let saying = null;
 
 function toBase64Url(bytes) {
   let binary = "";
@@ -562,15 +558,22 @@ SHARE.addEventListener("click", async () => {
   location.hash = `${VERSION}/${payload}`;
   ours = location.hash;
 
-  // The button says what it did, including when it could not: a page served
-  // over `file://` has no clipboard permission and neither does an old
-  // browser, and silently doing nothing is worse than saying so.
+  // In the button, not under the editor: a line of text appearing to report
+  // one word pushes everything below it down, and the thing below it is the
+  // editor. It still says when it could not, because a page served over
+  // `file://` has no clipboard permission and neither does an old browser.
+  let said;
   try {
     await navigator.clipboard.writeText(link);
-    SHARED.textContent = `Copied. ${link.length} characters, and the address bar has it too.`;
+    said = "Copied";
   } catch {
-    SHARED.textContent = `The address bar has the link, ${link.length} characters. Copying it needs a permission this page does not have here.`;
+    said = "In the address bar";
   }
+  SHARE.textContent = said;
+  clearTimeout(saying);
+  saying = setTimeout(() => {
+    SHARE.textContent = SHARE_LABEL;
+  }, 2500);
 });
 
 async function loadFromLink() {
