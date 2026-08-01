@@ -38,13 +38,26 @@
         </p>
         <p class="status" id="status" aria-live="polite">loading</p>
 
-        <div class="picker">
-          <label for="example">Example</label>
-          <select id="example" disabled>
-            <option value="">the program below</option>
-          </select>
+        <div class="controls">
+          <div class="picker">
+            <label for="example">Example</label>
+            <select id="example" disabled>
+              <option value="">the program below</option>
+            </select>
+          </div>
+
+          <div class="verbs">
+            <button data-verb="deed_check" disabled>Check</button>
+            <button data-verb="deed_run" disabled>Run</button>
+            <button data-verb="deed_test" disabled>Test</button>
+            <button data-verb="deed_fmt" disabled>Format</button>
+            <button id="stop" type="button" hidden>Stop</button>
+            <button id="share" type="button">Copy a link to this</button>
+            <span class="verbnote" id="verbnote"></span>
+          </div>
         </div>
         <p class="summary" id="summary"></p>
+        <p class="summary" id="shared" aria-live="polite"></p>
 
         <div class="panes">
           <div class="editor">
@@ -92,17 +105,6 @@ fn main(sys: System) -> Int
             >
             </div>
           </div>
-
-          <div class="verbs">
-            <button data-verb="deed_check" disabled>Check</button>
-            <button data-verb="deed_run" disabled>Run</button>
-            <button data-verb="deed_test" disabled>Test</button>
-            <button data-verb="deed_fmt" disabled>Format</button>
-            <button id="stop" type="button" hidden>Stop</button>
-            <button id="share" type="button">Copy a link to this</button>
-            <span class="verbnote" id="verbnote"></span>
-          </div>
-          <p class="summary" id="shared" aria-live="polite"></p>
 
           <div class="console">
             <div class="bar">

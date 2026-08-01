@@ -355,6 +355,16 @@ main .lede {
 
 /* Playground */
 
+/* The picker and the verbs on one line, above the editor, so what is left of
+   the window belongs to the thing people came here to type in. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin: 0 0 0.75rem;
+}
+
 .verbs {
   display: flex;
   flex-wrap: wrap;
@@ -372,7 +382,7 @@ main .lede {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .picker label {
@@ -690,13 +700,18 @@ button:disabled {
   border-color: transparent;
 }
 
-/* The playground in one screen.
+/* The playground in one screen, laid out like the ones that fit a window:
+   the controls in a strip, the editor taking everything left over, and the
+   answer beside it rather than under it. A console under the editor costs a
+   third of the height of the thing people came here to type in.
    Only where there is room for it: on a phone, or a short window, scrolling
    is the right answer and a 26rem editor squeezed into 300 pixels is not. */
 @media (min-width: 52rem) and (min-height: 40rem) {
   body.fits {
-    max-width: min(120ch, 100%);
-    height: 100dvh;
+    max-width: none;
+    /* The page's own padding is outside this box, so a whole viewport here is
+       a viewport and a bit, and the bit is a scrollbar. */
+    height: calc(100dvh - 40px);
     overflow: hidden;
   }
 
@@ -723,16 +738,24 @@ button:disabled {
   }
 
   body.fits header.site h1 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
+  /* The tagline is the landing page's sentence, and the wordmark still says
+     whose playground this is. */
   body.fits header.site h2 {
-    font-size: 0.85rem;
-    margin: 0.25em 0;
+    display: none;
   }
 
   body.fits main h1 {
     font-size: 1.3rem;
+  }
+
+  /* The nav already says which page this is, and the sentence under it is on
+     the landing page. In here the screen belongs to the editor. */
+  body.fits main h1,
+  body.fits main .lede {
+    display: none;
   }
 
   body.fits .lede,
@@ -761,11 +784,25 @@ button:disabled {
   body.fits .panes {
     flex: 1;
     min-height: 0;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    gap: 1rem;
+    transition: grid-template-columns 0.25s ease-out;
+  }
+
+  /* The console is not there until a verb is asked for, so until then the
+     column it lives in has no width and the editor has all of it. */
+  body.fits .panes:has(.console.shown) {
+    grid-template-columns: 1fr minmax(26rem, 34%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.fits .panes {
+      transition: none;
+    }
   }
 
   body.fits .editor {
-    flex: 1;
     height: auto;
     min-height: 0;
   }
@@ -777,28 +814,30 @@ button:disabled {
     overflow: auto;
   }
 
-  /* The console keeps its share of the screen, and the editor takes the
-     rest, like the playgrounds that fit in a window. */
   body.fits .console {
-    flex: 0 0 0%;
     height: auto;
     min-height: 0;
-    max-height: 18rem;
+    max-height: none;
   }
 
   body.fits .console.shown {
-    flex: 0 0 35%;
-    min-height: 8rem;
+    height: auto;
+  }
+
+  /* One line of footer. The other paragraph is about the four verbs, which
+     are now a hand's width above it. */
+  body.fits footer.site p:first-child {
+    display: none;
   }
 
   body.fits footer.site {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0 0;
     font-size: 0.8rem;
   }
 
   body.fits footer.site p {
-    margin: 0.25rem 0;
+    margin: 0;
   }
 }
 
