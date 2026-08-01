@@ -198,6 +198,19 @@ header.site h1 {
   font-size: 2em;
 }
 
+/* The bracket is drawn in currentColor, so the mark follows the wordmark into
+   dark mode without a second file to keep in step. */
+header.site h1 .mark {
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.16em;
+  margin-right: 0.3em;
+}
+
+header.site h1 a {
+  text-decoration: none;
+}
+
 header.site h1 a {
   text-decoration: none;
 }

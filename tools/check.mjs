@@ -67,12 +67,14 @@ for (const path of files.filter((f) => f.endsWith(".html"))) {
   }
 }
 
-// Every page wears the mark. The playground was the one that did not, which
-// showed up as the only 404 in the server log while the site was being read in
-// a browser, and as a blank tab beside four that were not.
+// Every page wears the mark, in the tab and in its own header. The playground
+// was the one with no favicon, which showed up as the only 404 in the server
+// log; the header is five hand-written copies of the same markup, so a page
+// can lose the mark there without anything else on it changing.
 for (const path of files.filter((f) => f.endsWith(".html"))) {
   const html = await readFile(path, "utf8");
   if (!/rel="icon"/.test(html)) complain(relative(root, path), "has no favicon");
+  if (!/class="mark"/.test(html)) complain(relative(root, path), "has no mark in its header");
 }
 
 // The pin names a file, and the file has to be one somebody added. More than
