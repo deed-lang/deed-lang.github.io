@@ -26,6 +26,7 @@ const STOP = document.getElementById("stop");
 const VERBNOTE = document.getElementById("verbnote");
 const HIGHLIGHT = document.getElementById("highlight");
 const GUTTER = document.getElementById("gutter");
+const CONSOLE = document.querySelector(".console");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -227,6 +228,7 @@ function applyEdits(source, edits) {
 }
 
 OUTPUT.addEventListener("click", (event) => {
+  CONSOLE.classList.add("shown");
   const instead = event.target.closest("button[data-instead]");
   if (instead) {
     run(instead.dataset.instead);
@@ -493,7 +495,13 @@ function load() {
 }
 
 for (const button of VERBS) {
-  button.addEventListener("click", () => run(button.dataset.verb));
+  button.addEventListener("click", () => {
+    // The console is not there until it is needed: a verb is the only thing
+    // that asks for it, so the editor owns the screen until then. The check
+    // that runs while you type is not a question asked, and must not open it.
+    CONSOLE.classList.add("shown");
+    run(button.dataset.verb);
+  });
 }
 
 // A link carries the program and the version it was written against, in the

@@ -530,15 +530,38 @@ button:disabled {
 
 /* The console is where the compiler answers, in both themes: a bar on top
    and the answer scrolling beneath it, like the playgrounds of the
-   languages that had this idea first. */
+   languages that had this idea first.
+   It is not there until a verb is asked for: the editor owns the screen
+   first, and the console grows into it, letting the page flex rather than
+   adding a scrollbar. */
 
 .console {
   display: flex;
   flex-direction: column;
-  min-height: 14rem;
-  border: 1px solid var(--gray);
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  border-width: 0;
   background: var(--console);
   color: var(--white);
+  transition:
+    height 0.25s ease-out,
+    flex-basis 0.25s ease-out,
+    opacity 0.25s ease-out,
+    border-width 0.25s ease-out;
+}
+
+.console.shown {
+  height: 14rem;
+  opacity: 1;
+  border-width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .console {
+    transition: none;
+  }
 }
 
 .console .bar {
@@ -745,9 +768,15 @@ button:disabled {
   /* The console keeps its share of the screen, and the editor takes the
      rest, like the playgrounds that fit in a window. */
   body.fits .console {
+    flex: 0 0 0%;
+    height: auto;
+    min-height: 0;
+    max-height: 18rem;
+  }
+
+  body.fits .console.shown {
     flex: 0 0 35%;
     min-height: 8rem;
-    max-height: 18rem;
   }
 
   body.fits footer.site {
