@@ -261,11 +261,22 @@ main .lede {
   max-width: 60ch;
 }
 
+/* The panes hold source, so they are as wide as their longest line needs
+   rather than as wide as the prose column. Inside it they were cut off, and a
+   diagnostic with the caret line scrolled out of view is not showing anything. */
 .show {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin: 2rem 0;
+  position: relative;
+  left: 50%;
+  translate: -50%;
+  width: min(76rem, calc(100vw - 2.5rem));
+}
+
+.show pre.code {
+  font-size: 0.8rem;
 }
 
 /* A grid item is as wide as its widest line unless told otherwise, so a long
@@ -334,7 +345,9 @@ main .lede {
   font-size: 0.9rem;
 }
 
-@media (max-width: 52rem) {
+/* Two columns stop fitting a seventy-two character line before the viewport
+   runs out, so they stack while there is still room to read them whole. */
+@media (max-width: 78rem) {
   .show {
     grid-template-columns: 1fr;
   }
