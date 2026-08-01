@@ -99,7 +99,7 @@ errors/             every diagnostic code, read out of the compiler
 install/            how to get a binary running
 one-clause/         what a signature turns into
 examples/           the compiler's corpus at the pinned tag
-assets/             the stylesheet, the scripts, the brand files, the compiler
+assets/             the stylesheet, the scripts, the fonts, the brand files, the compiler
 tools/              the check that runs before anything merges, and the
                     script that regenerates the example index
 decisions/          why this repository is shaped the way it is

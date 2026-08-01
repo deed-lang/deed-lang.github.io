@@ -14,15 +14,21 @@
   <body>
     <div class="wrap">
       <header class="site">
-        <a class="name" href="../">Deed</a>
-        <nav>
-          <a href="../one-clause/">One clause</a>
-          <a href="../play/">Playground</a>
-          <a href="../errors/">Diagnostics</a>
-          <a href="./">Install</a>
-          <a href="https://github.com/deed-lang/deed">Source</a>
-        </nav>
+        <div class="header-section">
+          <div class="header-frame">
+            <h1><a href="../">Deed</a></h1>
+            <h2>A function can only do what its signature admits to.</h2>
+          </div>
+        </div>
       </header>
+
+      <nav class="site">
+        <a href="../one-clause/">One clause</a>
+        <a href="../play/">Playground</a>
+        <a href="../errors/">Diagnostics</a>
+        <a href="./" class="active">Install</a>
+        <a href="https://github.com/deed-lang/deed">Source</a>
+      </nav>
 
       <main>
         <h1>Install</h1>
@@ -214,5 +220,6 @@ $ cargo install --path crates/deed-cli</code></pre>
         </p>
       </footer>
     </div>
+    <script src="../assets/color.js"></script>
   </body>
 </html>
