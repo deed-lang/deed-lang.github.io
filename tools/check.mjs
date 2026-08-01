@@ -134,14 +134,23 @@ for (const entry of index.examples) {
   }
 }
 
-// A share link carries the version it was written against, and the playground
-// says so when it disagrees. A link written into a page here should not be the
-// thing triggering that.
+// This site names one release, and the pin is which one. Everything else that
+// says a version is prose: the filenames on the install page, the `deed 0.2.2`
+// under each `--version`, and the version a share link carries.
+//
+// The pin moved to v0.2.2 and the install page kept telling people to download
+// v0.2.1, which is not in the latest release any more, so the page's own
+// instructions could not be followed. Nothing here noticed, because the pin
+// was only ever compared against other pins.
+//
+// Any three-part number counts. A version that belongs to something else
+// (Rust 1.85, and the rest of the page's prose) does not look like one.
 for (const path of files.filter((f) => f.endsWith(".html"))) {
   const html = await readFile(path, "utf8");
-  for (const [, version] of html.matchAll(/play\/#(\d+\.\d+\.\d+)\//g)) {
+  const said = new Set([...html.matchAll(/(\d+\.\d+\.\d+)/g)].map((m) => m[1]));
+  for (const version of said) {
     if (`v${version}` !== tag) {
-      complain(relative(root, path), `links a program written against ${version}, and the pin is ${tag}`);
+      complain(relative(root, path), `says ${version}, and the pin is ${tag}`);
     }
   }
 }

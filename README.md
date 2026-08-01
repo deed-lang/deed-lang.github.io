@@ -56,13 +56,19 @@ that tag. It is not built here and it is not edited here. A release asset
 cannot be fetched from a browser, so it is committed rather than requested;
 the measurement behind that is in the decision record.
 
-Moving the pin is three steps:
+Moving the pin:
 
 ```
 $ gh release download vX.Y.Z --repo deed-lang/deed --pattern '*.wasm' --dir assets
 $ git rm assets/deed-<old tag>-wasm32-unknown-unknown.wasm
-$ $EDITOR assets/play.js    # TAG and VERSION
+$ $EDITOR assets/play.js assets/errors.js    # TAG and VERSION
+$ $EDITOR install/index.html                 # the filenames and `deed X.Y.Z`
 ```
+
+Two scripts carry the pin and the install page names the same release in
+prose, so `node tools/check.mjs` compares all three and fails if any of them
+disagrees. The install page went a day naming a release that was no longer the
+latest one, which made its own instructions unfollowable, and nothing noticed.
 
 The page asks the module its version and refuses to run if the answer is not
 the one `play.js` claims, so changing the file without changing the pin, or
