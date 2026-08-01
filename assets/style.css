@@ -426,6 +426,13 @@ button:disabled {
   cursor: default;
 }
 
+/* A verb nobody pressed still has to hold the compiler for the moment it
+   takes, but it must not say so: four buttons fading and coming back on every
+   keystroke is the row looking broken. */
+.controls.quiet [data-verb]:disabled {
+  opacity: 1;
+}
+
 .summary {
   color: var(--gray);
   font-size: 0.9rem;

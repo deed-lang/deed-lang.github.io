@@ -26,6 +26,7 @@ const STOP = document.getElementById("stop");
 const VERBNOTE = document.getElementById("verbnote");
 const HIGHLIGHT = document.getElementById("highlight");
 const GUTTER = document.getElementById("gutter");
+const CONTROLS = document.querySelector(".controls");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
 
 const encoder = new TextEncoder();
@@ -81,7 +82,12 @@ function stop(why, deliberate = false) {
   worker.postMessage({ load: new URL(WASM_URL, location.href).href });
 }
 
-function ask(verb, source) {
+// Whether the question in flight is one somebody pressed a button for. The
+// check and the colouring run on their own while you type, and they are quick,
+// but dimming four buttons every keystroke reads as the row flickering.
+let asked = false;
+
+function ask(verb, source, byHand = false) {
   if (pending) return Promise.reject(new Error("one question at a time"));
   const id = nextId++;
   return new Promise((resolve, reject) => {
@@ -98,6 +104,7 @@ function ask(verb, source) {
         stop("ran too long", true);
       }, PATIENCE),
     };
+    asked = byHand;
     running(true);
     worker.postMessage({ id, verb, source });
   });
@@ -107,7 +114,8 @@ function running(yes) {
   // Disabled rather than hidden. The row is centred, so a button appearing in
   // it slid every other button sideways, and the check that runs while you
   // type made that happen on its own.
-  STOP.disabled = !yes;
+  STOP.disabled = !(yes && asked);
+  CONTROLS.classList.toggle("quiet", yes && !asked);
   for (const button of VERBS) {
     button.disabled = yes || worker === null || (button.dataset.verb === "deed_run" && !runnable);
   }
@@ -232,7 +240,7 @@ function applyEdits(source, edits) {
 OUTPUT.addEventListener("click", (event) => {
   const instead = event.target.closest("button[data-instead]");
   if (instead) {
-    run(instead.dataset.instead);
+    run(instead.dataset.instead, true);
     return;
   }
 
@@ -250,7 +258,7 @@ OUTPUT.addEventListener("click", (event) => {
   }
 
   SOURCE.value = applyEdits(SOURCE.value, repairs[Number(button.dataset.repair)]);
-  run("deed_check");
+  run("deed_check", true);
 });
 
 function render(verb, json, source) {
@@ -325,10 +333,10 @@ function render(verb, json, source) {
   return out.join("\n");
 }
 
-async function run(verb) {
+async function run(verb, byHand = false) {
   const source = SOURCE.value;
   try {
-    const answer = await ask(verb, source);
+    const answer = await ask(verb, source, byHand);
     OUTPUT.innerHTML = render(verb, answer, source);
     if (verb === "deed_check" || verb === "deed_fmt") markLines(answer, SOURCE.value);
     if (verb === "deed_fmt") paint();
@@ -497,7 +505,7 @@ function load() {
 
 for (const button of VERBS) {
   button.addEventListener("click", () => {
-    run(button.dataset.verb);
+    run(button.dataset.verb, true);
   });
 }
 
