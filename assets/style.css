@@ -6,14 +6,20 @@
 /* The typeface is committed rather than fetched, like the compiler: the site
    promises no third-party requests, and a release that moves on cannot be
    allowed to move this page with it. iA Writer Mono is SIL-1.1; the licence is
-   committed beside the files in assets/fonts/. */
+   committed beside the files in assets/fonts/.
+
+   `optional` rather than `swap`, and the two upright faces are preloaded in
+   every page's head. `swap` paints the fallback first and then re-lays the
+   page out under the reader, which is what a hard reload used to look like.
+   `optional` is the one value that cannot do that: the face either arrives in
+   time to be the first thing drawn, or it waits for the next visit. */
 
 @font-face {
   font-family: "iA Writer Mono";
   src: url("fonts/ia-writer-mono-latin-400-normal.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -21,7 +27,7 @@
   src: url("fonts/ia-writer-mono-latin-400-italic.woff2") format("woff2");
   font-style: italic;
   font-weight: 400;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -29,7 +35,7 @@
   src: url("fonts/ia-writer-mono-latin-700-normal.woff2") format("woff2");
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -37,7 +43,7 @@
   src: url("fonts/ia-writer-mono-latin-700-italic.woff2") format("woff2");
   font-style: italic;
   font-weight: 700;
-  font-display: swap;
+  font-display: optional;
 }
 
 :root {
