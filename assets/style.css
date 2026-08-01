@@ -381,11 +381,6 @@ main > .controls,
   margin: 0;
 }
 
-.verbnote {
-  color: var(--gray);
-  font-size: 0.9rem;
-}
-
 .picker {
   display: flex;
   align-items: baseline;
@@ -435,6 +430,10 @@ button:disabled {
   color: var(--gray);
   font-size: 0.9rem;
   margin: 0 0 1rem;
+}
+
+.summary:empty {
+  display: none;
 }
 
 .status {
@@ -771,10 +770,6 @@ button:disabled {
     margin-bottom: 0.5rem;
     max-height: 2.9em;
     overflow-y: auto;
-  }
-
-  body.fits .summary:empty {
-    display: none;
   }
 
   body.fits .panes {

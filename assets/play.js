@@ -104,7 +104,10 @@ function ask(verb, source) {
 }
 
 function running(yes) {
-  STOP.hidden = !yes;
+  // Disabled rather than hidden. The row is centred, so a button appearing in
+  // it slid every other button sideways, and the check that runs while you
+  // type made that happen on its own.
+  STOP.disabled = !yes;
   for (const button of VERBS) {
     button.disabled = yes || worker === null || (button.dataset.verb === "deed_run" && !runnable);
   }
