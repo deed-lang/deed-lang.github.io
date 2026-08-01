@@ -7,6 +7,35 @@
 
 import { readFile } from "node:fs/promises";
 
+// What the picker offers, in this order.
+//
+// The corpus is twenty-eight files and it is not a menu: about half of it is
+// one language feature at a time, written so the compiler's own tests have
+// something to read, and a visitor scrolling past `sink`, `names` and
+// `diverge` is being shown the inside of a test suite. So the picker is a
+// dozen programs a person would recognise, and the rest stay on disk, still
+// asked about here and still reachable by name.
+//
+// `hello` is first because it is the only one this page can start. The others
+// have tests, which is the button that works for them.
+//
+// It lives beside the code that asks the compiler because both tools need it:
+// one writes the order into the index and the other checks it is still there.
+export const SHOWN = [
+  "hello.deed",
+  "tic_tac_toe.deed",
+  "calculator.deed",
+  "markdown.deed",
+  "json.deed",
+  "stack_machine.deed",
+  "tree.deed",
+  "counter.deed",
+  "using_list.deed",
+  "logs.deed",
+  "todo.deed",
+  "proven.deed",
+];
+
 export async function open(path) {
   const { instance } = await WebAssembly.instantiate(await readFile(path), {});
   const wasm = instance.exports;
@@ -48,18 +77,26 @@ export async function open(path) {
     return read();
   }
 
-  // The three things `examples/index.json` says about a file. Two of them are
-  // answers from the module and the third is the file's own opening comment,
-  // so none of it is a description written here.
+  // What `examples/index.json` says about a file. All of it is either an
+  // answer from the module or the file's own opening comment, so none of it is
+  // a description written here.
   function describe(source) {
     // Asked rather than guessed. Looking for `fn main` in the text would be a
     // small parser written here, which is the thing this repository does not do.
-    const runs = !lines("deed_run", source).some(
+    const run = lines("deed_run", source);
+    const runs = !run.some(
       (item) =>
         item.kind === "result" && item.ok === false && /no `main`/.test(item.message ?? ""),
     );
+    // The capabilities this page cannot offer. A `main` is not enough to press
+    // Run on: the command line has a filesystem behind it and a page does not,
+    // so six of these have an entry point and still cannot start here.
+    const needs = run
+      .filter((item) => item.kind === "capability")
+      .map((item) => (item.message ?? "").match(/`([^`]+)`/)?.[1])
+      .filter(Boolean);
     const tests = lines("deed_test", source).filter((item) => item.kind === "test").length;
-    return { summary: summaryOf(source), runs, tests };
+    return { summary: summaryOf(source), runs, needs, tests };
   }
 
   return { call, lines, version, describe };
