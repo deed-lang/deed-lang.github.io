@@ -25,7 +25,7 @@ Concretely, that rules out a few things that would otherwise be tempting:
   pages the compiler generates rather than a list maintained here.
 - No examples written here. The playground's are the compiler's corpus at the
   pinned tag, and the summary under each one is the comment at the top of the
-  file. Which twelve of them the picker offers is a choice made here, and it is
+  file. Which thirteen of them the picker offers is a choice made here, and it is
   the only one: choosing what to show is not writing it, and every file is
   still served. The landing page's program is the exception, and it is short
   and its refusal was still produced by running it.
@@ -92,13 +92,13 @@ Everything in it comes from somewhere else: each summary is the comment at the
 top of the file, and the rest is what the pinned artifact answered when asked.
 
 What it was asked matters, because "can this be run" has two halves here.
-Twenty-one of the twenty-eight have no `main` at all. Six of the remaining
+Twenty-two of the twenty-nine have no `main` at all. Six of the remaining
 seven have one and want the filesystem, which a page does not have, so `needs`
 records the capabilities they asked for. That leaves exactly one example this
-page can start, and Run is off for the other twenty-seven with the reason
+page can start, and Run is off for the other twenty-eight with the reason
 beside it, rather than letting somebody press it and be refused.
 
-The picker shows twelve of the twenty-eight, and that list is in
+The picker shows thirteen of the twenty-nine, and that list is in
 `tools/artifact.mjs` because both tools need it. The corpus is not a menu:
 about half of it is one language feature at a time, written so the compiler's
 own tests have something to read, and a visitor scrolling past `sink`, `names`
@@ -113,7 +113,7 @@ corpus no longer has, so a promoted or deleted example shortens the menu
 loudly.
 
 `greeting.deed` is left out because it imports two other modules and this page
-hands the compiler one file. That is the only one: the other twenty-eight were
+hands the compiler one file. That is the only one: the other twenty-nine were
 checked through the pinned artifact and every one of them is clean.
 
 ## Layout
@@ -144,7 +144,7 @@ the release the pin names, and the example index still says what the compiler
 says.
 
 That last part is not a shape check. It loads the pinned artifact, asks it its
-version, and asks it about all twenty-eight examples, because a committed wasm
+version, and asks it about all twenty-nine examples, because a committed wasm
 is a file nothing here ever built: a truncated copy, or a different build
 wearing the right name, spells its filename correctly and passes everything
 else. It runs on every pull request too.
