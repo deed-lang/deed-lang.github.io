@@ -9,11 +9,11 @@ import { readFile } from "node:fs/promises";
 
 // What the picker offers, in this order.
 //
-// The corpus is twenty-eight files and it is not a menu: about half of it is
+// The corpus is twenty-nine files and it is not a menu: about half of it is
 // one language feature at a time, written so the compiler's own tests have
 // something to read, and a visitor scrolling past `sink`, `names` and
-// `diverge` is being shown the inside of a test suite. So the picker is a
-// dozen programs a person would recognise, and the rest stay on disk, still
+// `diverge` is being shown the inside of a test suite. So the picker is
+// thirteen programs a person would recognise, and the rest stay on disk, still
 // asked about here and still reachable by name.
 //
 // `hello` is first because it is the only one this page can start. The others
@@ -33,6 +33,7 @@ export const SHOWN = [
   "using_list.deed",
   "logs.deed",
   "todo.deed",
+  "tasks.deed",
   "proven.deed",
 ];
 

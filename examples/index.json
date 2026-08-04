@@ -1,5 +1,5 @@
 {
-  "tag": "v0.2.3",
+  "tag": "v0.2.4",
   "examples": [
     {
       "file": "calculator.deed",
@@ -146,7 +146,7 @@
     },
     {
       "file": "proven.deed",
-      "shown": 11,
+      "shown": 12,
       "summary": "The Proven tier, which is the part of this language that is supposed to be interesting.",
       "runs": false,
       "needs": [],
@@ -191,6 +191,14 @@
       "runs": false,
       "needs": [],
       "tests": 7
+    },
+    {
+      "file": "tasks.deed",
+      "shown": 11,
+      "summary": "Tasks, out of the library.",
+      "runs": false,
+      "needs": [],
+      "tests": 2
     },
     {
       "file": "tic_tac_toe.deed",
