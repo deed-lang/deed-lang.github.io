@@ -13,8 +13,8 @@
 // release, because a release asset cannot be fetched from a browser at all:
 // both the download URL and the API one redirect to a host that sends no
 // `Access-Control-Allow-Origin`. See decisions/2026-07-31-no-build-step.md.
-const TAG = "v0.2.4";
-const VERSION = "0.2.4";
+const TAG = "v0.2.5";
+const VERSION = "0.2.5";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
 
 const SOURCE = document.getElementById("source");
