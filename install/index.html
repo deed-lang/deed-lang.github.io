@@ -62,7 +62,7 @@
         </p>
 
         <!--
-          Every `deed 0.2.5` below is the output of that binary on that
+          Every `deed 0.2.6` below is the output of that binary on that
           platform, printed by the release workflow, which refuses to publish
           when a binary disagrees with its tag. The program output further down
           was produced by running the released Windows build.
@@ -83,15 +83,15 @@
           <tbody>
             <tr>
               <td>Linux, 64-bit Intel or AMD</td>
-              <td><code>deed-v0.2.5-x86_64-unknown-linux-gnu.tar.gz</code></td>
+              <td><code>deed-v0.2.6-x86_64-unknown-linux-gnu.tar.gz</code></td>
             </tr>
             <tr>
               <td>macOS, Apple silicon</td>
-              <td><code>deed-v0.2.5-aarch64-apple-darwin.tar.gz</code></td>
+              <td><code>deed-v0.2.6-aarch64-apple-darwin.tar.gz</code></td>
             </tr>
             <tr>
               <td>Windows, 64-bit</td>
-              <td><code>deed-v0.2.5-x86_64-pc-windows-msvc.zip</code></td>
+              <td><code>deed-v0.2.6-x86_64-pc-windows-msvc.zip</code></td>
             </tr>
           </tbody>
         </table>
@@ -110,23 +110,23 @@
         </p>
 
         <h3>Linux</h3>
-        <pre class="code"><code>$ tar xzf deed-v0.2.5-x86_64-unknown-linux-gnu.tar.gz
-$ ./deed-v0.2.5-x86_64-unknown-linux-gnu/deed --version
-deed 0.2.5</code></pre>
+        <pre class="code"><code>$ tar xzf deed-v0.2.6-x86_64-unknown-linux-gnu.tar.gz
+$ ./deed-v0.2.6-x86_64-unknown-linux-gnu/deed --version
+deed 0.2.6</code></pre>
 
         <h3>macOS</h3>
-        <pre class="code"><code>$ tar xzf deed-v0.2.5-aarch64-apple-darwin.tar.gz
-$ xattr -d com.apple.quarantine deed-v0.2.5-aarch64-apple-darwin/deed
-$ ./deed-v0.2.5-aarch64-apple-darwin/deed --version
-deed 0.2.5</code></pre>
+        <pre class="code"><code>$ tar xzf deed-v0.2.6-aarch64-apple-darwin.tar.gz
+$ xattr -d com.apple.quarantine deed-v0.2.6-aarch64-apple-darwin/deed
+$ ./deed-v0.2.6-aarch64-apple-darwin/deed --version
+deed 0.2.6</code></pre>
         <p>
           The middle line is not optional and it is explained below.
         </p>
 
         <h3>Windows</h3>
-        <pre class="code"><code>&gt; Expand-Archive deed-v0.2.5-x86_64-pc-windows-msvc.zip .
-&gt; .\deed-v0.2.5-x86_64-pc-windows-msvc\deed.exe --version
-deed 0.2.5</code></pre>
+        <pre class="code"><code>&gt; Expand-Archive deed-v0.2.6-x86_64-pc-windows-msvc.zip .
+&gt; .\deed-v0.2.6-x86_64-pc-windows-msvc\deed.exe --version
+deed 0.2.6</code></pre>
 
         <h2>What your operating system will say about it</h2>
         <p>
@@ -162,7 +162,7 @@ deed 0.2.5</code></pre>
           itself. To type <code>deed</code> instead of a path, move it onto
           yours:
         </p>
-        <pre class="code"><code>$ sudo mv deed-v0.2.5-x86_64-unknown-linux-gnu/deed /usr/local/bin/deed</code></pre>
+        <pre class="code"><code>$ sudo mv deed-v0.2.6-x86_64-unknown-linux-gnu/deed /usr/local/bin/deed</code></pre>
         <p>
           On Windows, put the folder on <code>Path</code> through Settings, or
           keep using the full path. Nothing on this page needs it on
@@ -218,7 +218,7 @@ $ cargo install --path crates/deed-cli</code></pre>
             <code>./</code>, or move it as above.
           </dd>
 
-          <dt><code>--version</code> prints something other than 0.2.5</dt>
+          <dt><code>--version</code> prints something other than 0.2.6</dt>
           <dd>
             You are running a different <code>deed</code> than the one you
             unpacked. <code>which deed</code> says which.
