@@ -13,11 +13,17 @@ import { readFile } from "node:fs/promises";
 // one language feature at a time, written so the compiler's own tests have
 // something to read, and a visitor scrolling past `sink`, `names` and
 // `diverge` is being shown the inside of a test suite. So the picker is
-// thirteen programs a person would recognise, and the rest stay on disk, still
+// fourteen programs a person would recognise, and the rest stay on disk, still
 // asked about here and still reachable by name.
 //
 // `hello` is first because it is the only one this page can start. The others
 // have tests, which is the button that works for them.
+//
+// `transfer` is late rather than absent, which it was for four releases. It is
+// the program every design document works through and the one the README
+// opens with, and it is not a feature written down on its own: it is a ledger
+// with an effect, a handler, a contract and a refinement in it. Leaving it out
+// while offering `counter` was an oversight rather than a judgement.
 //
 // It lives beside the code that asks the compiler because both tools need it:
 // one writes the order into the index and the other checks it is still there.
@@ -34,6 +40,7 @@ export const SHOWN = [
   "logs.deed",
   "todo.deed",
   "tasks.deed",
+  "transfer.deed",
   "proven.deed",
 ];
 

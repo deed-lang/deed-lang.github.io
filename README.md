@@ -25,7 +25,7 @@ Concretely, that rules out a few things that would otherwise be tempting:
   pages the compiler generates rather than a list maintained here.
 - No examples written here. The playground's are the compiler's corpus at the
   pinned tag, and the summary under each one is the comment at the top of the
-  file. Which thirteen of them the picker offers is a choice made here, and it is
+  file. Which fourteen of them the picker offers is a choice made here, and it is
   the only one: choosing what to show is not writing it, and every file is
   still served. The landing page's program is the exception, and it is short
   and its refusal was still produced by running it.
@@ -98,11 +98,11 @@ records the capabilities they asked for. That leaves exactly one example this
 page can start, and Run is off for the other twenty-eight with the reason
 beside it, rather than letting somebody press it and be refused.
 
-The picker shows thirteen of the twenty-nine, and that list is in
+The picker shows fourteen of the twenty-nine, and that list is in
 `tools/artifact.mjs` because both tools need it. The corpus is not a menu:
 about half of it is one language feature at a time, written so the compiler's
 own tests have something to read, and a visitor scrolling past `sink`, `names`
-and `diverge` is being shown the inside of a test suite. The other sixteen stay
+and `diverge` is being shown the inside of a test suite. The other fifteen stay
 here, still asked about, still reachable by name.
 
 Forgetting that step is caught rather than shipped. `tools/check.mjs` asks the

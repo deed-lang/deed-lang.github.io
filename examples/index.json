@@ -146,7 +146,7 @@
     },
     {
       "file": "proven.deed",
-      "shown": 12,
+      "shown": 13,
       "summary": "The Proven tier, which is the part of this language that is supposed to be interesting.",
       "runs": false,
       "needs": [],
@@ -223,7 +223,7 @@
     },
     {
       "file": "transfer.deed",
-      "shown": -1,
+      "shown": 12,
       "summary": "The running example, and two of the fourteen design documents work through it: design/02-syntax.md and design/03-effects.md.",
       "runs": false,
       "needs": [],

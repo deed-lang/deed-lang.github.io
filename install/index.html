@@ -57,8 +57,9 @@
       <main>
         <h1>Install</h1>
         <p class="lede">
-          One file. The compiler, the formatter, the test runner and the
-          language server are all in it, and there is nothing else to install.
+          One file. The compiler, the test runner, the formatter, the
+          WebAssembly backend, the language server, the debugger and the agent
+          server are all in it, and there is nothing else to install.
         </p>
 
         <!--
@@ -192,6 +193,109 @@ hello, world</code></pre>
         <p>
           The <a href="../play/">playground</a> runs the same compiler in a
           browser tab, so you can try things there without any of this.
+        </p>
+
+        <!--
+          The lede claims a list, and this is it. Every line here is a
+          shortened `deed --help`, which is the binary describing itself; the
+          page named two of these and showed one of them for four releases,
+          which is a page that undersells the file it is telling you to
+          download.
+        -->
+        <h2>What else is in it</h2>
+        <p>
+          The same file with a different first word each time. None of them
+          needs anything else on the machine, and
+          <code>deed --help</code> is the longer version of this table.
+        </p>
+        <table class="files">
+          <thead>
+            <tr>
+              <th scope="col">Command</th>
+              <th scope="col">What it is</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>deed check</code></td>
+              <td>The compiler. Silence is the answer.</td>
+            </tr>
+            <tr>
+              <td><code>deed test</code></td>
+              <td>
+                The test blocks, and the properties a contract generates. It
+                refuses to run anything that does not check.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed run</code></td>
+              <td>
+                Calls <code>main</code>, handing it the one
+                <code>System</code> capability there is.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed build</code></td>
+              <td>
+                Compiles to WebAssembly. With <code>--component</code>, writes
+                the <code>.wit</code> world the effect rows add up to, which is
+                <a href="../one-clause/">the one clause</a> page.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed doc</code></td>
+              <td>
+                A module's API reference, as Markdown. No visibility modifiers
+                here, so there is nothing to decide about what belongs on it.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed fmt</code></td>
+              <td>One canonical form, and no options for the output.</td>
+            </tr>
+            <tr>
+              <td><code>deed fix</code></td>
+              <td>
+                Applies the repairs that are certain and leaves the guesses
+                alone.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed explain</code></td>
+              <td>
+                The page for one diagnostic code.
+                <a href="../errors/">Every code has one.</a>
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed lsp</code></td>
+              <td>A language server, for an editor to start rather than you.</td>
+            </tr>
+            <tr>
+              <td><code>deed debug</code></td>
+              <td>
+                A debug adapter: breakpoints, stepping, and the stack and
+                bindings of every active call.
+              </td>
+            </tr>
+            <tr>
+              <td><code>deed mcp</code></td>
+              <td>
+                A Model Context Protocol server, so an agent can ask the
+                compiler the questions an editor asks.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The last one is worth a second sentence, because the argument this
+          language is built on is that most code is no longer typed out by a
+          person. <code>deed mcp</code> holds no capability: a program arrives
+          as text and the answer leaves as text, and nothing it runs can reach
+          a file. What it hands back is not only the diagnostics but which tier
+          each obligation landed in, so the thing writing the code can see the
+          difference between a contract that was proved and one that was left
+          to a runtime check.
         </p>
 
         <h2 id="source">From source</h2>
