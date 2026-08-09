@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>For agents | Deed</title>
+    <meta
+      name="description"
+      content="Deed ships a Model Context Protocol server, so the thing writing the code can ask the compiler instead of remembering. It answers with which obligations were proved and which were left to a runtime check."
+    />
+    <link rel="icon" href="../assets/brand/deed-cipher-favicon.ico" sizes="any" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="../assets/fonts/ia-writer-mono-latin-400-normal.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="../assets/fonts/ia-writer-mono-latin-700-normal.woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <div class="header-section">
+          <div class="header-frame">
+            <h1>
+              <a href="../"
+                ><svg class="mark" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                  <path d="M176 116H104V396H176" fill="none" stroke="currentColor" stroke-width="56" />
+                  <rect x="236" y="128" width="200" height="56" fill="#24d05a" />
+                  <rect x="236" y="228" width="148" height="56" fill="#eb4888" />
+                  <rect x="236" y="328" width="176" height="56" fill="#10a2f5" />
+                </svg
+                >Deed</a
+              >
+            </h1>
+            <h2>A function can only do what its signature admits to.</h2>
+          </div>
+        </div>
+      </header>
+
+      <nav class="site">
+        <a href="../one-clause/">One clause</a>
+        <a href="../play/">Playground</a>
+        <a href="./" class="active">For agents</a>
+        <a href="../errors/">Diagnostics</a>
+        <a href="../install/">Install</a>
+        <a href="https://github.com/deed-lang/deed">Source</a>
+      </nav>
+
+      <main>
+        <h1>For agents</h1>
+        <p class="lede">
+          Most code being written now is not typed out by a person. Deed is
+          built on that being true, and <code>deed mcp</code> is the part of it
+          you can point a tool at: a Model Context Protocol server, so the
+          thing writing the code asks the compiler instead of remembering.
+        </p>
+        <p class="status" id="status" aria-live="polite">loading the compiler</p>
+
+        <!--
+          Every transcript on this page is filled in by assets/agents.js from
+          the pinned artifact, in the reader's tab. Nothing below is a sample
+          output written here, which is the same rule the playground and the
+          diagnostics index follow, and it matters more here than anywhere:
+          this page is a claim about what a machine gets back.
+        -->
+
+        <h2>What comes back that a type error does not</h2>
+        <p>
+          A compiler that only says yes or no tells an agent whether it has
+          finished. Deed says which of the promises in the signature it
+          <em>settled</em>, and which it could only arrange to check at
+          runtime. That is a gradient, and something iterating on its own
+          output can climb it.
+        </p>
+        <pre class="code"><code id="tiers-sent">…</code></pre>
+        <pre class="code"><code id="tiers-got">…</code></pre>
+        <p>
+          <code>proven</code> means the checker discharged it at compile time.
+          <code>tested</code> means it produced a property and ran it. Neither
+          was asked for.
+        </p>
+
+        <h2>And when it cannot</h2>
+        <p>
+          The same refinement without the precondition that establishes it. The
+          answer is not "no", it is which tier this landed in and the reason it
+          did not land higher.
+        </p>
+        <pre class="code"><code id="guarded-sent">…</code></pre>
+        <pre class="code"><code id="guarded-got">…</code></pre>
+        <p>
+          <em>Nothing narrowed this name</em> is a sentence a model can act on.
+          It says where to look, which is the caller's side, and it is the
+          difference between a warning and a next step.
+        </p>
+
+        <h2>A repair, and the reason behind it</h2>
+        <p>
+          Models reach for <code>export</code>, because most languages have one.
+          Across
+          <a href="https://github.com/deed-lang/deed/blob/main/benchmarks/RESULTS.md"
+            >five recorded runs</a
+          >
+          this was the single most common thing said, forty-five times, in
+          every task. So the answer carries the edit that fixes it and the
+          reason the word does not exist:
+        </p>
+        <pre class="code"><code id="repair-sent">…</code></pre>
+        <pre class="code"><code id="repair-got">…</code></pre>
+        <p>
+          <code>machine-applicable</code> is the compiler saying this one may
+          be applied without asking. Guesses are marked differently and are
+          never applied on their own, which is a distinction an agent can only
+          respect if it is told.
+        </p>
+
+        <h2>A test nobody wrote</h2>
+        <p>
+          The contract in a signature is not documentation. Ask the same server
+          to run the tests of a module that contains none, and it runs the
+          property the contract generates:
+        </p>
+        <pre class="code"><code id="property-sent">…</code></pre>
+        <pre class="code"><code id="property-got">…</code></pre>
+        <p>
+          A hundred cases, from a seed that is in the answer so the run can be
+          repeated. In the recorded runs this happened three times to a model
+          that had been told not to write tests.
+        </p>
+
+        <h2>Wiring it up</h2>
+        <p>
+          The server speaks MCP on stdin and stdout, so a client starts it the
+          way it starts any other:
+        </p>
+        <pre class="code"><code>{
+  "mcpServers": {
+    "deed": { "command": "deed", "args": ["mcp"] }
+  }
+}</code></pre>
+        <p>
+          There is nothing else to install; see
+          <a href="../install/">Install</a>. Six tools:
+          <code>deed_check</code>, <code>deed_test</code>,
+          <code>deed_run</code>, <code>deed_fmt</code>, <code>deed_fix</code>
+          and <code>deed_explain</code>. The full walkthrough is
+          <a
+            href="https://github.com/deed-lang/deed/blob/main/how-to/let-an-agent-use-the-compiler.md"
+            >in the repository</a
+          >.
+        </p>
+
+        <h2>What it is not allowed to do</h2>
+        <p>
+          The server holds no capability. A program arrives as text and the
+          answer leaves as text; it opens no file, resolves no path, and
+          refuses to run a program whose signature reaches for a directory
+          before running a single instruction. That is not a sandbox bolted on
+          — it is the same rule the language is about, applied to itself.
+        </p>
+        <p>
+          The cost is written down rather than hidden: a server with no
+          filesystem cannot be handed a module set, so a program that imports
+          another module has to arrive with it.
+        </p>
+
+        <h2>Does it actually help?</h2>
+        <p>
+          Measured, not asserted. Six tasks, one model, five runs, against a
+          control arm with the compiler taken away:
+        </p>
+        <table class="files">
+          <thead>
+            <tr>
+              <th scope="col">Arm</th>
+              <th scope="col">Answered</th>
+              <th scope="col">Check</th>
+              <th scope="col">Pass their tests</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>prompt only</td>
+              <td>6/6</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>with <code>deed mcp</code></td>
+              <td>6/6</td>
+              <td>5 or 6</td>
+              <td>5</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Six confident answers either way, and not one of the prompt-only ones
+          compiles. Deed is in nobody's training data, which is what makes the
+          control arm worth having and what makes the number honest rather than
+          impressive.
+        </p>
+        <p>
+          The record says what it does not establish, too: one model family, no
+          comparison against a language without contracts, and a control arm
+          recorded against an earlier build.
+          <a href="https://github.com/deed-lang/deed/blob/main/benchmarks/RESULTS.md"
+            >Read it</a
+          >
+          before quoting it.
+        </p>
+      </main>
+
+      <footer class="site">
+        <p>
+          The transcripts on this page are what the pinned compiler answered in
+          your tab, for the programs shown above them. Nothing here is a sample
+          output written by hand. On the wire each answer is one JSON object per
+          line; the indentation is the only thing this page adds.
+        </p>
+        <p>
+          Apache-2.0. This page has no analytics, no cookies and no third-party
+          requests.
+        </p>
+      </footer>
+    </div>
+    <script src="../assets/color.js"></script>
+    <script src="../assets/agents.js"></script>
+  </body>
+</html>
