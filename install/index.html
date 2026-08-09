@@ -63,7 +63,7 @@
         </p>
 
         <!--
-          Every `deed 0.2.8` below is the output of that binary on that
+          Every `deed 0.2.9` below is the output of that binary on that
           platform, printed by the release workflow, which refuses to publish
           when a binary disagrees with its tag. The program output further down
           was produced by running the released Windows build.
@@ -73,7 +73,41 @@
           not is a broken download link, and it was one for a day.
         -->
 
-        <h2>Take the file for your machine</h2>
+        <h2>One line</h2>
+        <p>On Linux, or on an Apple-silicon Mac:</p>
+        <pre class="code"><code>$ curl -fsSL https://raw.githubusercontent.com/deed-lang/deed/main/install.sh | sh</code></pre>
+        <p>On Windows:</p>
+        <pre class="code"><code>&gt; irm https://raw.githubusercontent.com/deed-lang/deed/main/install.ps1 | iex</code></pre>
+        <p>
+          Either one works out which release asset fits the machine, downloads
+          it along with the checksum list the release published, refuses it if
+          the hash does not match, and leaves one file in your own profile:
+          <code>~/.local/bin</code>, or
+          <code>%LOCALAPPDATA%\Programs\deed</code>. It never asks for a
+          password, because it never writes anywhere that would need one, and
+          there is nothing to uninstall but the file.
+        </p>
+        <p>
+          What the hash buys is worth stating exactly, since a
+          <code>sha256</code> in an install script tends to read like it proves
+          more than it does. The checksums come from the same release as the
+          binary, so this catches a truncated or corrupted download and does
+          not catch a compromised release.
+        </p>
+        <p>
+          Piping a script into a shell is a thing worth being uneasy about.
+          Both scripts are short and are in the repository beside the compiler
+          &mdash; <a href="https://github.com/deed-lang/deed/blob/main/install.sh"
+            ><code>install.sh</code></a
+          >
+          and
+          <a href="https://github.com/deed-lang/deed/blob/main/install.ps1"
+            ><code>install.ps1</code></a
+          >
+          &mdash; and the rest of this page is the same work done by hand.
+        </p>
+
+        <h2>By hand instead</h2>
         <table class="files">
           <thead>
             <tr>
@@ -84,15 +118,15 @@
           <tbody>
             <tr>
               <td>Linux, 64-bit Intel or AMD</td>
-              <td><code>deed-v0.2.8-x86_64-unknown-linux-gnu.tar.gz</code></td>
+              <td><code>deed-v0.2.9-x86_64-unknown-linux-gnu.tar.gz</code></td>
             </tr>
             <tr>
               <td>macOS, Apple silicon</td>
-              <td><code>deed-v0.2.8-aarch64-apple-darwin.tar.gz</code></td>
+              <td><code>deed-v0.2.9-aarch64-apple-darwin.tar.gz</code></td>
             </tr>
             <tr>
               <td>Windows, 64-bit</td>
-              <td><code>deed-v0.2.8-x86_64-pc-windows-msvc.zip</code></td>
+              <td><code>deed-v0.2.9-x86_64-pc-windows-msvc.zip</code></td>
             </tr>
           </tbody>
         </table>
@@ -101,7 +135,7 @@
           <a href="https://github.com/deed-lang/deed/releases/latest"
             >the latest release</a
           >. There is no Intel Mac build and no Linux ARM build; on those,
-          <a href="#source">build from source</a>.
+          <a href="#source">build it with Rust</a>.
         </p>
 
         <h2>Unpack it and ask it what it is</h2>
@@ -111,23 +145,23 @@
         </p>
 
         <h3>Linux</h3>
-        <pre class="code"><code>$ tar xzf deed-v0.2.8-x86_64-unknown-linux-gnu.tar.gz
-$ ./deed-v0.2.8-x86_64-unknown-linux-gnu/deed --version
-deed 0.2.8</code></pre>
+        <pre class="code"><code>$ tar xzf deed-v0.2.9-x86_64-unknown-linux-gnu.tar.gz
+$ ./deed-v0.2.9-x86_64-unknown-linux-gnu/deed --version
+deed 0.2.9</code></pre>
 
         <h3>macOS</h3>
-        <pre class="code"><code>$ tar xzf deed-v0.2.8-aarch64-apple-darwin.tar.gz
-$ xattr -d com.apple.quarantine deed-v0.2.8-aarch64-apple-darwin/deed
-$ ./deed-v0.2.8-aarch64-apple-darwin/deed --version
-deed 0.2.8</code></pre>
+        <pre class="code"><code>$ tar xzf deed-v0.2.9-aarch64-apple-darwin.tar.gz
+$ xattr -d com.apple.quarantine deed-v0.2.9-aarch64-apple-darwin/deed
+$ ./deed-v0.2.9-aarch64-apple-darwin/deed --version
+deed 0.2.9</code></pre>
         <p>
           The middle line is not optional and it is explained below.
         </p>
 
         <h3>Windows</h3>
-        <pre class="code"><code>&gt; Expand-Archive deed-v0.2.8-x86_64-pc-windows-msvc.zip .
-&gt; .\deed-v0.2.8-x86_64-pc-windows-msvc\deed.exe --version
-deed 0.2.8</code></pre>
+        <pre class="code"><code>&gt; Expand-Archive deed-v0.2.9-x86_64-pc-windows-msvc.zip .
+&gt; .\deed-v0.2.9-x86_64-pc-windows-msvc\deed.exe --version
+deed 0.2.9</code></pre>
 
         <h2>What your operating system will say about it</h2>
         <p>
@@ -160,10 +194,11 @@ deed 0.2.8</code></pre>
         <h2>Where to put it</h2>
         <p>
           Anywhere. It reads nothing next to itself and writes nothing beside
-          itself. To type <code>deed</code> instead of a path, move it onto
-          yours:
+          itself. The one-line install has already put it somewhere your shell
+          looks; if you unpacked it by hand and want to type
+          <code>deed</code> instead of a path, move it onto yours:
         </p>
-        <pre class="code"><code>$ sudo mv deed-v0.2.8-x86_64-unknown-linux-gnu/deed /usr/local/bin/deed</code></pre>
+        <pre class="code"><code>$ sudo mv deed-v0.2.9-x86_64-unknown-linux-gnu/deed /usr/local/bin/deed</code></pre>
         <p>
           On Windows, put the folder on <code>Path</code> through Settings, or
           keep using the full path. Nothing on this page needs it on
@@ -171,7 +206,33 @@ deed 0.2.8</code></pre>
         </p>
 
         <h2>A first program</h2>
-        <p>Put this in a file called <code>hello.deed</code>:</p>
+        <p>
+          <code>deed new</code> writes one, rather than leaving you to work the
+          module header and the file layout out of a repository:
+        </p>
+        <pre class="code"><code>$ deed new greeter
+greeter/greeter.deed
+greeter/main.deed
+
+next: cd greeter &amp;&amp; deed test .
+
+$ cd greeter
+$ deed test .
+./greeter.deed
+  ok    a greeting carries the name it was given
+  ok    there is no greeting for nobody
+  ok    property greeting (100 cases)
+
+3 passed, 0 failed
+
+$ deed run main.deed
+hello, world</code></pre>
+        <p>
+          Three tests out of two files, and only two of them are written down.
+          The third is generated from the contract on <code>greeting</code>,
+          which is the point: a signature is checked rather than read.
+        </p>
+        <p>By hand instead, the whole of a program is this much:</p>
         <pre class="code"><code>module hello
 
 fn main(sys: System) -&gt; Int
@@ -216,6 +277,14 @@ hello, world</code></pre>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td><code>deed new</code></td>
+              <td>
+                A project: a library module with a contract and its tests, and
+                a program that imports it. No manifest, because a new project
+                has no code outside its own tree.
+              </td>
+            </tr>
             <tr>
               <td><code>deed check</code></td>
               <td>The compiler. Silence is the answer.</td>
@@ -298,14 +367,22 @@ hello, world</code></pre>
           to a runtime check.
         </p>
 
-        <h2 id="source">From source</h2>
+        <h2 id="source">With Rust instead</h2>
         <p>Needs Rust 1.85 or newer, and nothing else:</p>
+        <pre class="code"><code>$ cargo install deed-lang</code></pre>
+        <p>
+          <code>deed</code> on crates.io belongs to somebody else, so the
+          package is <code>deed-lang</code>. The binary it installs is
+          <code>deed</code>, and it is the same one file this page has been
+          talking about.
+        </p>
+        <p>From a clone, if you want the tree it was built from:</p>
         <pre class="code"><code>$ git clone https://github.com/deed-lang/deed
 $ cd deed
 $ cargo install --path crates/deed-cli</code></pre>
         <p>
-          The workspace has no external dependencies, so this compiles what is
-          in the tree and nothing from anywhere else.
+          The workspace has no external dependencies, so either way this
+          compiles the compiler and nothing from anywhere else.
         </p>
 
         <h2>When it does not work</h2>
@@ -322,7 +399,7 @@ $ cargo install --path crates/deed-cli</code></pre>
             <code>./</code>, or move it as above.
           </dd>
 
-          <dt><code>--version</code> prints something other than 0.2.8</dt>
+          <dt><code>--version</code> prints something other than 0.2.9</dt>
           <dd>
             You are running a different <code>deed</code> than the one you
             unpacked. <code>which deed</code> says which.
