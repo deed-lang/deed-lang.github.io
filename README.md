@@ -121,6 +121,7 @@ checked through the pinned artifact and every one of them is clean.
 ```
 index.html          what the language is
 play/               the playground
+agents/             what `deed mcp` hands back, asked in the tab
 errors/             every diagnostic code, read out of the compiler
 install/            how to get a binary running
 one-clause/         what a signature turns into
