@@ -92,17 +92,9 @@ function esc(text) {
 
 async function load() {
   let wasm;
-  let reviewDemo;
   try {
-    const [module, reviewResponse] = await Promise.all([
-      WebAssembly.instantiateStreaming(fetch(WASM_URL), {}),
-      fetch(REVIEW_DEMO_URL),
-    ]);
-    if (!reviewResponse.ok) {
-      throw new Error(`the review demo returned HTTP ${reviewResponse.status}`);
-    }
+    const module = await WebAssembly.instantiateStreaming(fetch(WASM_URL), {});
     wasm = module.instance.exports;
-    reviewDemo = await reviewResponse.json();
   } catch (error) {
     STATUS.innerHTML = `<span class="d-error">The compiler did not load, so the answers below are missing. (${esc(error)})</span>`;
     return;
@@ -141,29 +133,53 @@ async function load() {
   };
 
   const review = (before, after) => {
+    if (typeof wasm.deed_review !== "function") {
+      throw new Error("the pinned compiler has no deed_review export");
+    }
     const beforeInput = encoder.encode(before);
     const afterInput = encoder.encode(after);
-    const beforePtr = wasm.deed_alloc(beforeInput.length);
-    const afterPtr = wasm.deed_alloc(afterInput.length);
-    bytes().set(beforeInput, beforePtr);
-    bytes().set(afterInput, afterPtr);
-    wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
-    const text = read();
-    wasm.deed_free(beforePtr, beforeInput.length);
-    wasm.deed_free(afterPtr, afterInput.length);
-    return text
-      .split("\n")
-      .filter((line) => line.trim() !== "")
-      .map((line) => JSON.parse(line));
+    let beforePtr = null;
+    let afterPtr = null;
+    try {
+      beforePtr = wasm.deed_alloc(beforeInput.length);
+      afterPtr = wasm.deed_alloc(afterInput.length);
+      bytes().set(beforeInput, beforePtr);
+      bytes().set(afterInput, afterPtr);
+      wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
+      return read()
+        .split("\n")
+        .filter((line) => line.trim() !== "")
+        .map((line) => JSON.parse(line));
+    } finally {
+      if (beforePtr !== null) wasm.deed_free(beforePtr, beforeInput.length);
+      if (afterPtr !== null) wasm.deed_free(afterPtr, afterInput.length);
+    }
   };
 
-  const before = `${reviewDemo.before.join("\n")}\n`;
-  const after = `${reviewDemo.after.join("\n")}\n`;
-  REVIEW_BEFORE.textContent = before.trimEnd();
-  REVIEW_AFTER.textContent = after.trimEnd();
-  REVIEW_GOT.textContent = review(before, after)
-    .map((line) => JSON.stringify(line, null, 2))
-    .join("\n\n");
+  try {
+    const response = await fetch(REVIEW_DEMO_URL);
+    if (!response.ok) throw new Error(`the review demo returned HTTP ${response.status}`);
+    const demo = await response.json();
+    if (
+      !Array.isArray(demo.before) ||
+      !demo.before.every((line) => typeof line === "string") ||
+      !Array.isArray(demo.after) ||
+      !demo.after.every((line) => typeof line === "string")
+    ) {
+      throw new Error("the review demo does not contain before and after source lines");
+    }
+    const before = `${demo.before.join("\n")}\n`;
+    const after = `${demo.after.join("\n")}\n`;
+    REVIEW_BEFORE.textContent = before.trimEnd();
+    REVIEW_AFTER.textContent = after.trimEnd();
+    REVIEW_GOT.textContent = review(before, after)
+      .map((line) => JSON.stringify(line, null, 2))
+      .join("\n\n");
+  } catch (error) {
+    REVIEW_BEFORE.textContent = "The review demo did not load.";
+    REVIEW_AFTER.textContent = "The review demo did not load.";
+    REVIEW_GOT.textContent = `The receipt could not be produced. (${error})`;
+  }
 
   for (const { id, verb, source } of ASKS) {
     const sent = document.getElementById(`${id}-sent`);

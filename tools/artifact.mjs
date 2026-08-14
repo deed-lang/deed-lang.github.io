@@ -75,20 +75,27 @@ export async function open(path) {
   }
 
   function review(before, after) {
+    if (typeof wasm.deed_review !== "function") {
+      throw new Error("the pinned artifact has no deed_review export");
+    }
     const beforeInput = encoder.encode(before);
     const afterInput = encoder.encode(after);
-    const beforePtr = wasm.deed_alloc(beforeInput.length);
-    const afterPtr = wasm.deed_alloc(afterInput.length);
-    bytes().set(beforeInput, beforePtr);
-    bytes().set(afterInput, afterPtr);
-    wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
-    const text = read();
-    wasm.deed_free(beforePtr, beforeInput.length);
-    wasm.deed_free(afterPtr, afterInput.length);
-    return text
-      .split("\n")
-      .filter((line) => line.trim() !== "")
-      .map((line) => JSON.parse(line));
+    let beforePtr = null;
+    let afterPtr = null;
+    try {
+      beforePtr = wasm.deed_alloc(beforeInput.length);
+      afterPtr = wasm.deed_alloc(afterInput.length);
+      bytes().set(beforeInput, beforePtr);
+      bytes().set(afterInput, afterPtr);
+      wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
+      return read()
+        .split("\n")
+        .filter((line) => line.trim() !== "")
+        .map((line) => JSON.parse(line));
+    } finally {
+      if (beforePtr !== null) wasm.deed_free(beforePtr, beforeInput.length);
+      if (afterPtr !== null) wasm.deed_free(afterPtr, afterInput.length);
+    }
   }
 
   const lines = (verb, source) =>

@@ -140,10 +140,18 @@ if (deed) {
 // the page and this check cannot drift onto different demonstrations, and the
 // receipt is asked of the released artifact rather than copied into either.
 if (deed) {
-  const demo = JSON.parse(await readFile(join(root, "assets", "review-demo.json"), "utf8"));
-  const before = `${demo.before.join("\n")}\n`;
-  const after = `${demo.after.join("\n")}\n`;
   try {
+    const demo = JSON.parse(await readFile(join(root, "assets", "review-demo.json"), "utf8"));
+    if (
+      !Array.isArray(demo.before) ||
+      !demo.before.every((line) => typeof line === "string") ||
+      !Array.isArray(demo.after) ||
+      !demo.after.every((line) => typeof line === "string")
+    ) {
+      throw new Error("review-demo.json needs before and after arrays of source lines");
+    }
+    const before = `${demo.before.join("\n")}\n`;
+    const after = `${demo.after.join("\n")}\n`;
     const receipts = deed.review(before, after);
     const receipt = receipts.length === 1 ? receipts[0] : null;
     if (!receipt || receipt.kind !== "review_receipt") {
