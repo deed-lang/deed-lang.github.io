@@ -63,11 +63,11 @@ Moving the pin:
 ```
 $ gh release download vX.Y.Z --repo deed-lang/deed --pattern '*.wasm' --dir assets
 $ git rm assets/deed-<old tag>-wasm32-unknown-unknown.wasm
-$ $EDITOR assets/play.js assets/errors.js    # TAG and VERSION
+$ $EDITOR assets/play.js assets/errors.js assets/agents.js    # TAG and VERSION
 $ $EDITOR install/index.html                 # the filenames and `deed X.Y.Z`
 ```
 
-Two scripts carry the pin and the install page names the same release in
+Three scripts carry the pin and the install page names the same release in
 prose, so `node tools/check.mjs` compares all three and fails if any of them
 disagrees. The install page went a day naming a release that was no longer the
 latest one, which made its own instructions unfollowable, and nothing noticed.
@@ -121,7 +121,7 @@ checked through the pinned artifact and every one of them is clean.
 ```
 index.html          what the language is
 play/               the playground
-agents/             what `deed mcp` hands back, asked in the tab
+agents/             review receipts and what `deed mcp` hands back, asked in the tab
 errors/             every diagnostic code, read out of the compiler
 install/            how to get a binary running
 one-clause/         what a signature turns into
@@ -145,10 +145,11 @@ the release the pin names, and the example index still says what the compiler
 says.
 
 That last part is not a shape check. It loads the pinned artifact, asks it its
-version, and asks it about all twenty-nine examples, because a committed wasm
-is a file nothing here ever built: a truncated copy, or a different build
-wearing the right name, spells its filename correctly and passes everything
-else. It runs on every pull request too.
+version, asks it about all twenty-nine examples, and runs the before/after
+review shown on the agents page. A committed wasm is a file nothing here ever
+built: a truncated copy, or a different build wearing the right name, spells
+its filename correctly and passes everything else. It runs on every pull
+request too.
 
 ## Licence
 

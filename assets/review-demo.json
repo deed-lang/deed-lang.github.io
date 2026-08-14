@@ -1,0 +1,36 @@
+{
+  "before": [
+    "module billing/transfer",
+    "",
+    "type Positive = Int where value > 0",
+    "",
+    "effect Store {",
+    "    fn read() -> Int",
+    "    fn write(value: Int) -> ()",
+    "}",
+    "",
+    "fn sync() -> Int uses Store.read, { Store.read() }",
+    "",
+    "fn preserve(value: Positive) -> Positive { value + 1 }"
+  ],
+  "after": [
+    "module billing/transfer",
+    "",
+    "type Positive = Int where value > 0",
+    "",
+    "effect Store {",
+    "    fn read() -> Int",
+    "    fn write(value: Int) -> ()",
+    "}",
+    "",
+    "fn sync() -> Int",
+    "  uses Store.read, Store.write,",
+    "{",
+    "    let value = Store.read()",
+    "    Store.write(value)",
+    "    value",
+    "}",
+    "",
+    "fn preserve(value: Int) -> Positive { value + 1 }"
+  ]
+}

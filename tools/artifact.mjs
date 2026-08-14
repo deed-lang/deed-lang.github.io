@@ -74,6 +74,23 @@ export async function open(path) {
     return text;
   }
 
+  function review(before, after) {
+    const beforeInput = encoder.encode(before);
+    const afterInput = encoder.encode(after);
+    const beforePtr = wasm.deed_alloc(beforeInput.length);
+    const afterPtr = wasm.deed_alloc(afterInput.length);
+    bytes().set(beforeInput, beforePtr);
+    bytes().set(afterInput, afterPtr);
+    wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
+    const text = read();
+    wasm.deed_free(beforePtr, beforeInput.length);
+    wasm.deed_free(afterPtr, afterInput.length);
+    return text
+      .split("\n")
+      .filter((line) => line.trim() !== "")
+      .map((line) => JSON.parse(line));
+  }
+
   const lines = (verb, source) =>
     call(verb, source)
       .split("\n")
@@ -107,7 +124,7 @@ export async function open(path) {
     return { summary: summaryOf(source), runs, needs, tests };
   }
 
-  return { call, lines, version, describe };
+  return { call, lines, review, version, describe };
 }
 
 /// The opening comment, up to the first blank comment line or the first line

@@ -5,11 +5,15 @@
 // a claim about what an agent gets back is worth nothing if the page is the
 // one making it up.
 
-const TAG = "v0.2.10";
-const VERSION = "0.2.10";
+const TAG = "v0.2.11";
+const VERSION = "0.2.11";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
+const REVIEW_DEMO_URL = "../assets/review-demo.json";
 
 const STATUS = document.getElementById("status");
+const REVIEW_BEFORE = document.getElementById("review-before");
+const REVIEW_AFTER = document.getElementById("review-after");
+const REVIEW_GOT = document.getElementById("review-got");
 
 // Each one is a program and the verb an agent would send it to. The programs
 // are short on purpose: this page is about the answer, not the program.
@@ -88,9 +92,17 @@ function esc(text) {
 
 async function load() {
   let wasm;
+  let reviewDemo;
   try {
-    const module = await WebAssembly.instantiateStreaming(fetch(WASM_URL), {});
+    const [module, reviewResponse] = await Promise.all([
+      WebAssembly.instantiateStreaming(fetch(WASM_URL), {}),
+      fetch(REVIEW_DEMO_URL),
+    ]);
+    if (!reviewResponse.ok) {
+      throw new Error(`the review demo returned HTTP ${reviewResponse.status}`);
+    }
     wasm = module.instance.exports;
+    reviewDemo = await reviewResponse.json();
   } catch (error) {
     STATUS.innerHTML = `<span class="d-error">The compiler did not load, so the answers below are missing. (${esc(error)})</span>`;
     return;
@@ -127,6 +139,31 @@ async function load() {
       .filter((line) => line.trim() !== "")
       .map((line) => JSON.parse(line));
   };
+
+  const review = (before, after) => {
+    const beforeInput = encoder.encode(before);
+    const afterInput = encoder.encode(after);
+    const beforePtr = wasm.deed_alloc(beforeInput.length);
+    const afterPtr = wasm.deed_alloc(afterInput.length);
+    bytes().set(beforeInput, beforePtr);
+    bytes().set(afterInput, afterPtr);
+    wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
+    const text = read();
+    wasm.deed_free(beforePtr, beforeInput.length);
+    wasm.deed_free(afterPtr, afterInput.length);
+    return text
+      .split("\n")
+      .filter((line) => line.trim() !== "")
+      .map((line) => JSON.parse(line));
+  };
+
+  const before = `${reviewDemo.before.join("\n")}\n`;
+  const after = `${reviewDemo.after.join("\n")}\n`;
+  REVIEW_BEFORE.textContent = before.trimEnd();
+  REVIEW_AFTER.textContent = after.trimEnd();
+  REVIEW_GOT.textContent = review(before, after)
+    .map((line) => JSON.stringify(line, null, 2))
+    .join("\n\n");
 
   for (const { id, verb, source } of ASKS) {
     const sent = document.getElementById(`${id}-sent`);
