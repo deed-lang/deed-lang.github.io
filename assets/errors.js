@@ -5,8 +5,8 @@
 // artifact carries all of them, so this page cannot document a code the
 // compiler does not have, or miss one it does.
 
-const TAG = "v0.2.11";
-const VERSION = "0.2.11";
+const TAG = "v0.2.12";
+const VERSION = "0.2.12";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
 
 const STATUS = document.getElementById("status");
