@@ -108,6 +108,24 @@ for (const [where, { tag, version }] of pins) {
 
 const tag = first?.tag;
 
+// The wasm reports its Deed version, but it cannot report the oldest Rust
+// toolchain that can build the crates.io package. Keep that release metadata
+// explicit here: moving TAG to a release not in this table fails until the
+// install claim is considered too, instead of silently carrying an old MSRV.
+const minimumRust = new Map([["v0.2.12", "1.88"]]).get(tag);
+const install = await readFile(join(root, "install", "index.html"), "utf8");
+const claimedRust = install.match(/Needs Rust ([0-9.]+) or newer/)?.[1];
+if (!minimumRust) {
+  complain("tools/check.mjs", `no minimum Rust version is recorded for ${tag}`);
+} else if (!claimedRust) {
+  complain("install/index.html", "does not state the minimum Rust version");
+} else if (claimedRust !== minimumRust) {
+  complain(
+    "install/index.html",
+    `says Rust ${claimedRust} and ${tag} requires Rust ${minimumRust}`,
+  );
+}
+
 // The artifact is committed rather than built, so nothing in this repository
 // has ever compiled it, and a file that is present is not a file that answers.
 // A truncated copy, or the artifact of a different build wearing the right
