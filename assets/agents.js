@@ -5,8 +5,8 @@
 // a claim about what an agent gets back is worth nothing if the page is the
 // one making it up.
 
-const TAG = "v0.2.12";
-const VERSION = "0.2.12";
+const TAG = "v0.2.13";
+const VERSION = "0.2.13";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
 const REVIEW_DEMO_URL = "../assets/review-demo.json";
 

@@ -112,7 +112,7 @@ const tag = first?.tag;
 // toolchain that can build the crates.io package. Keep that release metadata
 // explicit here: moving TAG to a release not in this table fails until the
 // install claim is considered too, instead of silently carrying an old MSRV.
-const minimumRust = new Map([["v0.2.12", "1.88"]]).get(tag);
+const minimumRust = new Map([["v0.2.13", "1.88"]]).get(tag);
 const install = await readFile(join(root, "install", "index.html"), "utf8");
 const claimedRust = install.match(/Needs Rust ([0-9.]+) or newer/)?.[1];
 if (!minimumRust) {
