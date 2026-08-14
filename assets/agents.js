@@ -5,11 +5,15 @@
 // a claim about what an agent gets back is worth nothing if the page is the
 // one making it up.
 
-const TAG = "v0.2.10";
-const VERSION = "0.2.10";
+const TAG = "v0.2.11";
+const VERSION = "0.2.11";
 const WASM_URL = `../assets/deed-${TAG}-wasm32-unknown-unknown.wasm`;
+const REVIEW_DEMO_URL = "../assets/review-demo.json";
 
 const STATUS = document.getElementById("status");
+const REVIEW_BEFORE = document.getElementById("review-before");
+const REVIEW_AFTER = document.getElementById("review-after");
+const REVIEW_GOT = document.getElementById("review-got");
 
 // Each one is a program and the verb an agent would send it to. The programs
 // are short on purpose: this page is about the answer, not the program.
@@ -127,6 +131,55 @@ async function load() {
       .filter((line) => line.trim() !== "")
       .map((line) => JSON.parse(line));
   };
+
+  const review = (before, after) => {
+    if (typeof wasm.deed_review !== "function") {
+      throw new Error("the pinned compiler has no deed_review export");
+    }
+    const beforeInput = encoder.encode(before);
+    const afterInput = encoder.encode(after);
+    let beforePtr = null;
+    let afterPtr = null;
+    try {
+      beforePtr = wasm.deed_alloc(beforeInput.length);
+      afterPtr = wasm.deed_alloc(afterInput.length);
+      bytes().set(beforeInput, beforePtr);
+      bytes().set(afterInput, afterPtr);
+      wasm.deed_review(beforePtr, beforeInput.length, afterPtr, afterInput.length);
+      return read()
+        .split("\n")
+        .filter((line) => line.trim() !== "")
+        .map((line) => JSON.parse(line));
+    } finally {
+      if (beforePtr !== null) wasm.deed_free(beforePtr, beforeInput.length);
+      if (afterPtr !== null) wasm.deed_free(afterPtr, afterInput.length);
+    }
+  };
+
+  try {
+    const response = await fetch(REVIEW_DEMO_URL);
+    if (!response.ok) throw new Error(`the review demo returned HTTP ${response.status}`);
+    const demo = await response.json();
+    if (
+      !Array.isArray(demo.before) ||
+      !demo.before.every((line) => typeof line === "string") ||
+      !Array.isArray(demo.after) ||
+      !demo.after.every((line) => typeof line === "string")
+    ) {
+      throw new Error("the review demo does not contain before and after source lines");
+    }
+    const before = `${demo.before.join("\n")}\n`;
+    const after = `${demo.after.join("\n")}\n`;
+    REVIEW_BEFORE.textContent = before.trimEnd();
+    REVIEW_AFTER.textContent = after.trimEnd();
+    REVIEW_GOT.textContent = review(before, after)
+      .map((line) => JSON.stringify(line, null, 2))
+      .join("\n\n");
+  } catch (error) {
+    REVIEW_BEFORE.textContent = "The review demo did not load.";
+    REVIEW_AFTER.textContent = "The review demo did not load.";
+    REVIEW_GOT.textContent = `The receipt could not be produced. (${error})`;
+  }
 
   for (const { id, verb, source } of ASKS) {
     const sent = document.getElementById(`${id}-sent`);

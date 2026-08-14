@@ -6,7 +6,7 @@
     <title>For agents | Deed</title>
     <meta
       name="description"
-      content="Deed ships a Model Context Protocol server, so the thing writing the code can ask the compiler instead of remembering. It answers with which obligations were proved and which were left to a runtime check."
+      content="Deed gives agent-written patches a review receipt: new authority, weaker promises, and obligations left to runtime checks. The same evidence is available over MCP."
     />
     <link rel="icon" href="../assets/brand/deed-cipher-favicon.ico" sizes="any" />
     <link
@@ -72,6 +72,30 @@
           diagnostics index follow, and it matters more here than anywhere:
           this page is a claim about what a machine gets back.
         -->
+
+        <h2>A receipt for the patch</h2>
+        <p>
+          Tests can stay green while a patch starts writing where it used to
+          read, or turns a compile-time proof into a runtime check. The review
+          receipt compares what a human had to trust before with what the
+          patch asks them to trust now.
+        </p>
+        <h3>Before</h3>
+        <pre class="code"><code id="review-before">…</code></pre>
+        <h3>After</h3>
+        <pre class="code"><code id="review-after">…</code></pre>
+        <h3>Receipt</h3>
+        <pre class="code"><code id="review-got">…</code></pre>
+        <p>
+          That receipt came from the pinned compiler in this tab. The new
+          <code>Store.write</code> authority and the
+          <code>proven</code>-to-<code>guarded</code> regression are separate
+          evidence. CI can turn either one, or a newly Guarded obligation,
+          into an independent policy gate. The
+          <a href="https://github.com/deed-lang/deed/blob/v0.2.11/how-to/review-an-agent-patch-in-ci.md"
+            >copy-paste workflow</a
+          > compares the two commit trees on every pull request.
+        </p>
 
         <h2>What comes back that a type error does not</h2>
         <p>
@@ -149,8 +173,8 @@
 }</code></pre>
         <p>
           There is nothing else to install; see
-          <a href="../install/">Install</a>. Six tools:
-          <code>deed_check</code>, <code>deed_test</code>,
+          <a href="../install/">Install</a>. Seven tools:
+          <code>deed_review</code>, <code>deed_check</code>, <code>deed_test</code>,
           <code>deed_run</code>, <code>deed_fmt</code>, <code>deed_fix</code>
           and <code>deed_explain</code>. The full walkthrough is
           <a
@@ -209,9 +233,12 @@
           impressive.
         </p>
         <p>
-          The record says what it does not establish, too: one model family, no
-          comparison against a language without contracts, and a control arm
-          recorded against an earlier build.
+          The record says what it does not establish, too: one model family
+          and a control arm recorded against an earlier build. A later
+          <a href="https://github.com/deed-lang/deed/blob/v0.2.11/benchmarks/STARLARK.md"
+            >contracts-free Starlark comparison</a
+          > solved all six routine tasks, so these tasks do not establish that
+          contracts caused the result.
           <a href="https://github.com/deed-lang/deed/blob/main/benchmarks/RESULTS.md"
             >Read it</a
           >
@@ -221,10 +248,10 @@
 
       <footer class="site">
         <p>
-          The transcripts on this page are what the pinned compiler answered in
-          your tab, for the programs shown above them. Nothing here is a sample
-          output written by hand. On the wire each answer is one JSON object per
-          line; the indentation is the only thing this page adds.
+          The receipt and transcripts on this page are what the pinned compiler
+          answered in your tab, for the programs shown above them. Nothing here
+          is sample output written by hand. On the wire each answer is one JSON
+          object per line; the indentation is the only thing this page adds.
         </p>
         <p>
           Apache-2.0. This page has no analytics, no cookies and no third-party

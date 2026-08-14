@@ -136,6 +136,53 @@ if (deed) {
   }
 }
 
+// The agents page leads with a review receipt. Its two programs are data so
+// the page and this check cannot drift onto different demonstrations, and the
+// receipt is asked of the released artifact rather than copied into either.
+if (deed) {
+  try {
+    const demo = JSON.parse(await readFile(join(root, "assets", "review-demo.json"), "utf8"));
+    if (
+      !Array.isArray(demo.before) ||
+      !demo.before.every((line) => typeof line === "string") ||
+      !Array.isArray(demo.after) ||
+      !demo.after.every((line) => typeof line === "string")
+    ) {
+      throw new Error("review-demo.json needs before and after arrays of source lines");
+    }
+    const before = `${demo.before.join("\n")}\n`;
+    const after = `${demo.after.join("\n")}\n`;
+    const receipts = deed.review(before, after);
+    const receipt = receipts.length === 1 ? receipts[0] : null;
+    if (!receipt || receipt.kind !== "review_receipt") {
+      complain("agents/", `the review demo returned ${JSON.stringify(receipts)}`);
+    } else {
+      const authority = receipt.authority_added?.[0];
+      if (
+        receipt.authority_added?.length !== 1 ||
+        authority?.module !== "billing/transfer" ||
+        authority?.declaration !== "sync" ||
+        authority?.authority !== "Store.write"
+      ) {
+        complain("agents/", `the review demo says authority is ${JSON.stringify(receipt.authority_added)}`);
+      }
+
+      const regression = receipt.tier_regressions?.[0];
+      if (
+        receipt.tier_regressions?.length !== 1 ||
+        regression?.module !== "billing/transfer" ||
+        regression?.declaration !== "preserve" ||
+        regression?.before !== "proven" ||
+        regression?.after !== "guarded"
+      ) {
+        complain("agents/", `the review demo says regressions are ${JSON.stringify(receipt.tier_regressions)}`);
+      }
+    }
+  } catch (error) {
+    complain("agents/", `the pinned artifact could not review the demo: ${error.message}`);
+  }
+}
+
 // The picker's list and the files on disk are the same list.
 const index = JSON.parse(await readFile(join(root, "examples", "index.json"), "utf8"));
 const listed = new Set(index.examples.map((e) => e.file));
