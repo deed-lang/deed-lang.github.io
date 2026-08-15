@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Deed</title>
+    <title>Deed | Review what an agent patch is allowed to do</title>
     <meta
       name="description"
-      content="A language where a function's signature says what it does, and the compiler refuses the ones that do more."
+      content="Deed is a contract-first language and local review tool that catches new authority, weaker guarantees, and new runtime checks in agent-written patches."
     />
     <link rel="icon" href="assets/brand/deed-cipher-favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="assets/brand/deed-cipher-180.png" />
     <link rel="manifest" href="assets/brand/deed-cipher.webmanifest" />
-    <meta property="og:title" content="Deed" />
+    <meta property="og:title" content="Deed | Review agent-written code" />
     <meta
       property="og:description"
-      content="A function can only do what its signature admits to."
+      content="See when a patch gains authority, weakens a guarantee, or moves a promise to runtime, even when its tests stay green."
     />
     <meta
       property="og:image"
@@ -37,7 +37,7 @@
     />
     <link rel="stylesheet" href="assets/style.css" />
   </head>
-  <body class="wide">
+  <body class="wide home">
     <div class="wrap">
       <header class="site">
         <div class="header-section">
@@ -66,90 +66,173 @@
         <a href="https://github.com/deed-lang/deed">Source</a>
       </nav>
 
-      <main>
-        <h1>A function can only do what its signature admits to.</h1>
-        <p class="lede">
-          Not a lint, not a convention. Deed reads the body, and a function that
-          reaches for something its signature did not mention is not a program.
-        </p>
-
-        <!--
-          Both halves of this come out of the compiler. The program is checked
-          by the playground on this site, and the message below it is what the
-          artifact answered, copied rather than written.
-        -->
-        <section class="show">
-          <div>
-            <h2>This function saves a file.</h2>
-            <pre class="code"><code>fn keep(files: Dir, name: String, text: String) -&gt; Result&lt;(), String&gt;
-  <b>uses
-    Io.read,</b>
-{
-    match Io.read(files, name) {
-        ok(_) =&gt; ok(()),
-        err(_) =&gt; <b>Io.save</b>(files, name, text),
-    }
-}</code></pre>
+      <main class="landing">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">Contract-first language / local review tool</p>
+            <h1 id="hero-title">Deed tells you when an agent patch gains power.</h1>
+            <p class="hero-lede">
+              Deed compares the checked contract before and after a patch. It
+              flags new authority, weaker guarantees, and new runtime checks
+              even when the tests stay green.
+            </p>
+            <div class="hero-actions" aria-label="Get started">
+              <a class="action primary" href="#receipt">See the receipt</a>
+              <a class="action" href="play/">Try the compiler</a>
+            </div>
+            <ul class="proof-strip" aria-label="Product properties">
+              <li>Runs locally</li>
+              <li>Works in CI</li>
+              <li>Available over MCP</li>
+            </ul>
           </div>
 
-          <div>
-            <h2>Its signature only admits to reading one.</h2>
-            <pre
-              class="code"
-            ><code><span class="d-error">error[DEED5001]</span>: `keep` performs `Io.save` without declaring it
-<span class="d-gutter">  --&gt; main.deed:3:4</span>
-<span class="d-gutter">  |</span>
-<span class="d-gutter">3 |</span> fn keep(files: Dir, name: String, text: String) -&gt; Result&lt;(), String&gt;
-<span class="d-gutter">  |</span> <span class="d-caret">   ^^^^</span> add `Io.save` to the `uses` clause
-<span class="d-gutter">  |</span>
-<span class="d-gutter">  = note: a function can only do what its signature admits to</span></code></pre>
+          <!--
+            This concise receipt is the same review-demo.json held by
+            tools/check.mjs against the pinned compiler. It is intentionally
+            smaller than the full JSON on the agents page: this is the human
+            decision, not a second implementation of the compiler's answer.
+          -->
+          <div class="receipt-shell" id="receipt">
+            <div class="receipt-bar">
+              <span>deed review</span>
+              <span class="receipt-policy">policy: blocked</span>
+            </div>
+            <div class="patch-lines" aria-label="Relevant patch lines">
+              <p class="removed">- uses Store.read</p>
+              <p class="added">+ uses Store.read, Store.write</p>
+            </div>
+            <div class="receipt-result">
+              <p class="receipt-status"><span aria-hidden="true"></span>Review blocked</p>
+              <dl>
+                <div>
+                  <dt>New authority</dt>
+                  <dd data-review-authority="Store.write">Store.write</dd>
+                </div>
+                <div>
+                  <dt>Weaker promise</dt>
+                  <dd data-review-tier="proven:guarded">proven -&gt; guarded</dd>
+                </div>
+                <div>
+                  <dt>Tests</dt>
+                  <dd>may still pass</dd>
+                </div>
+              </dl>
+            </div>
+            <p class="receipt-foot">
+              Produced from the pinned Deed compiler.
+              <a href="agents/">Open the full receipt</a>.
+            </p>
           </div>
         </section>
 
-        <p class="after">
-          That list has a name, an effect row, and it is part of the type. It is
-          checked in both directions, so a row that claims authority the body
-          never uses is an error too: a signature is only worth reading if it is
-          tight. Nothing is ambient. If a function can touch the filesystem, it
-          was handed the filesystem, and you can see that from the call.
-        </p>
+        <section class="landing-band signals" aria-labelledby="signals-title">
+          <p class="eyebrow">What the receipt names</p>
+          <h2 id="signals-title">Review the change tests do not name.</h2>
+          <div class="signal-grid">
+            <article>
+              <p class="signal-mark">+</p>
+              <h3>New authority</h3>
+              <p>
+                A function starts writing files, calling a service, or performing
+                any effect its previous contract did not admit.
+              </p>
+            </article>
+            <article>
+              <p class="signal-mark">-</p>
+              <h3>Weaker guarantees</h3>
+              <p>
+                A promise that was proven at compile time now depends on a test
+                or a runtime guard.
+              </p>
+            </article>
+            <article>
+              <p class="signal-mark">?</p>
+              <h3>New uncertainty</h3>
+              <p>
+                The patch leaves a new obligation for runtime and says why the
+                checker could not settle it earlier.
+              </p>
+            </article>
+          </div>
+        </section>
 
-        <nav class="next" aria-label="Where to go next">
-          <a class="card" href="play/">
-            <strong>Try it</strong>
-            <span
-              >The compiler runs in your tab. Break the example above and watch
-              it refuse.</span
-            >
+        <section class="landing-band workflow" aria-labelledby="workflow-title">
+          <div>
+            <p class="eyebrow">One boundary, three readers</p>
+            <h2 id="workflow-title">Write the rule once. Let code, CI, and agents read it.</h2>
+          </div>
+          <ol class="workflow-steps">
+            <li>
+              <span>01</span>
+              <div>
+                <strong>The signature states the authority.</strong>
+                <p>The body is refused if it reaches for anything wider.</p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <strong><code>deed review</code> compares two checked trees.</strong>
+                <p>New authority and weaker tiers become structured evidence.</p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <strong>CI chooses what must block a merge.</strong>
+                <p>Each review signal has its own independent policy gate.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="landing-band language" aria-labelledby="language-title">
+          <div class="language-copy">
+            <p class="eyebrow">Underneath the receipt</p>
+            <h2 id="language-title">A small language, not another policy file.</h2>
+            <p>
+              Deed checks types, effects, capabilities, contracts, and the code
+              that must satisfy them. Nothing is ambient. If a function can
+              touch the filesystem, the filesystem appears in its inputs and
+              the operation appears in its signature.
+            </p>
+            <a href="one-clause/">See one clause become a boundary</a>
+          </div>
+          <pre class="code language-sample"><code>fn keep(files: Dir, name: String, text: String)
+  -&gt; Result&lt;(), String&gt;
+  <b>uses Io.read,</b>
+{
+    match Io.read(files, name) {
+        ok(_)  =&gt; ok(()),
+        err(_) =&gt; <span class="d-error">Io.save</span>(files, name, text),
+    }
+}
+
+<span class="d-error">error[DEED5001]</span>: `keep` performs `Io.save`
+without declaring it</code></pre>
+        </section>
+
+        <nav class="next landing-next" aria-label="Where to go next">
+          <a class="card" href="install/">
+            <strong>Install Deed</strong>
+            <span>One command on Linux, macOS, or Windows.</span>
           </a>
-          <a
-            class="card"
-            href="agents/"
-          >
-            <strong>Ask it</strong>
-            <span>What the compiler hands an agent, and what that is worth.</span>
+          <a class="card" href="agents/">
+            <strong>Give it to an agent</strong>
+            <span>Seven local MCP tools, including the same review receipt.</span>
           </a>
-          <a
-            class="card"
-            href="install/"
-          >
-            <strong>Install it</strong>
-            <span>One line, or one file, on Linux, macOS and Windows.</span>
-          </a>
-          <a class="card" href="https://github.com/deed-lang/deed/tree/main/design">
-            <strong>Read it</strong>
-            <span
-              >Why the language is shaped this way, argued rather than
-              asserted.</span
-            >
+          <a class="card" href="https://github.com/deed-lang/deed">
+            <strong>Read the source</strong>
+            <span>The compiler, design record, examples, and CI workflow.</span>
           </a>
         </nav>
       </main>
 
       <footer class="site">
         <p>
-          Apache-2.0. This page has no analytics, no cookies and no third-party
-          requests.
+          MIT OR Apache-2.0. This page has no analytics, no cookies and no
+          third-party requests.
         </p>
       </footer>
     </div>
