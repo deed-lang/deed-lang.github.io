@@ -58,9 +58,10 @@
       </header>
 
       <nav class="site">
-        <a href="one-clause/">One clause</a>
+        <a href="one-clause/">Why Deed</a>
+        <a href="learn/">Learn</a>
         <a href="play/">Playground</a>
-        <a href="agents/">For agents</a>
+        <a href="agents/">Agents</a>
         <a href="errors/">Diagnostics</a>
         <a href="install/">Install</a>
         <a href="https://github.com/deed-lang/deed">Source</a>
@@ -69,7 +70,10 @@
       <main class="landing">
         <section class="hero" aria-labelledby="hero-title">
           <div class="hero-copy">
-            <p class="eyebrow">Contract-first language / local review tool</p>
+            <p class="eyebrow">
+              <a href="https://github.com/deed-lang/deed/releases/tag/v0.2.13">Deed 0.2.13</a>
+              / contract-first language
+            </p>
             <h1 id="hero-title">Deed tells you when an agent patch gains power.</h1>
             <p class="hero-lede">
               Deed compares the checked contract before and after a patch. It
@@ -77,8 +81,8 @@
               even when the tests stay green.
             </p>
             <div class="hero-actions" aria-label="Get started">
-              <a class="action primary" href="#receipt">See the receipt</a>
-              <a class="action" href="play/">Try the compiler</a>
+              <a class="action primary" href="play/">Try in the browser</a>
+              <a class="action" href="install/">Install Deed</a>
             </div>
             <ul class="proof-strip" aria-label="Product properties">
               <li>Runs locally</li>
@@ -126,65 +130,125 @@
           </div>
         </section>
 
-        <section class="landing-band signals" aria-labelledby="signals-title">
-          <p class="eyebrow">What the receipt names</p>
-          <h2 id="signals-title">Review the change tests do not name.</h2>
+        <section class="landing-band signals" aria-labelledby="why-title">
+          <p class="eyebrow">Why Deed</p>
+          <h2 id="why-title">Make authority part of the program, not the reviewer's guess.</h2>
           <div class="signal-grid">
             <article>
-              <p class="signal-mark">+</p>
-              <h3>New authority</h3>
+              <p class="signal-mark">01</p>
+              <h3>Explicit by construction</h3>
               <p>
-                A function starts writing files, calling a service, or performing
-                any effect its previous contract did not admit.
+                Effects live in signatures and capabilities live in values. A
+                function cannot quietly reach beyond either one.
               </p>
             </article>
             <article>
-              <p class="signal-mark">-</p>
-              <h3>Weaker guarantees</h3>
+              <p class="signal-mark">02</p>
+              <h3>Contracts that do work</h3>
               <p>
-                A promise that was proven at compile time now depends on a test
-                or a runtime guard.
+                A promise is proven, turned into generated tests, guarded at
+                runtime, or refused with the reason it could not go higher.
               </p>
             </article>
             <article>
-              <p class="signal-mark">?</p>
-              <h3>New uncertainty</h3>
+              <p class="signal-mark">03</p>
+              <h3>Evidence for change</h3>
               <p>
-                The patch leaves a new obligation for runtime and says why the
-                checker could not settle it earlier.
+                Review compares checked trees, so new authority and weaker
+                guarantees stay visible even when tests still pass.
               </p>
             </article>
           </div>
         </section>
 
-        <section class="landing-band workflow" aria-labelledby="workflow-title">
+        <section class="landing-band uses" aria-labelledby="uses-title">
           <div>
-            <p class="eyebrow">One boundary, three readers</p>
-            <h2 id="workflow-title">Write the rule once. Let code, CI, and agents read it.</h2>
+            <p class="eyebrow">Use Deed for</p>
+            <h2 id="uses-title">The boundary where generated code meets real authority.</h2>
           </div>
-          <ol class="workflow-steps">
-            <li>
-              <span>01</span>
+          <div class="use-grid">
+            <article>
+              <span class="use-index">01 / review</span>
               <div>
-                <strong>The signature states the authority.</strong>
-                <p>The body is refused if it reaches for anything wider.</p>
+                <h3>Review an agent patch</h3>
+                <p>See authority additions, tier regressions, and new runtime obligations.</p>
+                <a href="agents/">Open the review receipt</a>
               </div>
-            </li>
-            <li>
-              <span>02</span>
+            </article>
+            <article>
+              <span class="use-index">02 / capabilities</span>
               <div>
-                <strong><code>deed review</code> compares two checked trees.</strong>
-                <p>New authority and weaker tiers become structured evidence.</p>
+                <h3>Bound side effects</h3>
+                <p>Pass filesystem, store, clock, and service access as explicit values.</p>
+                <a href="one-clause/">Follow one boundary</a>
               </div>
-            </li>
-            <li>
-              <span>03</span>
+            </article>
+            <article>
+              <span class="use-index">03 / contracts</span>
               <div>
-                <strong>CI chooses what must block a merge.</strong>
-                <p>Each review signal has its own independent policy gate.</p>
+                <h3>Generate the test</h3>
+                <p>Turn a contract into reproducible property cases without writing a test.</p>
+                <a href="play/">Open the contract examples</a>
               </div>
-            </li>
-          </ol>
+            </article>
+            <article>
+              <span class="use-index">04 / components</span>
+              <div>
+                <h3>Embed checked code</h3>
+                <p>Build a WebAssembly component and call it from a capability-holding host.</p>
+                <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/embed-a-compiled-program.md"
+                  >Read the host guide</a
+                >
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="landing-band toolchain" aria-labelledby="tools-title">
+          <div class="toolchain-heading">
+            <p class="eyebrow">One binary</p>
+            <h2 id="tools-title">From the first check to editor, CI, and agent.</h2>
+            <p>
+              Each surface asks the same compiler. No second policy engine and
+              no service account between the source and the answer.
+            </p>
+          </div>
+          <div class="tool-surface" aria-label="Deed tools">
+            <div class="tool-bar">
+              <span>deed / local toolchain</span>
+              <span>v0.2.13</span>
+            </div>
+            <a class="tool-row" href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/check-a-file-or-module-set.md">
+              <code>deed check</code>
+              <span>Types, effects, capabilities, and contracts</span>
+              <small>before runtime</small>
+            </a>
+            <a class="tool-row" href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/write-and-run-tests.md">
+              <code>deed test</code>
+              <span>Written tests and generated properties</span>
+              <small>replayable seeds</small>
+            </a>
+            <a class="tool-row" href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/review-an-agent-patch-in-ci.md">
+              <code>deed review</code>
+              <span>Before-and-after authority evidence</span>
+              <small>independent gates</small>
+            </a>
+            <a class="tool-row" href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/format-code.md">
+              <code>deed fmt / fix</code>
+              <span>Formatting and machine-applicable repairs</span>
+              <small>preview first</small>
+            </a>
+            <a class="tool-row" href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/use-deed-in-an-editor.md">
+              <code>deed lsp / dap</code>
+              <span>Editor feedback and protocol debugging</span>
+              <small>VS Code included</small>
+            </a>
+            <a class="tool-row" href="agents/">
+              <code>deed build / mcp</code>
+              <span>WebAssembly components and seven local agent tools</span>
+              <small>one compiler</small>
+            </a>
+          </div>
         </section>
 
         <section class="landing-band language" aria-labelledby="language-title">
@@ -213,26 +277,82 @@
 without declaring it</code></pre>
         </section>
 
-        <nav class="next landing-next" aria-label="Where to go next">
-          <a class="card" href="install/">
-            <strong>Install Deed</strong>
-            <span>One command on Linux, macOS, or Windows.</span>
-          </a>
-          <a class="card" href="agents/">
-            <strong>Give it to an agent</strong>
-            <span>Seven local MCP tools, including the same review receipt.</span>
-          </a>
-          <a class="card" href="https://github.com/deed-lang/deed">
-            <strong>Read the source</strong>
-            <span>The compiler, design record, examples, and CI workflow.</span>
-          </a>
-        </nav>
+        <section class="landing-band learning" aria-labelledby="learning-title">
+          <div>
+            <p class="eyebrow">Learn Deed</p>
+            <h2 id="learning-title">Choose the shortest route to a real answer.</h2>
+          </div>
+          <nav class="learning-routes" aria-label="Learning routes">
+            <a href="one-clause/">
+              <span>01</span>
+              <strong>Five minutes</strong>
+              <small>One clause, one refused effect, one repair.</small>
+            </a>
+            <a href="play/">
+              <span>02</span>
+              <strong>No installation</strong>
+              <small>Edit, check, run, test, and format in the browser.</small>
+            </a>
+            <a href="learn/">
+              <span>03</span>
+              <strong>Build along</strong>
+              <small>Tutorial, references, integrations, and task guides.</small>
+            </a>
+          </nav>
+        </section>
+
+        <section class="landing-band project" aria-labelledby="project-title">
+          <div class="project-copy">
+            <p class="eyebrow">Project record</p>
+            <h2 id="project-title">Open source, versioned, and written down.</h2>
+            <p>
+              The compiler, examples, release artifacts, design decisions, and
+              contribution process are public. The site adds no analytics or
+              account layer around them.
+            </p>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/deed-lang/deed/releases/tag/v0.2.13">
+              <span>Current release</span><strong>v0.2.13</strong>
+            </a>
+            <a href="https://github.com/deed-lang/deed/blob/main/ROADMAP.md">
+              <span>Direction</span><strong>Roadmap</strong>
+            </a>
+            <a href="https://github.com/deed-lang/deed/blob/main/SECURITY.md">
+              <span>Report a problem</span><strong>Security</strong>
+            </a>
+            <a href="https://github.com/deed-lang/deed/blob/main/CONTRIBUTING.md">
+              <span>Work with us</span><strong>Contributing</strong>
+            </a>
+          </div>
+        </section>
       </main>
 
-      <footer class="site">
-        <p>
-          MIT OR Apache-2.0. This page has no analytics, no cookies and no
-          third-party requests.
+      <footer class="site landing-footer">
+        <div class="footer-grid">
+          <div>
+            <strong>Learn</strong>
+            <a href="learn/">Start here</a>
+            <a href="play/">Playground</a>
+            <a href="errors/">Diagnostics</a>
+          </div>
+          <div>
+            <strong>Build</strong>
+            <a href="install/">Install</a>
+            <a href="agents/">For agents</a>
+            <a href="https://github.com/deed-lang/deed/tree/v0.2.13/examples">Examples</a>
+          </div>
+          <div>
+            <strong>Project</strong>
+            <a href="https://github.com/deed-lang/deed">Source</a>
+            <a href="https://github.com/deed-lang/deed/releases">Releases</a>
+            <a href="https://github.com/deed-lang/deed/blob/main/CODE_OF_CONDUCT.md"
+              >Code of conduct</a
+            >
+          </div>
+        </div>
+        <p class="footer-note">
+          MIT OR Apache-2.0. No analytics, cookies, accounts, or third-party requests.
         </p>
       </footer>
     </div>

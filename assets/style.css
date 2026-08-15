@@ -556,41 +556,154 @@ main h1 {
   color: var(--gray);
 }
 
-.workflow {
+.uses {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(32rem, 1.2fr);
+  grid-template-columns: minmax(0, 0.72fr) minmax(34rem, 1.28fr);
   gap: 4rem;
   align-items: start;
 }
 
-.workflow-steps {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.workflow-steps li {
+.use-grid {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 1rem;
-  padding: 1rem 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   border-top: 1px solid var(--gray);
 }
 
-.workflow-steps li > span {
-  color: var(--syntax-string);
-  font-size: 0.8rem;
+.use-grid article {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.25rem 1rem 1.25rem 0;
+  border-bottom: 1px solid var(--gray);
 }
 
-.workflow-steps strong {
-  display: block;
+.use-grid article:nth-child(odd) {
+  border-right: 1px solid var(--gray);
+}
+
+.use-grid article:nth-child(even) {
+  padding-left: 1rem;
+}
+
+.use-index {
+  color: var(--gray);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.use-grid article:nth-child(4n + 1) .use-index {
+  color: var(--syntax-number);
+}
+
+.use-grid article:nth-child(4n + 2) .use-index {
+  color: var(--syntax-string);
+}
+
+.use-grid article:nth-child(4n + 3) .use-index {
+  color: var(--syntax-keyword);
+}
+
+.use-grid article:nth-child(4n + 4) .use-index {
+  color: var(--warning);
+}
+
+.use-grid h3 {
+  margin: 0 0 0.55rem;
+  color: var(--black);
+  font-size: 1rem;
+}
+
+.use-grid p {
+  margin: 0 0 0.65rem;
+  color: var(--gray);
+  font-size: 0.88rem;
+}
+
+.use-grid a {
+  font-size: 0.82rem;
+}
+
+.toolchain {
+  display: grid;
+  grid-template-columns: minmax(0, 0.67fr) minmax(36rem, 1.33fr);
+  gap: 4rem;
+  align-items: start;
+}
+
+.toolchain-heading > p:last-child {
+  max-width: 48ch;
+  color: var(--gray);
+}
+
+.tool-surface {
+  min-width: 0;
+  border: 1px solid var(--gray);
+  background: var(--console);
+  box-shadow: 8px 8px 0 var(--moretransblack);
+}
+
+.tool-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid #555;
+  color: #a4a4a4;
+  font-size: 0.72rem;
+}
+
+.tool-row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.72fr) minmax(0, 1.28fr) auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #555;
+  color: #efefef;
+  text-decoration: none;
+}
+
+.tool-row:last-child {
+  border-bottom: 0;
+}
+
+.tool-row:nth-of-type(4n + 1) {
+  box-shadow: inset 3px 0 #24d05a;
+}
+
+.tool-row:nth-of-type(4n + 2) {
+  box-shadow: inset 3px 0 #eb4888;
+}
+
+.tool-row:nth-of-type(4n + 3) {
+  box-shadow: inset 3px 0 #10a2f5;
+}
+
+.tool-row:nth-of-type(4n + 4) {
+  box-shadow: inset 3px 0 #e9bc3f;
+}
+
+.tool-row:hover {
+  background: #ffffff0d;
+}
+
+.tool-row code {
+  padding: 0;
+  background: none;
+  color: #efefef;
   font-weight: 400;
 }
 
-.workflow-steps p {
-  margin: 0.35rem 0 0;
-  color: var(--gray);
-  font-size: 0.9rem;
+.tool-row > span {
+  color: #d0d0d0;
+  font-size: 0.8rem;
+}
+
+.tool-row small {
+  color: #a4a4a4;
+  font-size: 0.68rem;
+  white-space: nowrap;
 }
 
 .language {
@@ -609,23 +722,321 @@ main h1 {
   min-width: 0;
 }
 
-.landing-next {
+.learning,
+.project {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-  padding: 1rem 0 2rem;
+  grid-template-columns: minmax(0, 0.72fr) minmax(34rem, 1.28fr);
+  gap: 4rem;
+  align-items: start;
+}
+
+.learning-routes {
   border-top: 1px solid var(--gray);
 }
 
-.landing-next .card {
+.learning-routes a {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(9rem, 0.55fr) minmax(0, 1.45fr);
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--gray);
+  color: var(--black);
+  text-decoration: none;
+}
+
+.learning-routes a:hover strong {
+  text-decoration: underline;
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 0.25ex;
+  text-underline-offset: 0.3ex;
+}
+
+.learning-routes span {
+  color: var(--syntax-string);
+  font-size: 0.72rem;
+}
+
+.learning-routes strong {
+  font-weight: 400;
+}
+
+.learning-routes small {
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+.project-copy > p:last-child {
+  max-width: 52ch;
+  color: var(--gray);
+}
+
+.project-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--gray);
+}
+
+.project-links a {
+  display: flex;
   min-width: 0;
+  min-height: 6.5rem;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray);
+  color: var(--black);
+  text-decoration: none;
+}
+
+.project-links a:nth-child(odd) {
+  padding-left: 0;
+  border-right: 1px solid var(--gray);
+}
+
+.project-links a:hover strong {
+  text-decoration: underline;
+  text-decoration-color: var(--green);
+  text-decoration-thickness: 0.25ex;
+  text-underline-offset: 0.3ex;
+}
+
+.project-links span {
+  color: var(--gray);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.project-links strong {
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.landing-footer {
+  margin-top: 0;
+  padding: 2.75rem 0 1rem;
+  border-top: 1px solid var(--gray);
+  text-align: left;
+}
+
+.footer-grid {
+  display: grid;
+  max-width: 48rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem;
+}
+
+.footer-grid > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.footer-grid strong {
+  margin-bottom: 0.35rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.footer-grid a {
+  font-size: 0.8rem;
+}
+
+.landing-footer .footer-note {
+  margin: 2.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray);
+}
+
+/* Learn */
+
+.learn-page .wrap {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.learn .eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--gray);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.learn > section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--gray);
+}
+
+.learn > section:first-of-type {
+  margin-top: 3rem;
+}
+
+.learn section h2 {
+  max-width: 25ch;
   margin: 0;
+  color: var(--black);
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.learn-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  margin-top: 2.75rem;
+}
+
+.learn-route-grid article {
+  min-width: 0;
+  padding-top: 1rem;
+  border-top: 3px solid var(--green);
+}
+
+.learn-route-grid article:nth-child(2) {
+  border-top-color: var(--pink);
+}
+
+.learn-route-grid article:nth-child(3) {
+  border-top-color: var(--blue);
+}
+
+.learn-route-grid article > span {
+  color: var(--gray);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.learn-route-grid h3 {
+  margin: 1.25rem 0 0.65rem;
+  color: var(--black);
+  font-size: 1.05rem;
+}
+
+.learn-route-grid p {
+  min-height: 6.5rem;
+  margin: 0 0 1rem;
+  color: var(--gray);
+}
+
+.learn-library {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(38rem, 1.28fr);
+  gap: 4rem;
+  align-items: start;
+}
+
+.resource-groups {
+  border-top: 1px solid var(--gray);
+}
+
+.resource-groups > section {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--gray);
+}
+
+.resource-groups h3 {
+  grid-row: 1 / 4;
+  margin: 0.15rem 0 0;
+  color: var(--gray);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.resource-groups a {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.7fr) minmax(0, 1.3fr);
+  gap: 1rem;
+  padding: 0.55rem 0;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.resource-groups a:hover strong {
+  text-decoration: underline;
+  text-decoration-color: var(--blue);
+  text-decoration-thickness: 0.25ex;
+  text-underline-offset: 0.3ex;
+}
+
+.resource-groups strong {
+  font-weight: 400;
+}
+
+.resource-groups span {
+  color: var(--gray);
+  font-size: 0.82rem;
+}
+
+.learn-help {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(28rem, 1.2fr);
+  gap: 4rem;
+  align-items: start;
+}
+
+.learn-help > p {
+  margin: 0;
+  color: var(--gray);
+}
+
+@media (max-width: 62rem) {
+  .learn-library,
+  .learn-help {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 42rem) {
+  .learn > section {
+    padding: 3.25rem 0;
+  }
+
+  .learn > section:first-of-type {
+    margin-top: 2rem;
+  }
+
+  .learn section h2 {
+    font-size: 1.6rem;
+  }
+
+  .learn-route-grid {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+
+  .learn-route-grid p {
+    min-height: 0;
+  }
+
+  .resource-groups > section {
+    grid-template-columns: 1fr;
+  }
+
+  .resource-groups h3 {
+    grid-row: auto;
+    margin-bottom: 0.75rem;
+  }
+
+  .resource-groups a {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
 }
 
 @media (max-width: 56rem) {
   .hero,
-  .workflow,
-  .language {
+  .uses,
+  .toolchain,
+  .language,
+  .learning,
+  .project {
     grid-template-columns: 1fr;
     gap: 2.5rem;
   }
@@ -767,7 +1178,8 @@ main h1 {
   }
 
   .signal-grid,
-  .landing-next {
+  .use-grid,
+  .project-links {
     grid-template-columns: 1fr;
   }
 
@@ -779,8 +1191,56 @@ main h1 {
     margin-bottom: 0.75rem;
   }
 
-  .workflow,
-  .language {
+  .use-grid article {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    padding-right: 0;
+  }
+
+  .use-grid article:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .use-grid article:nth-child(even) {
+    padding-left: 0;
+  }
+
+  .tool-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem 1rem;
+  }
+
+  .tool-row > span {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .learning-routes a {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.2rem 0.75rem;
+  }
+
+  .learning-routes small {
+    grid-column: 2;
+  }
+
+  .project-links a,
+  .project-links a:nth-child(odd) {
+    min-height: 5.5rem;
+    padding-right: 0;
+    padding-left: 0;
+    border-right: 0;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .uses,
+  .toolchain,
+  .language,
+  .learning,
+  .project {
     gap: 2rem;
   }
 }
@@ -1733,6 +2193,14 @@ table.files th {
   font-size: 0.9rem;
 }
 
+@media (max-width: 42rem) {
+  table.files {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
 /* The four accents were only doing the link underlines. They cycle through
    the things a page is made of as well now, in the same order everywhere, and
    still meaning nothing: which colour a section gets is which section it is,
@@ -1866,7 +2334,14 @@ input[type="search"] {
   }
 
   body .landing-band h2,
-  body .signal-grid h3 {
+  body .signal-grid h3,
+  body .use-grid h3,
+  body .learn section h2,
+  body .learn-route-grid h3 {
+    color: var(--white);
+  }
+
+  body .resource-groups a {
     color: var(--white);
   }
 

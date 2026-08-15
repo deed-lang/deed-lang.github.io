@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learn | Deed</title>
+    <meta
+      name="description"
+      content="Learn Deed by reading one clause, trying the compiler in your browser, or following the versioned tutorial and task-focused guides."
+    />
+    <link rel="icon" href="../assets/brand/deed-cipher-favicon.ico" sizes="any" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="../assets/fonts/ia-writer-mono-latin-400-normal.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="../assets/fonts/ia-writer-mono-latin-700-normal.woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body class="learn-page">
+    <div class="wrap">
+      <header class="site">
+        <div class="header-section">
+          <div class="header-frame">
+            <h1>
+              <a href="../"
+                ><svg class="mark" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                  <path d="M176 116H104V396H176" fill="none" stroke="currentColor" stroke-width="56" />
+                  <rect x="236" y="128" width="200" height="56" fill="#24d05a" />
+                  <rect x="236" y="228" width="148" height="56" fill="#eb4888" />
+                  <rect x="236" y="328" width="176" height="56" fill="#10a2f5" />
+                </svg
+                >Deed</a
+              >
+            </h1>
+            <h2>A function can only do what its signature admits to.</h2>
+          </div>
+        </div>
+      </header>
+
+      <nav class="site">
+        <a href="../one-clause/">Why Deed</a>
+        <a href="./" class="active">Learn</a>
+        <a href="../play/">Playground</a>
+        <a href="../agents/">Agents</a>
+        <a href="../errors/">Diagnostics</a>
+        <a href="../install/">Install</a>
+        <a href="https://github.com/deed-lang/deed">Source</a>
+      </nav>
+
+      <main class="learn">
+        <h1>Learn Deed</h1>
+        <p class="lede">
+          Start with the shortest route that answers your question. The browser
+          paths need no setup; the written guides follow Deed 0.2.13.
+        </p>
+
+        <section class="learn-start" aria-labelledby="start-title">
+          <p class="eyebrow">Choose a starting point</p>
+          <h2 id="start-title">From one clause to a working program.</h2>
+          <div class="learn-route-grid">
+            <article>
+              <span>01 / five minutes</span>
+              <h3>See the boundary</h3>
+              <p>
+                Follow one function from its signature to a refused effect and
+                the smallest repair that makes its authority explicit.
+              </p>
+              <a href="../one-clause/">Read one clause</a>
+            </article>
+            <article>
+              <span>02 / no install</span>
+              <h3>Ask the compiler</h3>
+              <p>
+                Edit released examples, check them, run their tests, format
+                them, and inspect the compiler's own diagnostics in your tab.
+              </p>
+              <a href="../play/">Open the playground</a>
+            </article>
+            <article>
+              <span>03 / build along</span>
+              <h3>Write a program</h3>
+              <p>
+                Work through values, functions, effects, contracts, tests,
+                modules, and the command-line workflow in order.
+              </p>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/TUTORIAL.md"
+                >Follow the tutorial</a
+              >
+            </article>
+          </div>
+        </section>
+
+        <section class="learn-library" aria-labelledby="library-title">
+          <div class="learn-heading">
+            <p class="eyebrow">Learn by subject</p>
+            <h2 id="library-title">Read only as far as the job requires.</h2>
+          </div>
+          <div class="resource-groups">
+            <section aria-labelledby="language-resources">
+              <h3 id="language-resources">The language</h3>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/design/02-syntax.md">
+                <strong>Syntax</strong>
+                <span>Functions, values, records, variants, matching, and modules.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/use-effects-handlers-and-capabilities.md">
+                <strong>Effects and capabilities</strong>
+                <span>Declare authority, pass capability values, and handle effects.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/docs/std.md">
+                <strong>Standard library</strong>
+                <span>The modules and operations shipped with this release.</span>
+              </a>
+            </section>
+
+            <section aria-labelledby="workflow-resources">
+              <h3 id="workflow-resources">Daily work</h3>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/check-a-file-or-module-set.md">
+                <strong>Check a project</strong>
+                <span>Check one file or resolve a set of imported modules.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/write-and-run-tests.md">
+                <strong>Write and run tests</strong>
+                <span>Use examples, contracts, generated properties, and refusals.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/format-code.md">
+                <strong>Format code</strong>
+                <span>Preview a change, format a file, or check formatting in CI.</span>
+              </a>
+            </section>
+
+            <section aria-labelledby="integration-resources">
+              <h3 id="integration-resources">Integrations</h3>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/use-deed-in-an-editor.md">
+                <strong>Editors</strong>
+                <span>Connect the language server and debugger to VS Code.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/let-an-agent-use-the-compiler.md">
+                <strong>MCP for agents</strong>
+                <span>Expose check, test, run, format, fix, explain, and review.</span>
+              </a>
+              <a href="https://github.com/deed-lang/deed/blob/v0.2.13/how-to/embed-a-compiled-program.md">
+                <strong>Embed a program</strong>
+                <span>Compile a component and call it from a host.</span>
+              </a>
+            </section>
+          </div>
+        </section>
+
+        <section class="learn-help" aria-labelledby="help-title">
+          <div>
+            <p class="eyebrow">When something refuses</p>
+            <h2 id="help-title">Start with the diagnostic, not a guess.</h2>
+          </div>
+          <p>
+            The <a href="../errors/">diagnostic index</a> is generated from the
+            pinned compiler, and every entry links to its explanation. For a
+            concrete shape to adapt, browse the
+            <a href="https://github.com/deed-lang/deed/tree/v0.2.13/examples"
+              >released examples</a
+            >. For a design decision and its tradeoffs, read the
+            <a href="https://github.com/deed-lang/deed/tree/v0.2.13/design">design record</a>.
+          </p>
+        </section>
+      </main>
+
+      <footer class="site">
+        <p>
+          Learning links are pinned to Deed 0.2.13 so the guide and the
+          compiler describe the same language.
+        </p>
+        <p>
+          MIT OR Apache-2.0. This page has no analytics, no cookies and no
+          third-party requests.
+        </p>
+      </footer>
+    </div>
+    <script src="../assets/color.js"></script>
+  </body>
+</html>

@@ -120,10 +120,16 @@ loudly.
 hands the compiler one file. That is the only one: the other twenty-nine were
 checked through the pinned artifact and every one of them is clean.
 
+The learning page follows the same version boundary for prose. Its tutorial,
+reference, examples, and how-to links point at the pinned release rather than
+at a moving `main`, so a reader cannot silently get documentation for a
+different language than the playground runs.
+
 ## Layout
 
 ```
-index.html          what the language reviews and why that matters
+index.html          why Deed exists, where it fits, its tools, and its review receipt
+learn/              three starting routes and the versioned learning index
 play/               the playground
 agents/             review receipts and what `deed mcp` hands back, asked in the tab
 errors/             every diagnostic code, read out of the compiler
