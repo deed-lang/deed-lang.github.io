@@ -999,6 +999,65 @@ button {
   min-width: calc(19ch + 1.6rem + 2px);
 }
 
+#example-action {
+  min-width: calc(16ch + 1.6rem + 2px);
+}
+
+@media (max-width: 42rem) {
+  body.fits header.site h1 {
+    font-size: 1.55rem;
+  }
+
+  body.fits header.site h2,
+  body.fits main > h1,
+  body.fits main > .lede {
+    display: none;
+  }
+
+  body.fits nav.site {
+    margin-bottom: 0.5rem;
+  }
+
+  body.fits .status {
+    margin-bottom: 0.5rem;
+  }
+
+  body.fits .controls {
+    display: grid;
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.fits .picker {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    justify-content: stretch;
+  }
+
+  body.fits .picker select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body.fits .verbs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.fits .verbs button,
+  body.fits #share,
+  body.fits #example-action {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 button:hover:not(:disabled),
 select:hover:not(:disabled) {
   border-color: var(--black);
