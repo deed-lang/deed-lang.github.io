@@ -27,8 +27,9 @@ Concretely, that rules out a few things that would otherwise be tempting:
   pinned tag, and the summary under each one is the comment at the top of the
   file. Which fourteen of them the picker offers is a choice made here, and it is
   the only one: choosing what to show is not writing it, and every file is
-  still served. The landing page's program is the exception, and it is short
-  and its refusal was still produced by running it.
+  still served. The landing page's program and compact review receipt are the
+  exceptions. Both are short, and `tools/check.mjs` holds their answers against
+  the pinned compiler before they can ship.
 
 The split exists because the two repositories have different constraints. The
 compiler's has no dependencies on purpose and its tests are strict in ways
@@ -119,7 +120,7 @@ checked through the pinned artifact and every one of them is clean.
 ## Layout
 
 ```
-index.html          what the language is
+index.html          what the language reviews and why that matters
 play/               the playground
 agents/             review receipts and what `deed mcp` hands back, asked in the tab
 errors/             every diagnostic code, read out of the compiler
@@ -153,5 +154,5 @@ request too.
 
 ## Licence
 
-Apache-2.0, matching the compiler.
+MIT OR Apache-2.0, matching the compiler.
 

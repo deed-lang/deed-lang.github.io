@@ -195,6 +195,22 @@ if (deed) {
       ) {
         complain("agents/", `the review demo says regressions are ${JSON.stringify(receipt.tier_regressions)}`);
       }
+
+      const landing = await readFile(join(root, "index.html"), "utf8");
+      const landingAuthority = `data-review-authority="${authority?.authority}"`;
+      const landingTier = `data-review-tier="${regression?.before}:${regression?.after}"`;
+      if (!landing.includes(landingAuthority)) {
+        complain("index.html", `does not show the review demo authority ${authority?.authority}`);
+      }
+      if (!landing.includes(landingTier)) {
+        complain(
+          "index.html",
+          `does not show the review demo tier change ${regression?.before} -> ${regression?.after}`,
+        );
+      }
+      if (receipt.clean !== false || !landing.includes("Review blocked")) {
+        complain("index.html", "does not show that the review demo is blocked");
+      }
     }
   } catch (error) {
     complain("agents/", `the pinned artifact could not review the demo: ${error.message}`);
