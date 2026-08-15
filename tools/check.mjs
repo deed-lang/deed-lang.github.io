@@ -107,13 +107,58 @@ for (const [where, { tag, version }] of pins) {
 }
 
 const tag = first?.tag;
+const install = await readFile(join(root, "install", "index.html"), "utf8");
+
+// The install page's large platform links bypass the installer and point at
+// release assets directly. External links are skipped by the generic local-link
+// check above, so hold each one against the same tag the rest of the site pins.
+// Otherwise a release bump can leave a handsome one-click button downloading
+// the previous compiler, which is worse than a visibly stale filename in prose.
+const expectedDownloads = new Map([
+  ["windows", `deed-${tag}-x86_64-pc-windows-msvc.zip`],
+  ["macos", `deed-${tag}-aarch64-apple-darwin.tar.gz`],
+  ["linux", `deed-${tag}-x86_64-unknown-linux-gnu.tar.gz`],
+]);
+const downloadAnchors = [...install.matchAll(/<a\b[^>]*data-download-platform="[^"]+"[^>]*>/g)].map(
+  ([anchor]) =>
+    Object.fromEntries(
+      [...anchor.matchAll(/([\w-]+)="([^"]*)"/g)].map(([, name, value]) => [name, value]),
+    ),
+);
+const downloadsSeen = new Set();
+for (const attributes of downloadAnchors) {
+  const platform = attributes["data-download-platform"];
+  const expectedAsset = expectedDownloads.get(platform);
+  if (!expectedAsset) {
+    complain("install/index.html", `has an unexpected direct-download platform ${platform}`);
+    continue;
+  }
+  if (downloadsSeen.has(platform)) {
+    complain("install/index.html", `has more than one direct download for ${platform}`);
+  }
+  downloadsSeen.add(platform);
+  if (attributes["data-download-asset"] !== expectedAsset) {
+    complain(
+      "install/index.html",
+      `${platform} names ${attributes["data-download-asset"]} and ${tag} requires ${expectedAsset}`,
+    );
+  }
+  const expectedUrl = `https://github.com/deed-lang/deed/releases/download/${tag}/${expectedAsset}`;
+  if (attributes.href !== expectedUrl) {
+    complain("install/index.html", `${platform} downloads ${attributes.href} instead of ${expectedUrl}`);
+  }
+}
+for (const platform of expectedDownloads.keys()) {
+  if (!downloadsSeen.has(platform)) {
+    complain("install/index.html", `has no direct download for ${platform}`);
+  }
+}
 
 // The wasm reports its Deed version, but it cannot report the oldest Rust
 // toolchain that can build the crates.io package. Keep that release metadata
 // explicit here: moving TAG to a release not in this table fails until the
 // install claim is considered too, instead of silently carrying an old MSRV.
 const minimumRust = new Map([["v0.2.13", "1.88"]]).get(tag);
-const install = await readFile(join(root, "install", "index.html"), "utf8");
 const claimedRust = install.match(/Needs Rust ([0-9.]+) or newer/)?.[1];
 if (!minimumRust) {
   complain("tools/check.mjs", `no minimum Rust version is recorded for ${tag}`);

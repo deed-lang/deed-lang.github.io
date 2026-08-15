@@ -1459,6 +1459,190 @@ footer.site p {
 
 /* Install */
 
+.install-page .wrap {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.download-picker {
+  margin: 2rem auto 3rem;
+}
+
+.download-picker > h2 {
+  margin-top: 0;
+}
+
+.download-intro,
+.download-note {
+  max-width: 72ch;
+  margin-right: auto;
+  margin-left: auto;
+  color: var(--gray);
+  text-align: center;
+}
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.75rem 0 1.25rem;
+}
+
+.download-card {
+  display: flex;
+  min-width: 0;
+  min-height: 13rem;
+  flex-direction: column;
+  padding: 1.2rem;
+  border: 1px solid var(--gray);
+  border-top: 4px solid var(--blue);
+  background: var(--moretransblack);
+  color: var(--black);
+  text-decoration: none;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.download-card:nth-child(2) {
+  border-top-color: var(--pink);
+}
+
+.download-card:nth-child(3) {
+  border-top-color: var(--yellow);
+}
+
+.download-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 var(--moretransblack);
+}
+
+.platform-logo {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.download-copy {
+  display: block;
+}
+
+.download-copy strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.download-copy > span {
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+.download-action {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray);
+  font-size: 0.82rem;
+}
+
+.download-action small {
+  margin-left: auto;
+  color: var(--gray);
+  font-size: 0.7rem;
+}
+
+.download-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 52rem) {
+  .download-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .download-card {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .platform-logo {
+    margin: 0;
+  }
+
+  .download-action {
+    margin: 0;
+    padding: 0 0 0 1rem;
+    border-top: 0;
+    border-left: 1px solid var(--gray);
+  }
+}
+
+@media (max-width: 34rem) {
+  .install-page header.site h2 {
+    display: none;
+  }
+
+  .download-card {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .platform-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .download-action {
+    grid-column: 1 / -1;
+    margin-top: 0.75rem;
+    padding: 0.75rem 0 0;
+    border-top: 1px solid var(--gray);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 34rem) and (max-height: 40rem) {
+  .install-page nav.site {
+    margin-bottom: 0.5rem;
+  }
+
+  .install-page .lede {
+    margin-bottom: 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .download-picker {
+    margin-top: 0.75rem;
+  }
+
+  .download-picker > h2 {
+    font-size: 1.05rem;
+  }
+
+  .download-intro {
+    display: none;
+  }
+
+  .download-grid {
+    margin-top: 1rem;
+  }
+}
+
 main h2 {
   font-size: 1.2rem;
   margin: 2.5rem 0 0.75rem;
@@ -1635,6 +1819,15 @@ input[type="search"] {
   body .hero-actions .action.primary {
     background: var(--white);
     color: var(--black);
+  }
+
+  body .download-card {
+    background: var(--moretranswhite);
+    color: var(--white);
+  }
+
+  body .platform-logo.monochrome {
+    filter: invert(1);
   }
 
   .editor {

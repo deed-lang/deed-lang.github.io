@@ -156,3 +156,9 @@ request too.
 
 MIT OR Apache-2.0, matching the compiler.
 
+The platform marks in `assets/platforms/` are vendored locally so the install
+page makes no third-party request. The Windows mark comes from Devicon under
+MIT; the Apple and Linux marks come from Simple Icons under CC0. The names and
+marks remain trademarks of their respective owners and are used only to identify
+which release archive runs on which platform.
+

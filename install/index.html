@@ -25,7 +25,7 @@
     />
     <link rel="stylesheet" href="../assets/style.css" />
   </head>
-  <body>
+  <body class="install-page">
     <div class="wrap">
       <header class="site">
         <div class="header-section">
@@ -58,9 +58,8 @@
       <main>
         <h1>Install</h1>
         <p class="lede">
-          One file. The compiler, the test runner, the formatter, the
-          WebAssembly backend, the language server, the debugger and the agent
-          server are all in it, and there is nothing else to install.
+          One binary: compiler, tests, formatter, WebAssembly, language server,
+          debugger and MCP. Nothing else to install.
         </p>
 
         <!--
@@ -74,7 +73,106 @@
           not is a broken download link, and it was one for a day.
         -->
 
-        <h2>One line</h2>
+        <section class="download-picker" aria-labelledby="download-title">
+          <h2 id="download-title">Download Deed 0.2.13</h2>
+          <p class="download-intro">
+            Pick the machine this browser is on. Each button downloads the
+            released archive directly from GitHub.
+          </p>
+          <div class="download-grid">
+            <a
+              class="download-card"
+              data-download-platform="windows"
+              data-download-asset="deed-v0.2.13-x86_64-pc-windows-msvc.zip"
+              href="https://github.com/deed-lang/deed/releases/download/v0.2.13/deed-v0.2.13-x86_64-pc-windows-msvc.zip"
+            >
+              <img
+                class="platform-logo"
+                src="../assets/platforms/windows.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <span class="download-copy">
+                <strong>Windows</strong>
+                <span>64-bit Intel or AMD</span>
+              </span>
+              <span class="download-action">
+                <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
+                <span>Download .zip</span>
+                <small>1.8 MB</small>
+              </span>
+            </a>
+
+            <a
+              class="download-card"
+              data-download-platform="macos"
+              data-download-asset="deed-v0.2.13-aarch64-apple-darwin.tar.gz"
+              href="https://github.com/deed-lang/deed/releases/download/v0.2.13/deed-v0.2.13-aarch64-apple-darwin.tar.gz"
+            >
+              <img
+                class="platform-logo monochrome"
+                src="../assets/platforms/apple.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <span class="download-copy">
+                <strong>macOS</strong>
+                <span>Apple silicon</span>
+              </span>
+              <span class="download-action">
+                <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
+                <span>Download .tar.gz</span>
+                <small>1.9 MB</small>
+              </span>
+            </a>
+
+            <a
+              class="download-card"
+              data-download-platform="linux"
+              data-download-asset="deed-v0.2.13-x86_64-unknown-linux-gnu.tar.gz"
+              href="https://github.com/deed-lang/deed/releases/download/v0.2.13/deed-v0.2.13-x86_64-unknown-linux-gnu.tar.gz"
+            >
+              <img
+                class="platform-logo monochrome"
+                src="../assets/platforms/linux.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <span class="download-copy">
+                <strong>Linux</strong>
+                <span>64-bit Intel or AMD</span>
+              </span>
+              <span class="download-action">
+                <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
+                <span>Download .tar.gz</span>
+                <small>2.1 MB</small>
+              </span>
+            </a>
+          </div>
+          <p class="download-note">
+            These archives are unsigned. For automatic checksum verification
+            and a <code>deed</code> command on your <code>PATH</code>, use the
+            installer below. Intel Macs and Linux ARM machines can
+            <a href="#source">build with Rust</a>.
+          </p>
+        </section>
+
+        <h2 id="verified-install">Install and verify automatically</h2>
         <p>On Linux, or on an Apple-silicon Mac:</p>
         <pre class="code"><code>$ curl -fsSL https://raw.githubusercontent.com/deed-lang/deed/main/install.sh | sh</code></pre>
         <p>On Windows:</p>
@@ -106,37 +204,6 @@
             ><code>install.ps1</code></a
           >
           &mdash; and the rest of this page is the same work done by hand.
-        </p>
-
-        <h2>By hand instead</h2>
-        <table class="files">
-          <thead>
-            <tr>
-              <th scope="col">Machine</th>
-              <th scope="col">File</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Linux, 64-bit Intel or AMD</td>
-              <td><code>deed-v0.2.13-x86_64-unknown-linux-gnu.tar.gz</code></td>
-            </tr>
-            <tr>
-              <td>macOS, Apple silicon</td>
-              <td><code>deed-v0.2.13-aarch64-apple-darwin.tar.gz</code></td>
-            </tr>
-            <tr>
-              <td>Windows, 64-bit</td>
-              <td><code>deed-v0.2.13-x86_64-pc-windows-msvc.zip</code></td>
-            </tr>
-          </tbody>
-        </table>
-        <p>
-          From
-          <a href="https://github.com/deed-lang/deed/releases/latest"
-            >the latest release</a
-          >. There is no Intel Mac build and no Linux ARM build; on those,
-          <a href="#source">build it with Rust</a>.
         </p>
 
         <h2>Unpack it and ask it what it is</h2>
@@ -425,8 +492,8 @@ $ cargo install --path crates/deed-cli</code></pre>
 
       <footer class="site">
         <p>
-          Apache-2.0. This page has no analytics, no cookies and no third-party
-          requests.
+          MIT OR Apache-2.0. This page has no analytics, no cookies and no
+          third-party requests.
         </p>
       </footer>
     </div>
