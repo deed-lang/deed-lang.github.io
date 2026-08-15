@@ -301,7 +301,7 @@ if (deed) {
   }
 }
 
-// The picker's dozen. `shown` is the position in `SHOWN` and -1 for the rest,
+// The picker's fourteen. `shown` is the position in `SHOWN` and -1 for the rest,
 // so a file leaving the corpus takes its place in the picker with it and says
 // so here rather than shortening the menu quietly.
 for (const file of SHOWN) {
@@ -314,6 +314,24 @@ for (const entry of index.examples) {
       "examples/index.json",
       `${entry.file} says shown is ${entry.shown} and the picker's list says ${expected}. ` +
         "Regenerate with `node tools/examples.mjs`.",
+    );
+  }
+}
+
+// A selected example always gets one honest primary action. A program with no
+// external capability runs its main; everything else shown in the picker must
+// have tests for the dynamic `Run tests` action. Without this, a newly shown
+// library with no tests silently brings back the disabled Run dead end.
+const shownEntries = index.examples.filter((entry) => entry.shown >= 0);
+if (!shownEntries.some((entry) => entry.runs && entry.needs.length === 0)) {
+  complain("examples/index.json", "the picker has no program whose main runs in the browser");
+}
+for (const entry of shownEntries) {
+  const mainRunsHere = entry.runs && entry.needs.length === 0;
+  if (!mainRunsHere && entry.tests < 1) {
+    complain(
+      "examples/index.json",
+      `${entry.file} is shown but has neither a browser-runnable main nor tests`,
     );
   }
 }

@@ -96,8 +96,11 @@ What it was asked matters, because "can this be run" has two halves here.
 Twenty-two of the twenty-nine have no `main` at all. Six of the remaining
 seven have one and want the filesystem, which a page does not have, so `needs`
 records the capabilities they asked for. That leaves exactly one example this
-page can start, and Run is off for the other twenty-eight with the reason
-beside it, rather than letting somebody press it and be refused.
+page can start through `main`. In the picker that example says
+`Run program`; a library or a program needing filesystem capabilities
+says `Run tests` instead and names why its `main` cannot
+start in the tab. Every shown example therefore has a real primary action
+rather than a disabled Run button.
 
 The picker shows fourteen of the twenty-nine, and that list is in
 `tools/artifact.mjs` because both tools need it. The corpus is not a menu:

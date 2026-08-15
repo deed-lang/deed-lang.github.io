@@ -29,6 +29,7 @@ const GUTTER = document.getElementById("gutter");
 const CONTROLS = document.querySelector(".controls");
 const CONSOLE = document.querySelector(".console");
 const VERBS = Array.from(document.querySelectorAll("[data-verb]"));
+const EXAMPLE_ACTION = document.getElementById("example-action");
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -123,11 +124,10 @@ function running(yes) {
   }
 }
 
-// Most of the corpus cannot be started here, for two different reasons, and
-// pressing Run to find that out is a bad way to be told. Twenty-one are
-// libraries with no `main` to enter through. Six more have one and want the
-// filesystem, which this page does not have, so they would answer with a list
-// of capabilities rather than with anything about the program.
+// Most of the corpus cannot start a `main` here, for two different reasons.
+// Some are libraries with no entry point; others have one and want filesystem
+// capabilities this page deliberately does not hold. They do have tests, so
+// the primary action runs those instead of becoming a disabled dead end.
 //
 // `examples/index.json` records both answers from the pinned artifact, so the
 // button is off before it is reached for, and the note says which of the two
@@ -141,6 +141,36 @@ function thisIsRunnable(yes, why = "") {
   runnable = yes;
   VERBNOTE.textContent = why;
   if (ready) running(false);
+}
+
+function configureExampleAction(entry) {
+  if (!entry) {
+    EXAMPLE_ACTION.dataset.verb = "deed_run";
+    EXAMPLE_ACTION.textContent = "Run program";
+    thisIsRunnable(true);
+    return;
+  }
+
+  if (entry.runs && entry.needs.length === 0) {
+    EXAMPLE_ACTION.dataset.verb = "deed_run";
+    EXAMPLE_ACTION.textContent = "Run program";
+    thisIsRunnable(true, "Program example. Its `main` runs in this tab.");
+    return;
+  }
+
+  if (entry.tests > 0) {
+    EXAMPLE_ACTION.dataset.verb = "deed_test";
+    EXAMPLE_ACTION.textContent = "Run tests";
+    const reason = entry.runs
+      ? `Its \`main\` needs ${entry.needs.join(", ")}, which this page cannot provide.`
+      : "Library example: there is no `main` to start.";
+    thisIsRunnable(true, `${reason} The button runs its tests in this tab.`);
+    return;
+  }
+
+  EXAMPLE_ACTION.dataset.verb = "deed_run";
+  EXAMPLE_ACTION.textContent = "Cannot run here";
+  thisIsRunnable(false, whyNot(entry));
 }
 
 function lines(text) {
@@ -492,7 +522,7 @@ const check = () => run("deed_check").then(paint);
 SOURCE.addEventListener("input", () => {
   // Whatever was known about the example is now known about a different
   // program.
-  if (!runnable) thisIsRunnable(true);
+  configureExampleAction(null);
   drawGutter(SOURCE.value);
   schedule(paint, 150);
   schedule(check, 500);
@@ -651,7 +681,7 @@ async function loadFromLink() {
 // tests, and the summary under the picker is the comment at the top of the
 // file rather than a description written here.
 //
-// The picker shows twelve of the twenty-eight. The rest are the corpus doing
+// The picker shows fourteen of the twenty-nine. The rest are the corpus doing
 // its other job, one language feature at a time so the compiler's tests have
 // something to read, and a menu of those is a menu of somebody else's test
 // suite. `shown` in the index carries the choice and its order; every file is
@@ -678,7 +708,10 @@ async function loadExamples() {
     .sort((a, b) => a.shown - b.shown)) {
     const option = document.createElement("option");
     option.value = entry.file;
-    option.textContent = entry.file.replace(/\.deed$/, "");
+    const name = entry.file.replace(/\.deed$/, "");
+    option.textContent = entry.runs && entry.needs.length === 0
+      ? `${name} · runs here`
+      : `${name} · tests`;
     EXAMPLE.append(option);
   }
   EXAMPLE.disabled = false;
@@ -686,7 +719,7 @@ async function loadExamples() {
   EXAMPLE.addEventListener("change", async () => {
     const file = EXAMPLE.value;
     if (!file) {
-      thisIsRunnable(true);
+      configureExampleAction(null);
       return;
     }
     const entry = summaries.get(file);
@@ -696,8 +729,8 @@ async function loadExamples() {
     const response = await fetch(`../examples/${encodeURIComponent(file)}`);
     SOURCE.value = await response.text();
     marked = new Map();
-    thisIsRunnable(entry ? entry.runs && entry.needs.length === 0 : true, whyNot(entry));
-    paint();
+    configureExampleAction(entry);
+    schedule(paint, 150);
   });
 }
 
